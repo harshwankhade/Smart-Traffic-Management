@@ -1,0 +1,5 @@
+# Local API runtime. No AWS SDK or cloud credentials required.
+fastapi==0.162.2
+uvicorn==0.54.0
+SQLAlchemy==2.1.8
+httpx==0.28.1

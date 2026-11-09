@@ -1,0 +1,10 @@
+[
+  {"name": "sensor-registry", "placement": "kubernetes", "phase": 2},
+  {"name": "traffic-ingestion", "placement": "kubernetes", "phase": 3},
+  {"name": "event-publisher", "placement": "kubernetes", "phase": 3},
+  {"name": "congestion-processor", "placement": "managed-flink", "phase": 4},
+  {"name": "signal-recommendation", "placement": "kubernetes", "phase": 5},
+  {"name": "incident-manager", "placement": "kubernetes", "phase": 2},
+  {"name": "alert-service", "placement": "serverless", "phase": 6},
+  {"name": "traffic-analytics", "placement": "kubernetes", "phase": 5}
+]

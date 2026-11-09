@@ -1,0 +1,7 @@
+{
+  "schema_version": "1.0",
+  "sensor_id": "sensor-01",
+  "intersection_id": "int-01",
+  "location": "Demo intersection north approach",
+  "status": "active"
+}

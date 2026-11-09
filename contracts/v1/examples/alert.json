@@ -1,0 +1,10 @@
+{
+  "schema_version": "1.0",
+  "alert_id": "inc-event-001/rule-1",
+  "source_type": "incident",
+  "source_id": "inc-event-001",
+  "intersection_id": "int-01",
+  "reason": "Simulated lane closure opened",
+  "occurred_at": "2026-11-09T10:00:00Z",
+  "rule_version": "1"
+}

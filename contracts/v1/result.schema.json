@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:smart-traffic:v1:result",
+  "title": "result v1 approved planned contract",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "window_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "intersection_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "window_start": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "window_end": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "reading_count": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "vehicle_count_sum": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "average_speed": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "average_occupancy": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "congestion": {
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "unknown"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "window_id",
+    "intersection_id",
+    "window_start",
+    "window_end",
+    "reading_count",
+    "vehicle_count_sum",
+    "average_speed",
+    "average_occupancy",
+    "congestion"
+  ]
+}

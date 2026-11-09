@@ -1,0 +1,3 @@
+# Keep false: no AWS deployment has been authorized or priced within US$5.
+deployment_approved = false
+project_name        = "smarttraffic-phase2"

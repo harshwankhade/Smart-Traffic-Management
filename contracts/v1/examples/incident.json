@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "incident_id": "inc-001",
+  "intersection_id": "int-01",
+  "event_id": "inc-event-001",
+  "type": "closure",
+  "status": "open",
+  "reported_at": "2026-11-09T10:00:00Z",
+  "updated_at": "2026-11-09T10:00:00Z",
+  "description": "Simulated lane closure"
+}
