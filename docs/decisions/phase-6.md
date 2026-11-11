@@ -1,6 +1,6 @@
 # Phase 6 alert contract and delivery design
 
-**Status: proposed for user approval (2026-11-11).** This document settles no new interface by itself. Phase 1 already approved SQS Standard plus a DLQ, Python Lambda, DynamoDB on demand, one alert per high window, incident alerts on creation/status change, deterministic alert IDs, and an Incident Manager transactional outbox. Phase 6 implementation and cloud provisioning remain separate steps.
+**Status: approved by the user (2026-11-11).** The user replied "OK I APPROVE" to the proposed Phase 6 design. Phase 1 already approved SQS Standard plus a DLQ, Python Lambda, DynamoDB on demand, one alert per high window, incident alerts on creation/status change, deterministic alert IDs, and an Incident Manager transactional outbox. Phase 6 implementation and cloud provisioning remain separate steps.
 
 ## Current seams
 
@@ -39,6 +39,10 @@ Incident Manager adds an `alert_outbox` table in its own SQL schema with unique 
 3. Terraform format/validate/mock and read-only plan for queue, DLQ, function, mapping, table, IAM and log group. Package Python 3.14 Lambda dependencies for Linux and verify the artifact before deployment.
 4. Cloud acceptance requires a separate reviewed cost estimate and explicit temporary-deployment authorization under the US$5 total cap. Send both requests through actual SQS, observe Lambda invocations/logs and DynamoDB records, test replay plus one controlled failure/redrive, then destroy and audit run-owned resources. No full cloud system or Phase 7 work is implied.
 
-## Approval gate
+## Step 2 implementation note
 
-Please approve or revise the proposed identities, request/outcome contracts, incident outbox semantics, retry/DLQ settings, DynamoDB key/ownership, and test plan. Approval of this design authorizes **documentation of the choices only**; Steps 2–5 in `phase 6 steps.md` each require their own prompt, and billable provisioning requires explicit authorization.
+The separately authorized producer step adds a stable request builder and injectable SQS/local sender, opt-in high-window sending after recommendation persistence, and an Incident Manager outbox committed with the incident revision. SQLite creates the outbox table automatically; initial PostgreSQL DDL and an existing-schema upgrade script are prepared but not applied. A worker claims rows with expiring leases, retries after outage or ambiguous acknowledgement, and marks sent only after send acknowledgement. No Lambda, alert outcome store or cloud queue was created in this step.
+
+## Approval and execution boundary
+
+The user approved the identities, request/outcome contracts, incident outbox semantics, retry/DLQ settings, DynamoDB key/ownership, and test plan on 2026-11-11. This approval settles the design; Steps 2–5 in `phase 6 steps.md` each require their own prompt, and billable provisioning requires explicit authorization.

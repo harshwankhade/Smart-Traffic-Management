@@ -2,7 +2,7 @@
 
 `bootstrap-postgres.sql` defines service-specific owner/application roles and isolated schemas inside the planned RDS `smarttraffic` database. No credentials are embedded. Runtime roles use RDS IAM database authentication; future IAM permissions and token delivery/renewal are not implemented in Phase 2. Never run application services with the master account.
 
-`schema-postgres.sql` contains initial table definitions compiled from the SQLAlchemy models, with owner-role switching. These are initial schema definitions, not a migration history. They compile for PostgreSQL but have not been executed against a PostgreSQL server.
+`schema-postgres.sql` contains initial table definitions compiled from the SQLAlchemy models, with owner-role switching, including the Phase 6 incident alert outbox. These are initial schema definitions, not a migration history. They compile for PostgreSQL but have not been executed against a PostgreSQL server. Existing PostgreSQL installations must run `phase6-outbox-postgres.sql` as the owner role before enabling alerts. That upgrade is prepared but not PostgreSQL-tested.
 
 At a later authorized cloud step, use a private network connection and a verified RDS CA certificate to run bootstrap as the administrator, then run the initial schema file in the same database. The scripts are idempotent for initial creation; they do not upgrade existing tables or repair unrelated role memberships. Review existing schemas/roles before applying to a nonempty environment.
 

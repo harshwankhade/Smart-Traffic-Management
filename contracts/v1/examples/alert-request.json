@@ -1,0 +1,10 @@
+{
+  "schema_version": "1.0",
+  "alert_id": "int-01/2026-11-11T10:00:00Z/2026-11-11T10:01:00Z/v1/congestion-alert/v1",
+  "source_type": "congestion",
+  "source_id": "int-01/2026-11-11T10:00:00Z/2026-11-11T10:01:00Z/v1",
+  "intersection_id": "int-01",
+  "reason": "high_congestion",
+  "occurred_at": "2026-11-11T10:01:00Z",
+  "rule_version": "1"
+}

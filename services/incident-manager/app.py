@@ -11,9 +11,11 @@ from incidents import repository as repo
 from incidents.database import Database
 from incidents.registry_client import RegistryClient
 from incidents.schemas import Incident, IncidentCreate, IncidentPatch
+from incidents.outbox import OutboxWorker
+from traffic_contracts.alerts import SqsAlertSender
 
 
-def create_app(database_url=None, registry_url=None, registry_transport=None):
+def create_app(database_url=None, registry_url=None, registry_transport=None, alert_sender=None):
     database = Database(database_url)
     registry = RegistryClient(registry_url or os.environ.get("SENSOR_REGISTRY_URL", "http://127.0.0.1:8001"),
                               registry_transport)
@@ -22,8 +24,15 @@ def create_app(database_url=None, registry_url=None, registry_transport=None):
     async def lifespan(app):
         try:
             database.initialize()
+            app.state.outbox_worker = None
+            sender = alert_sender or (SqsAlertSender() if os.getenv("PHASE6_ALERTS_ENABLED") == "1" else None)
+            if sender is not None:
+                app.state.outbox_worker = OutboxWorker(database, sender)
+                app.state.outbox_worker.start()
             yield
         finally:
+            if getattr(app.state, "outbox_worker", None):
+                app.state.outbox_worker.stop()
             registry.close()
             database.engine.dispose()
 

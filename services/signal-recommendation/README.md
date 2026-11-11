@@ -21,3 +21,9 @@ the owned table is available. Local setup is in `docs/phase-5-api.md`; consumer 
 is in `docs/phase-5-consumers.md`. Local OpenAPI is available at `/docs`.
 
 Approved placement: Kubernetes. See the root README for run and smoke-test commands.
+
+Phase 6 Step 2 adds opt-in alert production. With `PHASE5_CONSUMER_ENABLED=1`, set
+`PHASE6_ALERTS_ENABLED=1` and `ALERT_QUEUE_URL` to send one stable request for each
+high-congestion result after recommendation storage and before Kafka offset commit.
+Queue failures retry the same result without committing; non-high results send nothing.
+The injectable in-memory sender supports local tests. The Lambda consumer is a later step.

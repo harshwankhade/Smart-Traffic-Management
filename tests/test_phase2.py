@@ -16,6 +16,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import StaleDataError
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "contracts" / "python"))
 for name in ("sensor-registry", "incident-manager"):
     sys.path.insert(0, str(ROOT / "services" / name))
 
@@ -169,7 +170,7 @@ class Phase2Tests(unittest.TestCase):
         reg_db = self.registry_app.state.database
         inc_db = self.incident_app.state.database
         self.assertEqual(set(inspect(reg_db.engine).get_table_names()), {"sensors", "intersections"})
-        self.assertEqual(set(inspect(inc_db.engine).get_table_names()), {"incidents"})
+        self.assertEqual(set(inspect(inc_db.engine).get_table_names()), {"incidents", "alert_outbox"})
         with reg_db.engine.connect() as connection:
             self.assertEqual(connection.execute(text("PRAGMA foreign_keys")).scalar(), 1)
         from registry.models import SensorRow
@@ -204,7 +205,7 @@ class Phase2Tests(unittest.TestCase):
     def test_explicit_initialization_tools_keep_tables_separate(self):
         for service, variable, filename, tables in (
             ("sensor-registry", "SENSOR_REGISTRY_DATABASE_URL", "init-registry.db", {"intersections", "sensors"}),
-            ("incident-manager", "INCIDENT_MANAGER_DATABASE_URL", "init-incidents.db", {"incidents"}),
+            ("incident-manager", "INCIDENT_MANAGER_DATABASE_URL", "init-incidents.db", {"incidents", "alert_outbox"}),
         ):
             with self.subTest(service=service):
                 database_file = Path(self.temp.name) / filename

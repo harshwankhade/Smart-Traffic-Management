@@ -8,21 +8,32 @@ from fastapi.responses import JSONResponse
 
 from recommendation import recommend
 from recommendation.repository import RecommendationRepository
+from traffic_contracts.alerts import SqsAlertSender, congestion_request
 from traffic_contracts.result_consumer import ResultConsumer
 from traffic_contracts.window_api import json_response, query_page
 
 
-def create_app(repository=None):
+def create_app(repository=None, alert_sender=None):
     @asynccontextmanager
     async def lifespan(app):
         app.state.worker = None
         app.state.repository = repository
         if os.getenv("PHASE5_CONSUMER_ENABLED") == "1":
             owned = repository or RecommendationRepository()
+            sender = alert_sender or (SqsAlertSender() if os.getenv("PHASE6_ALERTS_ENABLED") == "1" else None)
+
+            def persist_and_alert(result):
+                recommendation = recommend(result)
+                outcome = owned.put(recommendation)
+                request = congestion_request(result)
+                if request is not None and sender is not None:
+                    sender.send(request)
+                return outcome
+
             app.state.repository = owned
             app.state.worker = ResultConsumer(
                 "signal-recommendation-v1", owned.store,
-                lambda result: owned.put(recommend(result)))
+                persist_and_alert)
             app.state.worker.start()
         try:
             yield
