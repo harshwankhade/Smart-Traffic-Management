@@ -105,13 +105,16 @@ def main():
                             time.sleep(0.1)
                     if data != expected(name):
                         raise AssertionError(f"Incorrect health response for {name}: {data}")
-                    implemented = name in ("sensor-registry", "incident-manager", "traffic-ingestion")
+                    implemented = name in ("sensor-registry", "incident-manager", "traffic-ingestion",
+                                           "signal-recommendation", "traffic-analytics")
                     if implemented:
                         document = request(base + "/openapi.json")
-                        own = {"sensor-registry": "/sensors", "incident-manager": "/incidents", "traffic-ingestion": "/readings"}[name]
+                        own = {"sensor-registry": "/sensors", "incident-manager": "/incidents",
+                               "traffic-ingestion": "/readings", "signal-recommendation": "/recommendations",
+                               "traffic-analytics": "/traffic/summaries"}[name]
                         if own not in document["paths"]:
                             raise AssertionError(f"{name}: implemented routes missing from OpenAPI")
-                        verify_absent(base + own, 405)
+                        verify_absent(base + own, 422 if name in ("signal-recommendation", "traffic-analytics") else 405)
                         verify_absent(base + ("/incidents" if name == "sensor-registry" else "/sensors"), 404)
                     else:
                         for path in ("/docs", "/openapi.json", "/sensors", "/incidents"):

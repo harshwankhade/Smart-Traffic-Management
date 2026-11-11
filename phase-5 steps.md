@@ -1,6 +1,6 @@
 # Phase 5 — steps to execute one prompt at a time
 
-Status: Phase 5 is **In Progress**. Steps 1–2 were authorized and completed on 2026-11-11; steps 3–9 still need separate prompts. This file breaks down Phase 5 of `ROADMAP.md` and does not authorize cloud provisioning.
+Status: Phase 5 is **Completed** for its approved scope. Steps 1–9 were authorized and completed on 2026-11-11; evidence and limitations are recorded in `docs/progress/phase-5.md`. This file breaks down Phase 5 of `ROADMAP.md` and does not authorize cloud provisioning.
 
 Execute the steps in order, only when prompted. Each prompt authorizes **only its named step**. Read `AGENTS.md`, the authoritative root documents, approved decisions and relevant existing code before acting. Preserve prior behavior. After each step, record changes, actual checks, limitations and the next step, then stop. If a prerequisite fails, resolve it within that step before continuing. Do not start Phase 6.
 
@@ -77,3 +77,8 @@ Check every Phase 5 acceptance criterion against actual evidence. Run any outsta
 **Done when:** Evidence supports the recorded status, documentation is aligned, and the user receives a concise handoff. Phase 6 remains Not Started. Do not commit or push.
 
 **Prompt:** `Do Phase 5 step 9 from "phase-5 steps.md" only: audit acceptance evidence, finish required verification and documentation, and record the accurate Phase 5 status. Do not start Phase 6, commit or push. Then stop.`
+
+**Step 9 result (2026-11-11):** Acceptance criteria, local combined-demo evidence and managed
+DynamoDB write/read/replay/cleanup evidence were audited. The 47-test suite, smoke checks and
+documentation checks passed. Phase 5 is now Completed for its approved scope; Phase 6 remains
+Not Started.

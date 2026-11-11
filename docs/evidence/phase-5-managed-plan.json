@@ -1,0 +1,50 @@
+{
+  "run_name": "stp5-20261111124119",
+  "scope": "two temporary DynamoDB tables and two policies",
+  "managed_verified": false,
+  "started_at": "2026-11-11T12:41:19.978961+00:00",
+  "access_preflight": {
+    "account": "520646131316",
+    "principal_arn": "arn:aws:iam::520646131316:root",
+    "region": "ap-south-1",
+    "dynamodb_limits_checked": true
+  },
+  "reviewed_plan": [
+    {
+      "address": "aws_dynamodb_table.recommendations",
+      "type": "aws_dynamodb_table",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "aws_dynamodb_table.summaries",
+      "type": "aws_dynamodb_table",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "aws_iam_policy.signal_recommendation",
+      "type": "aws_iam_policy",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "aws_iam_policy.traffic_analytics",
+      "type": "aws_iam_policy",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "terraform_data.deployment_guard",
+      "type": "terraform_data",
+      "actions": [
+        "create"
+      ]
+    }
+  ],
+  "finished_at": "2026-11-11T12:41:38.046344+00:00"
+}

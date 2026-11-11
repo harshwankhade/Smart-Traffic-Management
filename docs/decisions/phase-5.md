@@ -1,6 +1,6 @@
 # Phase 5 interface and delivery decisions — proposed
 
-Status: **approved by the user for Phase 5 steps 1–2** on 2026-11-11. This records the approved design for later Phase 5 steps; only the Step 2 contracts and pure rules are implemented in this task. The requirements in the root `PROJECT_BRIEF.md`, approved baseline in `docs/decisions/phase-1.md`, Phase 4 processing contract and result schema remain authoritative.
+Status: **approved by the user for Phase 5 steps 1–2** on 2026-11-11; Steps 3–5 were separately authorized and locally verified. This records the approved design for later Phase 5 steps. The requirements in the root `PROJECT_BRIEF.md`, approved baseline in `docs/decisions/phase-1.md`, Phase 4 processing contract and result schema remain authoritative.
 
 ## Verified prerequisites
 
@@ -62,4 +62,81 @@ the source measurements. The rule emits deterministic simulated guidance without
 
 Verification actually run: `.venv\Scripts\python -m unittest tests.test_phase5_rules -v`
 passed 4 tests; `.venv\Scripts\python -m unittest discover -s tests -v` passed 42 tests.
-No Kafka/DynamoDB integration or cloud provisioning ran. Step 3 remains separately authorized.
+At that point, no Kafka/DynamoDB integration or cloud provisioning had run. Step 3 was
+separately authorized afterward, with its result recorded below.
+
+## Step 3 result (2026-11-11)
+
+The two service-owned repositories use the approved `intersection_id` and
+`window_start#window_id` keys. Shared storage code performs conditional insertion,
+strongly consistent replay comparison, scoped ascending queries and pagination. It validates
+DynamoDB numeric serialization before writing; unsupported large values fail explicitly.
+The local Docker setup uses AWS's pinned DynamoDB Local 2.6.1 image with a retained volume
+and two separate tables. No alert/recovery table or cloud resource was created.
+
+Verification actually run: `scripts/phase5_local.py bootstrap` created/verified both local
+tables. The opt-in `tests.test_phase5_storage` passed against real DynamoDB Local: writes/reads,
+intersection and time isolation, pagination, identical replay, changed-content conflict,
+numeric limit rejection and read after container restart. The normal Python suite passed
+43 tests with the opt-in local integration test skipped; compile and whitespace checks passed.
+The Step 3 container was stopped and its volume retained. See `docs/phase-5-storage.md` for
+reproduction. Managed AWS DynamoDB, Kafka consumers and HTTP queries are not yet verified.
+
+## Step 4 result (2026-11-11)
+
+Both existing API services now start independent `traffic.results` workers only when
+`PHASE5_CONSUMER_ENABLED=1`. The shared infrastructure loop uses separate approved groups,
+validates each result, persists through the owning repository, then synchronously commits
+the offset after checking the per-partition commit result. It retries storage/commit failures
+without acknowledging the record. Invalid results are logged with Kafka location and skipped;
+a conflicting replay is logged and quarantined without overwriting or advancing. The
+original `/healthz` payload remains and `/readyz` checks worker state and the owned table.
+
+The opt-in local Kafka/DynamoDB integration test passed, including duplicate replay,
+invalid-record handling, storage outage, process restart recovery and conflict quarantine.
+The normal 44-test suite passed with two opt-in container tests skipped; all eight smoke
+entry points passed. See `docs/evidence/phase-5-consumers.md` and the runbook at
+`docs/phase-5-consumers.md`. No AWS resource or Phase 5 query API was created.
+
+## Step 5 result (2026-11-11)
+
+Both services now expose the approved read-only list and detail routes. A shared API helper
+normalizes UTC bounds to minute-start keys, emits exact DynamoDB numbers as JSON, and encodes
+query-scoped opaque pagination cursors. Both routes require an intersection and use only the
+owning repository. Invalid queries/cursors return 422, missing details return 404, and
+unavailable storage returns 503. The actual HTTP and DynamoDB Local test passed isolation,
+fractional time boundaries, pagination, empty results, exact numeric output, store outage
+and recovery. The normal 45-test Python suite passed with three opt-in container tests
+skipped; all eight smoke entry points passed. See `docs/phase-5-api.md` and
+`docs/evidence/phase-5-api.md`. No AWS resource or Phase 7 recovery API was created.
+
+## Managed DynamoDB preparation result (2026-11-11)
+
+The separately authorized managed-DynamoDB preparation adds a guarded Terraform root with only
+the two approved on-demand encrypted tables and two unattached, owner-scoped policies. A runner
+will use the existing repositories and deterministic recommendation rule against uniquely named
+AWS tables, then destroy only Terraform state-owned resources and confirm those exact tables and
+policies are absent. Its mock tests passed; no AWS plan or apply ran. The documented
+`smarttraffic-sdk` profile now passes STS/DynamoDB/Cost Explorer preflight and a read-only
+AWS-backed plan. The plan has only the guard, two tables and two policies. Exact create/delete
+permission and execution remain pending explicit approval. See
+`docs/phase-5-managed-dynamodb.md` and `docs/evidence/phase-5-managed-preparation.md`.
+
+## Step 8 result (2026-11-11)
+
+The final managed run provisioned only two run-scoped DynamoDB tables and two unattached
+owner policies. Existing repository/rule code wrote, read, queried and replayed known records;
+both actual FastAPI APIs also returned paged, intersection-scoped AWS-backed data. The runner
+destroyed all five state-owned resources, recorded empty state and absent exact names, and an
+independent AWS CLI audit found no final-run leftovers. Two earlier test-run failures cleaned up
+successfully and are documented with the final evidence. Managed DynamoDB acceptance is now
+verified; the local end-to-end Step 6 demo passed and the final closure audit completed.
+
+## Step 6 and closure result (2026-11-11)
+
+The opt-in local combined demo published a unique valid result to the existing `traffic.results`
+topic, verified both independent consumers and APIs, replayed the same result without duplicate
+logical state, and read both records after restarting the service processes. The normal 47-test
+suite (five opt-in checks skipped by default), all eight smoke checks and documentation checks
+passed. Managed DynamoDB write/read/replay and cleanup evidence is recorded separately. Phase 5
+is Completed for its approved scope; Phase 6 remains Not Started.

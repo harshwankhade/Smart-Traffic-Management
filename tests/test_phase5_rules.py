@@ -11,6 +11,7 @@ from jsonschema import Draft202012Validator, FormatChecker
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACTS = ROOT / "contracts" / "v1"
 sys.path.insert(0, str(ROOT / "services" / "signal-recommendation"))
+sys.path.insert(0, str(ROOT / "contracts" / "python"))
 
 from recommendation import recommend, validate_result  # noqa: E402
 

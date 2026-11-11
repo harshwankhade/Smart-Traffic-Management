@@ -1,9 +1,15 @@
 # Smart Traffic Management - S12
 
-Phase 5 is in progress. The user approved the derived-record/query/delivery design in
-`docs/decisions/phase-5.md`; Steps 1–2 added recommendation and summary contracts plus
-pure simulation-only recommendation rules. Kafka consumers, DynamoDB, query APIs and managed
-NoSQL verification remain for later, separately authorized steps.
+Phase 5 is complete for its approved scope. The user approved the derived-record/query/delivery design in
+`docs/decisions/phase-5.md`; Steps 1–5 added recommendation and summary contracts, pure
+simulation-only rules, service-owned DynamoDB repositories, independent Kafka result
+consumers and read-only REST queries verified locally. The combined local
+[Kafka-to-DynamoDB-to-HTTP demo](docs/phase-5-demo.md) also passed. A temporary AWS DynamoDB run verified repository
+replay behavior and both AWS-backed APIs, then removed all run-owned resources; see
+[the managed verification evidence](docs/evidence/phase-5-managed.md).
+All Phase 5 acceptance criteria now have evidence, including managed DynamoDB use and cleanup.
+Phase 6 remains Not Started.
+See [the Phase 5 progress report](docs/progress/phase-5.md).
 
 **Phases 1-3 are complete for their approved local/preparation scope. Phase 4 is complete: local Flink and a temporary Amazon EMR on EC2 job produced verified Kafka results and restored an S3 checkpoint. The cloud stack was torn down.** The system remains an academic simulation; no physical signal control occurs.
 
@@ -15,7 +21,7 @@ Read [requirements](PROJECT_BRIEF.md), [architecture](ARCHITECTURE.md), [roadmap
 - Incident Manager: REST-validated intersections, creation, description/status updates and terminal resolution. Incident event IDs/timestamps are server-owned; no alerts are published.
 - Separate SQLAlchemy models and SQLite files, database constraints and optimistic incident update checks.
 - Traffic Ingestion validates active sensors and calls Event Publisher through real gRPC; Publisher archives normalized JSON before acknowledged Kafka delivery.
-- Local Kafka/SeaweedFS containers persist records/objects. Congestion Processor runs real Flink minute windows, bounded deduplication and checkpoint recovery; three other application services retain Phase 1 health/smoke behavior.
+- Local Kafka/SeaweedFS containers persist records/objects. Congestion Processor runs real Flink minute windows, bounded deduplication and checkpoint recovery. Signal Recommendation and Traffic Analytics consume its results and expose local read APIs; Alert Service retains Phase 1 health/smoke behavior.
 - Versioned response schemas, local HTTP restart demo, automated tests and private RDS Terraform prepared for mocked checks only.
 
 See [REST contracts, errors and examples](docs/phase-2-api.md) and [Flink processing/recovery](docs/phase-4-processing.md). Registry, Incident Manager and Ingestion expose local `/docs` and `/openapi.json`; Publisher exposes gRPC plus HTTP liveness/readiness. Queue delivery, ZooKeeper coordination, cloud deployment and dashboards remain unimplemented.
@@ -40,8 +46,9 @@ See [local evidence](docs/evidence/phase-4-verification.json),
 [managed evidence](docs/evidence/phase-4-cloud.json), [cleanup audit](docs/evidence/phase-4-cleanup.json),
 [Phase 4 report](docs/progress/phase-4.md) and the
 [EMR Terraform runbook](infrastructure/terraform/phase4-live/README.md).
-AWS CLI and Boto3 authentication are now verified using the local `smarttraffic-sdk` profile.
-Set `AWS_PROFILE=smarttraffic-sdk` and `AWS_REGION=ap-south-1` for project tools; renew with
+Phase 4 evidence recorded AWS CLI and Boto3 authentication using the `smarttraffic-sdk` profile.
+That profile is currently absent, so future managed work needs a fresh access check before use.
+When available, set `AWS_PROFILE=smarttraffic-sdk` and `AWS_REGION=ap-south-1`; renew with
 `aws login --profile smarttraffic` when needed. Earlier Amazon Managed Service for Apache Flink
 attempts were rejected by account verification, so the user approved EMR on EC2 instead. Run
 `stp4-91dd0a43a8` used Terraform to provision a private EMR 7.14/Flink 1.20 cluster, two-broker
@@ -53,7 +60,8 @@ terminated, the versioned run bucket was emptied, Terraform state is empty, the 
 and an independent audit found no run-owned resources. See [Phase 4 decisions](docs/decisions/phase-4.md).
 The written cost estimate was waived; actual billed cost and the unchanged US$5 ceiling were not
 verified. This temporary processor test does not establish a complete cloud deployment. Phase 5
-has started with approved design and pure rules only.
+has started with approved design, pure rules, repositories, local Kafka consumers and
+read-only recommendation/summary APIs.
 
 ## Setup and verification (PowerShell, project root)
 

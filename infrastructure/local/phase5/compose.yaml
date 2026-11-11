@@ -1,0 +1,12 @@
+name: smarttraffic-phase5
+services:
+  dynamodb:
+    image: amazon/dynamodb-local:2.6.1
+    user: "0:0"
+    command: ["-jar", "DynamoDBLocal.jar", "-sharedDb", "-dbPath", "/data"]
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - dynamodb-data:/data
+volumes:
+  dynamodb-data:
