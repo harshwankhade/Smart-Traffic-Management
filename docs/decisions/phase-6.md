@@ -43,6 +43,10 @@ Incident Manager adds an `alert_outbox` table in its own SQL schema with unique 
 
 The separately authorized producer step adds a stable request builder and injectable SQS/local sender, opt-in high-window sending after recommendation persistence, and an Incident Manager outbox committed with the incident revision. SQLite creates the outbox table automatically; initial PostgreSQL DDL and an existing-schema upgrade script are prepared but not applied. A worker claims rows with expiring leases, retries after outage or ambiguous acknowledgement, and marks sent only after send acknowledgement. No Lambda, alert outcome store or cloud queue was created in this step.
 
+## Step 3 implementation note
+
+The separately authorized Alert Service step adds a standard-library request validator, SQS partial-batch handler, conditional DynamoDB alert repository, and `recorded` outcome contract. Identical deliveries reuse the original logical record; malformed, conflicting and transiently failed items appear in `batchItemFailures`. Structured logs identify alert/source/message IDs and the outcome without logging bodies. The self-contained and DynamoDB Local demos both passed with three simulated queue messages and two logical alerts. The local container/network were removed after verification; its volume was retained. No AWS queue, Lambda function, IAM policy or trigger was created.
+
 ## Approval and execution boundary
 
 The user approved the identities, request/outcome contracts, incident outbox semantics, retry/DLQ settings, DynamoDB key/ownership, and test plan on 2026-11-11. This approval settles the design; Steps 2–5 in `phase 6 steps.md` each require their own prompt, and billable provisioning requires explicit authorization.

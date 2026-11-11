@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:smart-traffic:v1:alert-outcome",
+  "title": "Recorded alert outcome v1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "alert_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "source_type": {"enum": ["congestion", "incident"]},
+    "source_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "intersection_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "reason": {"type": "string", "minLength": 1, "maxLength": 2000},
+    "occurred_at": {"type": "string", "format": "date-time", "pattern": "Z$"},
+    "rule_version": {"const": "1"},
+    "outcome": {"const": "recorded"},
+    "processed_at": {"type": "string", "format": "date-time", "pattern": "Z$"}
+  },
+  "required": ["schema_version", "alert_id", "source_type", "source_id", "intersection_id", "reason", "occurred_at", "rule_version", "outcome", "processed_at"]
+}

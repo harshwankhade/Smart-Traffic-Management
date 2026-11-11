@@ -8,11 +8,12 @@ consumers and read-only REST queries verified locally. The combined local
 replay behavior and both AWS-backed APIs, then removed all run-owned resources; see
 [the managed verification evidence](docs/evidence/phase-5-managed.md).
 All Phase 5 acceptance criteria now have evidence, including managed DynamoDB use and cleanup.
-Phase 6 Step 2 has begun: Incident Manager now stages alerts in its SQL outbox, and Signal
-Recommendation can send high-congestion requests. Queue delivery is opt-in with
+Phase 6 Steps 2–3 are implemented locally: Incident Manager stages alerts in its SQL outbox,
+Signal Recommendation sends high-congestion requests, and the Alert Service SQS batch handler
+stores idempotent outcomes in its own DynamoDB table. Queue delivery is opt-in with
 `PHASE6_ALERTS_ENABLED=1` and `ALERT_QUEUE_URL` (and the Phase 5 consumer enabled for
-recommendations). The Alert Service handler, alert outcomes and cloud trigger remain future
-Phase 6 steps; no live alert outcome is available yet.
+recommendations). Run the [local alert demo](docs/phase-6-local.md) to exercise both paths.
+Cloud queue/function provisioning and actual Lambda invocation remain future Phase 6 steps.
 See [the Phase 5 progress report](docs/progress/phase-5.md).
 
 **Phases 1-3 are complete for their approved local/preparation scope. Phase 4 is complete: local Flink and a temporary Amazon EMR on EC2 job produced verified Kafka results and restored an S3 checkpoint. The cloud stack was torn down.** The system remains an academic simulation; no physical signal control occurs.
