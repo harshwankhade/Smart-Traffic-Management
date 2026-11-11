@@ -3,6 +3,11 @@ variable "deployment_approved" {
   default     = false
   description = "Keep false. Explicit approval plus verified cost/access checks are required before any real resource planning."
 }
+variable "provision_database" {
+  type        = bool
+  default     = true
+  description = "Keep true for Phase 2; a temporary Phase 4-only run can reuse networking without starting SQL."
+}
 
 variable "project_name" {
   type    = string

@@ -11,6 +11,7 @@ resource "aws_vpc" "main" {
   cidr_block           = "10.42.0.0/16"
   enable_dns_support   = true
   enable_dns_hostnames = true
+  tags                 = { "for-use-with-amazon-emr-managed-policies" = "true" }
   depends_on           = [terraform_data.deployment_guard]
 }
 
@@ -23,6 +24,7 @@ resource "aws_subnet" "database" {
   availability_zone       = each.key
   cidr_block              = each.value
   map_public_ip_on_launch = false
+  tags                    = { "for-use-with-amazon-emr-managed-policies" = "true" }
 }
 
 # No Internet gateway, NAT gateway or default Internet route is defined.
@@ -42,12 +44,14 @@ resource "aws_security_group" "application" {
   name_prefix = "${var.project_name}-app-"
   description = "Application identity; database-only egress in this foundation"
   vpc_id      = aws_vpc.main.id
+  tags        = { "for-use-with-amazon-emr-managed-policies" = "true" }
 }
 
 resource "aws_security_group" "database" {
   name_prefix = "${var.project_name}-db-"
   description = "Private PostgreSQL, restricted to application security group"
   vpc_id      = aws_vpc.main.id
+  tags        = { "for-use-with-amazon-emr-managed-policies" = "true" }
 }
 
 resource "aws_vpc_security_group_ingress_rule" "postgres" {
@@ -67,11 +71,13 @@ resource "aws_vpc_security_group_egress_rule" "application_database" {
 }
 
 resource "aws_db_subnet_group" "main" {
+  count      = var.provision_database ? 1 : 0
   name       = var.project_name
   subnet_ids = [for subnet in aws_subnet.database : subnet.id]
 }
 
 resource "aws_db_parameter_group" "main" {
+  count       = var.provision_database ? 1 : 0
   name_prefix = "${var.project_name}-"
   family      = "postgres17"
   parameter {
@@ -81,6 +87,7 @@ resource "aws_db_parameter_group" "main" {
 }
 
 resource "aws_db_instance" "main" {
+  count                               = var.provision_database ? 1 : 0
   identifier                          = var.project_name
   engine                              = "postgres"
   engine_version                      = "17"
@@ -92,8 +99,8 @@ resource "aws_db_instance" "main" {
   username                            = "traffic_admin"
   manage_master_user_password         = true
   iam_database_authentication_enabled = true
-  db_subnet_group_name                = aws_db_subnet_group.main.name
-  parameter_group_name                = aws_db_parameter_group.main.name
+  db_subnet_group_name                = aws_db_subnet_group.main[0].name
+  parameter_group_name                = aws_db_parameter_group.main[0].name
   vpc_security_group_ids              = [aws_security_group.database.id]
   publicly_accessible                 = false
   multi_az                            = false
@@ -103,4 +110,18 @@ resource "aws_db_instance" "main" {
   skip_final_snapshot                 = false
   final_snapshot_identifier           = "${var.project_name}-final"
   auto_minor_version_upgrade          = true
+}
+moved {
+  from = aws_db_instance.main
+  to   = aws_db_instance.main[0]
+}
+
+moved {
+  from = aws_db_subnet_group.main
+  to   = aws_db_subnet_group.main[0]
+}
+
+moved {
+  from = aws_db_parameter_group.main
+  to   = aws_db_parameter_group.main[0]
 }

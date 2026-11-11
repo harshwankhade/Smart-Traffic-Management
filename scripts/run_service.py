@@ -23,11 +23,16 @@ def main():
     parser.add_argument("service", choices=PORTS)
     parser.add_argument("--port", type=int, help="0 selects an available port")
     parser.add_argument("--port-file", type=Path, help=argparse.SUPPRESS)
+    parser.add_argument("--phase3-local", action="store_true", help="Explicitly load the ignored local Kafka/archive configuration")
     args = parser.parse_args()
+    if args.phase3_local:
+        from phase3_local import local_environment
+        os.environ.update(local_environment())
     port = PORTS[args.service] if args.port is None else args.port
     if not 0 <= port <= 65535:
         parser.error("port must be between 0 and 65535")
     sys.path.insert(0, str(ROOT / "services" / args.service))
+    sys.path.insert(0, str(ROOT / "contracts/python"))
     spec = importlib.util.spec_from_file_location(
         "health_service", ROOT / "services" / args.service / "app.py")
     module = importlib.util.module_from_spec(spec)

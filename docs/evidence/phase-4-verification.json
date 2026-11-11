@@ -1,0 +1,175 @@
+{
+  "scope": "real_local_flink_kafka_only",
+  "managed_cloud_verified": false,
+  "flink_image": "flink:2.2.0-scala_2.12-java17",
+  "run_prefix": "p4-0936613caa",
+  "input_records": [
+    {
+      "schema_version": "1.0",
+      "event_id": "p4-0936613caa-a",
+      "sensor_id": "processor-test-sensor",
+      "intersection_id": "p4-0936613caa-main",
+      "observed_at": "2026-11-10T10:05:00Z",
+      "vehicle_count": 2,
+      "average_speed": 10,
+      "occupancy": 0.4
+    },
+    {
+      "schema_version": "1.0",
+      "event_id": "p4-0936613caa-a",
+      "sensor_id": "processor-test-sensor",
+      "intersection_id": "p4-0936613caa-main",
+      "observed_at": "2026-11-10T10:05:00Z",
+      "vehicle_count": 2,
+      "average_speed": 10,
+      "occupancy": 0.4
+    },
+    {
+      "schema_version": "1.0",
+      "event_id": "p4-0936613caa-b",
+      "sensor_id": "processor-test-sensor",
+      "intersection_id": "p4-0936613caa-main",
+      "observed_at": "2026-11-10T10:05:59.999999Z",
+      "vehicle_count": 3,
+      "average_speed": 30,
+      "occupancy": 0.8
+    },
+    {
+      "schema_version": "1.0",
+      "event_id": "p4-0936613caa-other",
+      "sensor_id": "processor-test-sensor",
+      "intersection_id": "p4-0936613caa-other",
+      "observed_at": "2026-11-10T10:05:30Z",
+      "vehicle_count": 7
+    },
+    {
+      "schema_version": "1.0",
+      "event_id": "p4-0936613caa-pending",
+      "sensor_id": "processor-test-sensor",
+      "intersection_id": "p4-0936613caa-main",
+      "observed_at": "2026-11-10T10:06:00Z",
+      "average_speed": 45
+    },
+    {
+      "schema_version": "1.0",
+      "event_id": "p4-0936613caa-advance1",
+      "sensor_id": "processor-test-sensor",
+      "intersection_id": "p4-0936613caa-watermark",
+      "observed_at": "2026-11-10T10:06:12Z",
+      "vehicle_count": 0
+    },
+    {
+      "schema_version": "1.0",
+      "event_id": "p4-0936613caa-late",
+      "sensor_id": "processor-test-sensor",
+      "intersection_id": "p4-0936613caa-main",
+      "observed_at": "2026-11-10T10:05:20Z",
+      "average_speed": 0
+    },
+    {
+      "schema_version": "1.0",
+      "event_id": "p4-0936613caa-a",
+      "sensor_id": "processor-test-sensor",
+      "intersection_id": "p4-0936613caa-main",
+      "observed_at": "2026-11-10T10:05:00Z",
+      "vehicle_count": 2,
+      "average_speed": 10,
+      "occupancy": 0.4
+    },
+    {
+      "schema_version": "1.0",
+      "event_id": "p4-0936613caa-pending",
+      "sensor_id": "processor-test-sensor",
+      "intersection_id": "p4-0936613caa-main",
+      "observed_at": "2026-11-10T10:06:00Z",
+      "average_speed": 45
+    },
+    {
+      "schema_version": "1.0",
+      "event_id": "p4-0936613caa-new",
+      "sensor_id": "processor-test-sensor",
+      "intersection_id": "p4-0936613caa-main",
+      "observed_at": "2026-11-10T10:06:10Z",
+      "average_speed": 35
+    },
+    {
+      "schema_version": "1.0",
+      "event_id": "p4-0936613caa-advance2",
+      "sensor_id": "processor-test-sensor",
+      "intersection_id": "p4-0936613caa-watermark",
+      "observed_at": "2026-11-10T10:07:12Z",
+      "vehicle_count": 0
+    }
+  ],
+  "expected_main": [
+    {
+      "reading_count": 2,
+      "vehicle_count_sum": 5,
+      "average_speed": 20,
+      "average_occupancy": 0.6,
+      "congestion": "medium"
+    },
+    {
+      "reading_count": 2,
+      "vehicle_count_sum": null,
+      "average_speed": 40,
+      "average_occupancy": null,
+      "congestion": "low"
+    }
+  ],
+  "actual_results": [
+    {
+      "schema_version": "1.0",
+      "window_id": "p4-0936613caa-main/2026-11-10T10:05:00Z/2026-11-10T10:06:00Z/v1",
+      "intersection_id": "p4-0936613caa-main",
+      "window_start": "2026-11-10T10:05:00Z",
+      "window_end": "2026-11-10T10:06:00Z",
+      "reading_count": 2,
+      "vehicle_count_sum": 5,
+      "average_speed": 20,
+      "average_occupancy": 0.6,
+      "congestion": "medium"
+    },
+    {
+      "schema_version": "1.0",
+      "window_id": "p4-0936613caa-other/2026-11-10T10:05:00Z/2026-11-10T10:06:00Z/v1",
+      "intersection_id": "p4-0936613caa-other",
+      "window_start": "2026-11-10T10:05:00Z",
+      "window_end": "2026-11-10T10:06:00Z",
+      "reading_count": 1,
+      "vehicle_count_sum": 7,
+      "average_speed": null,
+      "average_occupancy": null,
+      "congestion": "unknown"
+    },
+    {
+      "schema_version": "1.0",
+      "window_id": "p4-0936613caa-watermark/2026-11-10T10:06:00Z/2026-11-10T10:07:00Z/v1",
+      "intersection_id": "p4-0936613caa-watermark",
+      "window_start": "2026-11-10T10:06:00Z",
+      "window_end": "2026-11-10T10:07:00Z",
+      "reading_count": 1,
+      "vehicle_count_sum": 0,
+      "average_speed": null,
+      "average_occupancy": null,
+      "congestion": "unknown"
+    },
+    {
+      "schema_version": "1.0",
+      "window_id": "p4-0936613caa-main/2026-11-10T10:06:00Z/2026-11-10T10:07:00Z/v1",
+      "intersection_id": "p4-0936613caa-main",
+      "window_start": "2026-11-10T10:06:00Z",
+      "window_end": "2026-11-10T10:07:00Z",
+      "reading_count": 2,
+      "vehicle_count_sum": null,
+      "average_speed": 40,
+      "average_occupancy": null,
+      "congestion": "low"
+    }
+  ],
+  "result_record_count": 4,
+  "duplicate_results": 0,
+  "restored_checkpoint": "file:/checkpoints/2ef903843301b4a6af4ecc557b58d3c3/chk-2",
+  "restored_checkpoint_id": 2,
+  "checkpoint_restoration_confirmed": true
+}

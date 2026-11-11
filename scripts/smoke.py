@@ -80,7 +80,9 @@ def main():
                         cwd=ROOT, stdout=log, stderr=log,
                         env={**os.environ,
                              "SENSOR_REGISTRY_DATABASE_URL": f"sqlite:///{(temp / 'registry.db').as_posix()}",
-                             "INCIDENT_MANAGER_DATABASE_URL": f"sqlite:///{(temp / 'incidents.db').as_posix()}"},
+                             "INCIDENT_MANAGER_DATABASE_URL": f"sqlite:///{(temp / 'incidents.db').as_posix()}",
+                             "PUBLISHER_GRPC_BIND": "127.0.0.1:0", "ARCHIVE_MODE": "local",
+                             "ARCHIVE_LOCAL_ACCESS_KEY": "", "ARCHIVE_LOCAL_SECRET_KEY": ""},
                         **PROCESS_OPTIONS)
                     processes.append((name, process, port_file))
 
@@ -103,10 +105,10 @@ def main():
                             time.sleep(0.1)
                     if data != expected(name):
                         raise AssertionError(f"Incorrect health response for {name}: {data}")
-                    implemented = name in ("sensor-registry", "incident-manager")
+                    implemented = name in ("sensor-registry", "incident-manager", "traffic-ingestion")
                     if implemented:
                         document = request(base + "/openapi.json")
-                        own = "/sensors" if name == "sensor-registry" else "/incidents"
+                        own = {"sensor-registry": "/sensors", "incident-manager": "/incidents", "traffic-ingestion": "/readings"}[name]
                         if own not in document["paths"]:
                             raise AssertionError(f"{name}: implemented routes missing from OpenAPI")
                         verify_absent(base + own, 405)
@@ -114,9 +116,12 @@ def main():
                     else:
                         for path in ("/docs", "/openapi.json", "/sensors", "/incidents"):
                             verify_absent(base + path, 404)
-                    verify_absent(base + "/readings", 404)
+                    if name != "traffic-ingestion":
+                        verify_absent(base + "/readings", 404)
+                    if name == "event-publisher":
+                        verify_absent(base + "/readyz", 503)
                     verify_absent(base + "/healthz", 405, "POST")
-                    print(f"PASS {name}: HTTP health; " + ("Phase 2 routes documented" if implemented else "business/docs routes absent"))
+                    print(f"PASS {name}: HTTP health; " + ("implemented routes documented" if implemented else "business/docs routes absent"))
 
                 check_entrypoint(python_command(ROOT / "services/alert-service/handler.py",
                                                "--smoke"), "alert-service")

@@ -1,0 +1,15 @@
+{
+  "run_prefix": "run-817769ba4e6b",
+  "logical_events": 8,
+  "kafka_records": 14,
+  "duplicate_records": 6,
+  "rejected_without_side_effects": 4,
+  "concurrent_conflicting_attempts": {
+    "accepted": 1,
+    "conflicts": 2
+  },
+  "failure_tests": true,
+  "kafka_image": "apache/kafka:3.9.1",
+  "archive_image": "chrislusf/seaweedfs:4.42",
+  "scope": "local_only"
+}

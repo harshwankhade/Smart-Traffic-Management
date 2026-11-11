@@ -1,0 +1,14 @@
+terraform {
+  required_version = ">= 1.7.0, < 2.0.0"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "6.45.0"
+    }
+  }
+}
+provider "aws" {
+  region  = "ap-south-1"
+  profile = "smarttraffic-sdk"
+  default_tags { tags = { Project = "SmartTraffic", Purpose = "Phase4TemporaryVerification" } }
+}

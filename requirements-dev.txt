@@ -1,3 +1,4 @@
 # Local smoke and contract-review tooling.
 -r requirements.txt
 jsonschema==4.26.0
+grpcio-tools==1.85.1

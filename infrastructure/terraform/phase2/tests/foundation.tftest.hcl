@@ -1,6 +1,18 @@
 # All runs use an AWS mock. No real AWS API calls or applies.
 mock_provider "aws" {}
 
+run "phase4_network_without_database" {
+  command = plan
+  variables {
+    deployment_approved = true
+    provision_database  = false
+  }
+  assert {
+    condition     = length(aws_db_instance.main) == 0 && length(aws_subnet.database) == 2
+    error_message = "The Phase 4-only verification must preserve two private subnets without starting an RDS instance."
+  }
+}
+
 run "deployment_denied_by_default" {
   command         = plan
   expect_failures = [terraform_data.deployment_guard]
@@ -14,30 +26,30 @@ run "private_database_foundation" {
 
   assert {
     condition = (
-      aws_db_instance.main.engine == "postgres" &&
-      aws_db_instance.main.engine_version == "17" &&
-      aws_db_instance.main.instance_class == "db.t4g.micro" &&
-      aws_db_instance.main.allocated_storage == 20 &&
-      aws_db_instance.main.storage_type == "gp3"
+      aws_db_instance.main[0].engine == "postgres" &&
+      aws_db_instance.main[0].engine_version == "17" &&
+      aws_db_instance.main[0].instance_class == "db.t4g.micro" &&
+      aws_db_instance.main[0].allocated_storage == 20 &&
+      aws_db_instance.main[0].storage_type == "gp3"
     )
     error_message = "Database must match the approved Phase 2 size and engine."
   }
 
   assert {
     condition = (
-      aws_db_instance.main.storage_encrypted &&
-      !aws_db_instance.main.publicly_accessible &&
-      !aws_db_instance.main.multi_az &&
-      aws_db_instance.main.manage_master_user_password &&
-      aws_db_instance.main.iam_database_authentication_enabled &&
-      aws_db_instance.main.deletion_protection &&
-      aws_db_instance.main.password == null
+      aws_db_instance.main[0].storage_encrypted &&
+      !aws_db_instance.main[0].publicly_accessible &&
+      !aws_db_instance.main[0].multi_az &&
+      aws_db_instance.main[0].manage_master_user_password &&
+      aws_db_instance.main[0].iam_database_authentication_enabled &&
+      aws_db_instance.main[0].deletion_protection &&
+      aws_db_instance.main[0].password == null
     )
     error_message = "Database privacy, encryption and secret management must be preserved."
   }
 
   assert {
-    condition     = anytrue([for parameter in aws_db_parameter_group.main.parameter : parameter.name == "rds.force_ssl" && parameter.value == "1"])
+    condition     = anytrue([for parameter in aws_db_parameter_group.main[0].parameter : parameter.name == "rds.force_ssl" && parameter.value == "1"])
     error_message = "PostgreSQL must require encrypted connections."
   }
 

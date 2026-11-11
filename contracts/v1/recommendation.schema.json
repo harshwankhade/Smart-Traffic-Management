@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:smart-traffic:v1:recommendation",
+  "title": "simulated signal recommendation v1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "recommendation_id": {"type": "string", "minLength": 1},
+    "window_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "intersection_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "window_start": {"type": "string", "format": "date-time", "pattern": "Z$"},
+    "window_end": {"type": "string", "format": "date-time", "pattern": "Z$"},
+    "source_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {"const": "1.0"},
+        "window_id": {"type": "string", "minLength": 1, "maxLength": 256},
+        "intersection_id": {"type": "string", "minLength": 1, "maxLength": 128},
+        "window_start": {"type": "string", "format": "date-time", "pattern": "Z$"},
+        "window_end": {"type": "string", "format": "date-time", "pattern": "Z$"},
+        "reading_count": {"type": "integer", "minimum": 1},
+        "vehicle_count_sum": {"type": ["integer", "null"], "minimum": 0},
+        "average_speed": {"type": ["number", "null"], "minimum": 0},
+        "average_occupancy": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "congestion": {"enum": ["low", "medium", "high", "unknown"]}
+      },
+      "required": ["schema_version", "window_id", "intersection_id", "window_start", "window_end", "reading_count", "vehicle_count_sum", "average_speed", "average_occupancy", "congestion"]
+    },
+    "action": {"enum": ["extend_green", "no_adjustment"]},
+    "green_extension_seconds": {"type": "integer", "enum": [0, 10]},
+    "reason_code": {"enum": ["high_congestion", "medium_congestion", "low_congestion", "insufficient_measurements"]},
+    "rationale": {"type": "string", "minLength": 1},
+    "simulated": {"const": true}
+  },
+  "required": ["schema_version", "recommendation_id", "window_id", "intersection_id", "window_start", "window_end", "source_result", "action", "green_extension_seconds", "reason_code", "rationale", "simulated"]
+}

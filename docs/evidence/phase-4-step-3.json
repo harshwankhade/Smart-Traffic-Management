@@ -1,0 +1,40 @@
+{
+  "step": "Phase 4 remaining step 3",
+  "checked_at": "2026-11-11",
+  "status": "passed locally; EMR execution unverified",
+  "commands_and_outcomes": [
+    {
+      "command": "mvn -f services/congestion-processor/pom.xml package (pinned local Maven/cache)",
+      "outcome": "passed; 7 Java tests; Flink 2.2 JAR rebuilt"
+    },
+    {
+      "command": "mvn -f services/congestion-processor/pom.xml -P emr package (pinned local Maven/cache)",
+      "outcome": "passed; 7 Java tests; Flink 1.20 EMR JAR rebuilt"
+    },
+    {
+      "command": ".venv/Scripts/python -m unittest discover -s tests -v",
+      "outcome": "passed; 36 Python tests including 5 offline runner tests"
+    },
+    {
+      "command": ".venv/Scripts/python scripts/phase4_local.py up",
+      "outcome": "passed; project Flink containers refreshed with the rebuilt local JAR"
+    },
+    {
+      "command": ".venv/Scripts/python scripts/demo_phase4.py --report docs/evidence/phase-4-verification.json",
+      "outcome": "passed on rerun; known Kafka results, duplicate and late handling, retained checkpoint restore; test job canceled"
+    }
+  ],
+  "demonstrated_fixes": [
+    "The local demo starts its Kafka reads at the current low watermark after 24-hour retention advanced the beginning of the topic.",
+    "The runner uses a Flink completed-checkpoint receipt after both pending readings, then selects metadata for that exact checkpoint ID.",
+    "The runner validates the complete result record against the approved schema and independent expected fields.",
+    "Partial-apply cleanup reads the exact EMR cluster and bucket IDs from Terraform state and attempts destroy even when termination or bucket emptying fails.",
+    "The EMR submit command enters FlinkJob directly and stage two requires an explicit checkpoint path."
+  ],
+  "local_demo_evidence": "docs/evidence/phase-4-verification.json",
+  "local_job_final_state": "CANCELED",
+  "terraform_state_after_checks": "empty (checked again in step 3; no apply)",
+  "deployment_approved": false,
+  "aws_apply_run": false,
+  "limitation": "Mocked runner checks and local Flink 2.2 processing do not establish EMR YARN submission, IAM-authenticated MSK, S3 checkpoint callback, or live teardown behavior. An AWS-created cluster omitted from Terraform state would require an explicit recovery decision; the runner will not delete an untracked ID."
+}

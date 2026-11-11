@@ -1,0 +1,40 @@
+name: smarttraffic-phase4
+services:
+  jobmanager:
+    image: flink:2.2.0-scala_2.12-java17
+    user: "0:0" # Local named-volume permissions only; not a cloud runtime identity.
+    command: jobmanager
+    ports:
+      - "127.0.0.1:8081:8081"
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:19092
+      CHECKPOINT_URI: file:///checkpoints
+      FLINK_PROPERTIES: |
+        jobmanager.rpc.address: jobmanager
+        taskmanager.numberOfTaskSlots: 2
+        parallelism.default: 1
+        execution.checkpointing.dir: file:///checkpoints
+        execution.checkpointing.savepoint-dir: file:///checkpoints/savepoints
+    volumes:
+      - ../../../services/congestion-processor/target/congestion-processor-1.0.0.jar:/opt/flink/usrlib/traffic.jar:ro
+      - checkpoints:/checkpoints
+    networks: [traffic]
+  taskmanager:
+    image: flink:2.2.0-scala_2.12-java17
+    user: "0:0"
+    command: taskmanager
+    depends_on: [jobmanager]
+    environment:
+      FLINK_PROPERTIES: |
+        jobmanager.rpc.address: jobmanager
+        taskmanager.numberOfTaskSlots: 2
+        parallelism.default: 1
+    volumes:
+      - checkpoints:/checkpoints
+    networks: [traffic]
+networks:
+  traffic:
+    external: true
+    name: smarttraffic-phase3_default
+volumes:
+  checkpoints:

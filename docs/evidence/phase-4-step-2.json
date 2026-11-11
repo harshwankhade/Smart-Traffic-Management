@@ -1,0 +1,49 @@
+{
+  "step": "Phase 4 remaining step 2",
+  "checked_at": "2026-11-11",
+  "status": "passed",
+  "changes": {
+    "iam": "The EMR service role can pass only the run-scoped custom EC2 role to ec2.amazonaws.com.",
+    "security_group_cleanup": "All three EMR security groups revoke EMR-added rules before state-owned deletion.",
+    "runner_scope": "Cleanup records EMR security-group IDs only from the current Terraform state.",
+    "runbook": "Updated from the superseded managed-service description to EMR 7.14 on EC2."
+  },
+  "verification": {
+    "terraform_format_check": "passed",
+    "phase2_mocked_tests": "3 passed, 0 failed",
+    "phase3_mocked_tests": "2 passed, 0 failed",
+    "phase4_mocked_tests": "2 passed, 0 failed",
+    "phase4_validation": "passed",
+    "phase4_live_validation": "passed",
+    "runner_python_compile": "passed",
+    "reviewed_plan": {
+      "run_name": "stp4-4cc91c23e9",
+      "add": 63,
+      "change": 0,
+      "destroy": 0,
+      "contains": [
+        "one private EMR 7.14 Flink cluster",
+        "one two-broker kafka.t3.small MSK cluster",
+        "traffic.raw and traffic.results",
+        "one private encrypted versioned S3 archive/checkpoint bucket",
+        "the scoped EMR service-role PassRole policy",
+        "the existing guarded Phase 2 network composition"
+      ],
+      "absent": [
+        "RDS instance",
+        "NAT gateway",
+        "EKS cluster",
+        "standalone EC2 instance resource",
+        "Amazon Managed Service for Apache Flink application",
+        "resource deletion",
+        "resource replacement"
+      ],
+      "full_plan_summary": "The latest plan-only summary path was later regenerated for step 4; this record preserves the step-2 resource counts."
+    },
+    "terraform_state_after_plan": "empty",
+    "deployment_approved_after_plan": false
+  },
+  "aws_apply_run": false,
+  "aws_resources_created": false,
+  "next_step_authorized": false
+}

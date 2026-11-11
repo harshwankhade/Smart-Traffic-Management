@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "recommendation_id": "int-01/2026-11-09T10:00:00Z/2026-11-09T10:01:00Z/v1/recommendation/v1",
+  "window_id": "int-01/2026-11-09T10:00:00Z/2026-11-09T10:01:00Z/v1",
+  "intersection_id": "int-01",
+  "window_start": "2026-11-09T10:00:00Z",
+  "window_end": "2026-11-09T10:01:00Z",
+  "source_result": {
+    "schema_version": "1.0",
+    "window_id": "int-01/2026-11-09T10:00:00Z/2026-11-09T10:01:00Z/v1",
+    "intersection_id": "int-01",
+    "window_start": "2026-11-09T10:00:00Z",
+    "window_end": "2026-11-09T10:01:00Z",
+    "reading_count": 1,
+    "vehicle_count_sum": 24,
+    "average_speed": 18.5,
+    "average_occupancy": 0.72,
+    "congestion": "high"
+  },
+  "action": "extend_green",
+  "green_extension_seconds": 10,
+  "reason_code": "high_congestion",
+  "rationale": "High congestion: suggest 10 additional green seconds in this simulation.",
+  "simulated": true
+}

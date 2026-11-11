@@ -1,0 +1,147 @@
+{
+  "run_name": "stp4-91dd0a43a8",
+  "scope": "temporary AWS EMR Phase 4 verification",
+  "started_at": "2026-11-11T06:35:46.906876+00:00",
+  "managed_verified": true,
+  "teardown_requested": true,
+  "account": "520646131316",
+  "principal_arn": "arn:aws:iam::520646131316:root",
+  "reviewed_plan": [
+    {
+      "address": "module.kafka.aws_iam_policy.publisher",
+      "type": "aws_iam_policy",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "module.kafka.aws_iam_policy.topic_admin",
+      "type": "aws_iam_policy",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "module.kafka.aws_iam_policy.verifier",
+      "type": "aws_iam_policy",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "module.kafka.aws_msk_topic.raw",
+      "type": "aws_msk_topic",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "module.processing.aws_emr_cluster.congestion",
+      "type": "aws_emr_cluster",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "module.processing.aws_iam_role_policy.emr_ec2",
+      "type": "aws_iam_role_policy",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "module.processing.aws_msk_topic.results",
+      "type": "aws_msk_topic",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "module.processing.aws_s3_object.jar",
+      "type": "aws_s3_object",
+      "actions": [
+        "update"
+      ]
+    }
+  ],
+  "kafka_service_role_before": {
+    "present": false,
+    "source": "Step 4 preflight before the interrupted first apply; IAM reports role creation at 2026-11-11T05:39:42Z during that apply"
+  },
+  "kafka_service_role_at_resume": {
+    "present": true,
+    "source": "Runner observation when the partial run resumed at 2026-11-11T06:35:46Z"
+  },
+  "emr_steps_after_termination": {
+    "stage1": {
+      "id": "s-0769196126W36H9WK2I5",
+      "state": "COMPLETED"
+    },
+    "stage2": {
+      "id": "s-068776339Z4SIFSMTPZO",
+      "state": "COMPLETED"
+    }
+  },
+  "outputs": {
+    "archive_bucket": "stp4-91dd0a43a8-kafka-20261111053935205500000001",
+    "artifact_key": "artifacts/congestion-processor-1.0.0-emr.jar",
+    "cluster_arn": "arn:aws:kafka:ap-south-1:520646131316:cluster/stp4-91dd0a43a8-kafka/e4141f63-793d-4372-8e9e-15539e3569d6-3",
+    "emr_cluster_id": "j-04392102IIH414HOANGT",
+    "emr_cluster_name": "stp4-91dd0a43a8-emr",
+    "kafka_bootstrap_servers": "b-1.stp491dd0a43a8kafka.p7azfm.c3.kafka.ap-south-1.amazonaws.com:9098,b-2.stp491dd0a43a8kafka.p7azfm.c3.kafka.ap-south-1.amazonaws.com:9098",
+    "vpc_id": "vpc-0478943bba2131a08"
+  },
+  "emr_release_label": "emr-7.14.0",
+  "emr_instance_collection_type": "INSTANCE_GROUP",
+  "stage1_step": "s-0769196126W36H9WK2I5",
+  "stage1_actual_result": {
+    "key": "verification/stp4-91dd0a43a8/stage-1.json",
+    "result": {
+      "schema_version": "1.0",
+      "window_id": "stp4-91dd0a43a8-main/2026-11-10T10:00:00Z/2026-11-10T10:01:00Z/v1",
+      "intersection_id": "stp4-91dd0a43a8-main",
+      "window_start": "2026-11-10T10:00:00Z",
+      "window_end": "2026-11-10T10:01:00Z",
+      "reading_count": 2,
+      "vehicle_count_sum": 5,
+      "average_speed": 20,
+      "average_occupancy": 0.6,
+      "congestion": "medium"
+    }
+  },
+  "checkpoint_receipt": {
+    "checkpoint_id": 1,
+    "run": "stp4-91dd0a43a8"
+  },
+  "restore_checkpoint": "s3://stp4-91dd0a43a8-kafka-20261111053935205500000001/checkpoints/stp4-91dd0a43a8/bce1e868b10237860337bc48a999783c/chk-1",
+  "stage2_step": "s-068776339Z4SIFSMTPZO",
+  "stage2_actual_result": {
+    "key": "verification/stp4-91dd0a43a8/stage-2.json",
+    "result": {
+      "schema_version": "1.0",
+      "window_id": "stp4-91dd0a43a8-main/2026-11-10T10:01:00Z/2026-11-10T10:02:00Z/v1",
+      "intersection_id": "stp4-91dd0a43a8-main",
+      "window_start": "2026-11-10T10:01:00Z",
+      "window_end": "2026-11-10T10:02:00Z",
+      "reading_count": 3,
+      "vehicle_count_sum": null,
+      "average_speed": 40,
+      "average_occupancy": null,
+      "congestion": "low"
+    }
+  },
+  "cleanup_emr_security_groups_from_state": {
+    "module.processing.aws_security_group.emr_core": "sg-0902d786b5d80e341",
+    "module.processing.aws_security_group.emr_primary": "sg-0f1ff01cfdf1c65de",
+    "module.processing.aws_security_group.emr_service": "sg-0c4135b5113e023b4"
+  },
+  "cleanup_run_resources_from_state": {
+    "module.kafka.aws_s3_bucket.archive": "stp4-91dd0a43a8-kafka-20261111053935205500000001",
+    "module.processing.aws_emr_cluster.congestion": "j-04392102IIH414HOANGT"
+  },
+  "terraform_state_empty_after_teardown": true,
+  "remaining_emr_clusters": [],
+  "remaining_msk_clusters": [],
+  "remaining_buckets": [],
+  "finished_at": "2026-11-11T06:54:56.959947+00:00"
+}

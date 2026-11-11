@@ -1,0 +1,20 @@
+{
+  "run": "stp4-91dd0a43a8",
+  "checked_at": "2026-11-11T06:56:29.810232+00:00",
+  "emr_clusters": [],
+  "clusters": [],
+  "configurations": [],
+  "applications": [],
+  "buckets": [],
+  "vpcs": [],
+  "security_groups": [],
+  "network_interfaces": [],
+  "log_groups": [],
+  "database_instances": [],
+  "database_subnet_groups": [],
+  "database_parameter_groups": [],
+  "project_roles": [],
+  "project_policies": [],
+  "new_kafka_service_role_removed": true,
+  "all_run_resources_removed": true
+}

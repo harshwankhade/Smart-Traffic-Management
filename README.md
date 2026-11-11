@@ -1,6 +1,11 @@
 # Smart Traffic Management - S12
 
-**Phases 1 and 2: local foundation and domain APIs implemented. Cloud deployment and verification are deferred.** The system remains an academic simulation; no physical signal control occurs.
+Phase 5 is in progress. The user approved the derived-record/query/delivery design in
+`docs/decisions/phase-5.md`; Steps 1–2 added recommendation and summary contracts plus
+pure simulation-only recommendation rules. Kafka consumers, DynamoDB, query APIs and managed
+NoSQL verification remain for later, separately authorized steps.
+
+**Phases 1-3 are complete for their approved local/preparation scope. Phase 4 is complete: local Flink and a temporary Amazon EMR on EC2 job produced verified Kafka results and restored an S3 checkpoint. The cloud stack was torn down.** The system remains an academic simulation; no physical signal control occurs.
 
 Read [requirements](PROJECT_BRIEF.md), [architecture](ARCHITECTURE.md), [roadmap](ROADMAP.md), and the [Phase 2 decisions](docs/decisions/phase-2.md). Root documents are authoritative; their `docs/` counterparts are location pointers.
 
@@ -9,10 +14,46 @@ Read [requirements](PROJECT_BRIEF.md), [architecture](ARCHITECTURE.md), [roadmap
 - Sensor Registry: intersection/sensor create, read and update with persistent SQL data.
 - Incident Manager: REST-validated intersections, creation, description/status updates and terminal resolution. Incident event IDs/timestamps are server-owned; no alerts are published.
 - Separate SQLAlchemy models and SQLite files, database constraints and optimistic incident update checks.
-- Six other application services retain their Phase 1 health/smoke entry points.
+- Traffic Ingestion validates active sensors and calls Event Publisher through real gRPC; Publisher archives normalized JSON before acknowledged Kafka delivery.
+- Local Kafka/SeaweedFS containers persist records/objects. Congestion Processor runs real Flink minute windows, bounded deduplication and checkpoint recovery; three other application services retain Phase 1 health/smoke behavior.
 - Versioned response schemas, local HTTP restart demo, automated tests and private RDS Terraform prepared for mocked checks only.
 
-See [REST contracts, errors and examples](docs/phase-2-api.md). These two services expose local `/docs` and `/openapi.json`; other scaffolds do not. No Kafka/Flink processing, queue delivery, ZooKeeper coordination, cloud deployment or dashboard has been implemented.
+See [REST contracts, errors and examples](docs/phase-2-api.md) and [Flink processing/recovery](docs/phase-4-processing.md). Registry, Incident Manager and Ingestion expose local `/docs` and `/openapi.json`; Publisher exposes gRPC plus HTTP liveness/readiness. Queue delivery, ZooKeeper coordination, cloud deployment and dashboards remain unimplemented.
+
+## Phase 4 local Flink demo
+
+Build the Java-17-targeted job using Maven 3.9.11, then run the actual Java 17 Flink container demo:
+
+```powershell
+mvn -f services/congestion-processor/pom.xml package
+.venv\Scripts\python scripts\phase3_local.py configure
+.venv\Scripts\python scripts\phase4_local.py up
+.venv\Scripts\python scripts\demo_phase4.py --report docs/evidence/phase-4-verification.json
+.venv\Scripts\python scripts\inspect_phase4.py --seconds 10
+.venv\Scripts\python scripts\phase4_local.py down
+```
+
+The demo compares known inputs with real Kafka results, excludes late readings and duplicates,
+restarts the Flink cluster and restores a retained checkpoint. Its job is canceled afterward;
+dependency containers/data remain until explicit shutdown (volumes retained).
+See [local evidence](docs/evidence/phase-4-verification.json),
+[managed evidence](docs/evidence/phase-4-cloud.json), [cleanup audit](docs/evidence/phase-4-cleanup.json),
+[Phase 4 report](docs/progress/phase-4.md) and the
+[EMR Terraform runbook](infrastructure/terraform/phase4-live/README.md).
+AWS CLI and Boto3 authentication are now verified using the local `smarttraffic-sdk` profile.
+Set `AWS_PROFILE=smarttraffic-sdk` and `AWS_REGION=ap-south-1` for project tools; renew with
+`aws login --profile smarttraffic` when needed. Earlier Amazon Managed Service for Apache Flink
+attempts were rejected by account verification, so the user approved EMR on EC2 instead. Run
+`stp4-91dd0a43a8` used Terraform to provision a private EMR 7.14/Flink 1.20 cluster, two-broker
+MSK and S3. Both EMR verification steps completed: the job consumed `traffic.raw`, wrote the
+expected minute-window records to `traffic.results`, then restored S3 checkpoint 1 and verified
+the pending window and duplicate suppression. The run was interrupted during MSK provisioning;
+the exact cluster was imported into its partial Terraform state before continuation. The cluster
+terminated, the versioned run bucket was emptied, Terraform state is empty, the guard is disabled,
+and an independent audit found no run-owned resources. See [Phase 4 decisions](docs/decisions/phase-4.md).
+The written cost estimate was waived; actual billed cost and the unchanged US$5 ceiling were not
+verified. This temporary processor test does not establish a complete cloud deployment. Phase 5
+has started with approved design and pure rules only.
 
 ## Setup and verification (PowerShell, project root)
 
@@ -72,6 +113,34 @@ terraform -chdir=infrastructure/terraform/phase2 validate
 terraform -chdir=infrastructure/terraform/phase2 test
 ```
 
-Both Terraform test runs use the mocked AWS provider and plan-only execution. No real AWS-backed plan or apply is authorized. Deployment approval defaults false. Provider downloads require Internet access; these checks require no AWS credentials.
+Phase 2 Terraform checks use the mocked AWS provider and plan-only execution; its PostgreSQL
+instance remains unapplied. The separate, user-authorized Phase 4 temporary stack was applied and
+destroyed. Deployment approval defaults false. Provider downloads require Internet access; these
+local checks require no AWS credentials.
 
-The US$5 total cap and no-credit assumption remain binding, with approximately 20 minutes of demonstration requested. Cost/access/quotas are user-approved planning assumptions, not verified facts. Region/instance/engine availability, costs including setup/teardown/backups, IAM, private connectivity, Linux packaging and live PostgreSQL must be verified before provisioning. Team/deadline remain unconfirmed. Phase 3 requires separate authorization.
+The US$5 total cap and no-credit assumption remain binding, with approximately 20 minutes of
+demonstration requested. The temporary Phase 4 EMR/MSK/S3 test verified that specific region,
+runtime and private data path once, but actual billed cost and future capacity were not checked.
+Linux packaging of the Python services and live PostgreSQL remain unverified. Team/deadline
+remain unconfirmed. Any future cloud deployment requires separate authorization and cost review.
+
+## Phase 3 real Kafka/archive demo
+
+See [Phase 3 API/delivery instructions](docs/phase-3-api.md), [decisions](docs/decisions/phase-3.md) and [verification evidence](docs/evidence/phase-3-local.md). Start Docker Desktop before these commands:
+
+```powershell
+.venv\Scripts\python scripts\generate_proto.py
+.venv\Scripts\python scripts\phase3_local.py configure
+.venv\Scripts\python scripts\phase3_local.py up
+.venv\Scripts\python scripts\phase3_local.py bootstrap
+.venv\Scripts\python scripts\demo_phase3.py --failure-tests
+```
+
+This runs real local Apache Kafka 3.9.1 and persistent SeaweedFS 4.42 S3 storage, not AWS. The demo uses actual gRPC and consumes Kafka records/retrieves archived bytes. Duplicate Kafka records after retries are expected and reported; one event ID cannot silently overwrite different archived content. It exercises concurrent requests, process restarts, a lost response and dependency outages. Failed publication can leave an archive-only record. No exactly-once claim is made.
+
+For manual operation, run Registry normally and launch Publisher/Ingestion with `--phase3-local`; see the API instructions for ports and environment overrides. `phase3_local.py down` stops only these supporting containers/network and retains volumes. No AWS account or credentials are needed for this local path.
+
+Guarded [Phase 3 Terraform](infrastructure/terraform/phase3/README.md) defines MSK, the raw topic,
+private S3 and IAM policies using Phase 2 network outputs. These resources were exercised in the
+temporary Phase 4 EMR run and then destroyed. No standing cloud deployment is present; future
+provisioning needs fresh authorization and a cost review.

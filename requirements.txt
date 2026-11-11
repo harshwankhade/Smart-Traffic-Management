@@ -1,5 +1,10 @@
-# Local API runtime. No AWS SDK or cloud credentials required.
+# Local APIs and optional AWS adapters. Local execution requires no AWS credentials.
 fastapi==0.162.2
 uvicorn==0.54.0
 SQLAlchemy==2.1.8
 httpx==0.28.1
+grpcio==1.85.1
+protobuf==7.36.2
+confluent-kafka==2.16.1
+boto3==1.43.126
+aws-msk-iam-sasl-signer-python==1.0.2

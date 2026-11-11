@@ -1,0 +1,96 @@
+{
+  "step": "Phase 4 remaining step 1",
+  "checked_at": "2026-11-11",
+  "region": "ap-south-1",
+  "aws_profile": "smarttraffic-sdk",
+  "read_only": true,
+  "resources_created": false,
+  "cluster": {
+    "id": "j-04400973T3BOB6RAIGP2",
+    "name": "stp4-97b99da46f-emr",
+    "release_label": "emr-7.14.0",
+    "state": "TERMINATED_WITH_ERRORS",
+    "state_change_code": "VALIDATION_ERROR",
+    "state_change_message": "The EMR service role has insufficient EC2 permissions.",
+    "service_role": "stp4-97b99da46f-emr-service-20261110183409212600000001",
+    "ec2_role": "stp4-97b99da46f-emr-ec2"
+  },
+  "cloudtrail": {
+    "window_utc": "2026-11-10T19:01:00Z/2026-11-10T19:02:10Z",
+    "principal": "the EMR service role assumed in CCSSession",
+    "invoked_by": "elasticmapreduce.amazonaws.com",
+    "successful_checks": [
+      "DescribeVpcs",
+      "DescribeSubnets",
+      "DescribeRouteTables",
+      "DescribeSecurityGroups",
+      "DescribeVpcEndpoints",
+      "AuthorizeSecurityGroupIngress",
+      "CreateNetworkInterface"
+    ],
+    "denials": [
+      {
+        "event_time": "2026-11-10T19:01:40Z",
+        "event_name": "RunInstances",
+        "error_code": "Client.UnauthorizedOperation",
+        "denied_action": "iam:PassRole",
+        "denied_resource": "role/stp4-97b99da46f-emr-ec2",
+        "reason": "No identity-based policy allowed iam:PassRole."
+      },
+      {
+        "event_time": "2026-11-10T19:01:57Z/2026-11-10T19:01:58Z",
+        "event_name": "RunInstances",
+        "error_code": "Client.UnauthorizedOperation",
+        "denied_action": "iam:PassRole",
+        "denied_resource": "role/stp4-97b99da46f-emr-ec2",
+        "repeat_count": 2
+      }
+    ],
+    "excluded_sensitive_fields": [
+      "temporary access key IDs",
+      "encoded authorization failure messages",
+      "session identifiers"
+    ]
+  },
+  "service_role_policy": {
+    "attached_policy": "arn:aws:iam::aws:policy/service-role/AmazonEMRServicePolicy_v2",
+    "default_version_observed": "v6",
+    "pass_role_for_ec2": {
+      "effect": "Allow",
+      "resource": "arn:aws:iam::*:role/EMR_EC2_DefaultRole",
+      "condition": {
+        "StringLike": {
+          "iam:PassedToService": "ec2.amazonaws.com*"
+        }
+      }
+    },
+    "custom_ec2_role_covered": false
+  },
+  "tag_inspection": {
+    "required_tag": {
+      "for-use-with-amazon-emr-managed-policies": "true"
+    },
+    "declared_on": [
+      "VPC",
+      "both private subnets",
+      "application and database security groups",
+      "EMR primary, core, and service-access security groups",
+      "EMR cluster"
+    ],
+    "source": [
+      "infrastructure/terraform/phase2/main.tf",
+      "infrastructure/terraform/phase4/main.tf"
+    ],
+    "limitation": "The run resources were already deleted, so their live tags could not be queried. The configuration and historical cluster request were inspected instead."
+  },
+  "conclusion": {
+    "status": "confirmed",
+    "cause": "The custom EMR service role could not pass the custom EC2 instance role when RunInstances was called.",
+    "missing_permission": "iam:PassRole",
+    "resource": "role/stp4-97b99da46f-emr-ec2",
+    "not_supported_as_primary_cause": "A missing EMR managed-policy resource tag is not supported by the observed denial; tagged-resource network validation and mutation calls succeeded before RunInstances.",
+    "narrowest_supported_correction": "Grant only the EMR service role iam:PassRole on the custom EC2 role ARN, conditioned on iam:PassedToService matching ec2.amazonaws.com. Do not grant iam:PassRole on all roles.",
+    "correction_applied": false
+  },
+  "cleanup_reference": "docs/evidence/phase-4-cleanup.json"
+}

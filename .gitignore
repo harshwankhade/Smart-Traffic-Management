@@ -14,6 +14,7 @@ __pycache__/
 *.tfvars
 !*.tfvars.example
 target/
+target-emr/
 .artifacts/
 .data/
 *.tfplan
