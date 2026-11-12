@@ -1,0 +1,8 @@
+name: smarttraffic-phase7
+services:
+  zookeeper:
+    image: zookeeper:3.9.3
+    ports:
+      - "127.0.0.1:2181:2181"
+    environment:
+      ZOO_4LW_COMMANDS_WHITELIST: ruok,stat

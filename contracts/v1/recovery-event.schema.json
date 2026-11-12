@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:smart-traffic:v1:recovery-event",
+  "title": "publisher recovery event v1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "recovery_id": {"type": "string", "minLength": 1, "maxLength": 384},
+    "publisher_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "session_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "event_type": {"enum": ["leader_elected", "leader_lost", "session_suspended", "session_lost", "session_rejoined"]},
+    "occurred_at": {"type": "string", "format": "date-time", "pattern": "Z$"},
+    "leader": {"type": "boolean"}
+  },
+  "required": ["schema_version", "recovery_id", "publisher_id", "session_id", "event_type", "occurred_at", "leader"]
+}

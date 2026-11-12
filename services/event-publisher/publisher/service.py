@@ -12,8 +12,9 @@ LOG = logging.getLogger("event-publisher")
 
 
 class Publisher(publisher_pb2_grpc.EventPublisherServicer):
-    def __init__(self, archive, sink):
+    def __init__(self, archive, sink, coordination=None):
         self.archive, self.sink = archive, sink
+        self.coordination = coordination
         self.lock = threading.Lock()
 
     def PublishReading(self, request, context):
@@ -22,9 +23,13 @@ class Publisher(publisher_pb2_grpc.EventPublisherServicer):
         except (ValidationError, ValueError):
             context.abort(grpc.StatusCode.INVALID_ARGUMENT, "Invalid v1 reading")
         timeout = min(context.time_remaining() or 15, 15)
+        if self.coordination and not self.coordination.ready():
+            context.abort(grpc.StatusCode.UNAVAILABLE, "Publisher is not the active ZooKeeper leader; retry same event ID")
         if not self.lock.acquire(timeout=max(timeout, 0)):
             context.abort(grpc.StatusCode.UNAVAILABLE, "Publisher busy; retry same event ID")
         try:
+            if self.coordination and not self.coordination.ready():
+                raise Unavailable("Publisher lost active ZooKeeper leadership")
             if not context.is_active():
                 raise Unavailable("Request deadline elapsed")
             self.archive.ensure(archive_key(reading.event_id), reading.canonical())

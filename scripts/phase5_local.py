@@ -11,7 +11,7 @@ from botocore.exceptions import ClientError, ConnectionClosedError, EndpointConn
 
 ROOT = Path(__file__).resolve().parents[1]
 COMPOSE = ROOT / "infrastructure/local/phase5/compose.yaml"
-TABLES = ("traffic_recommendations", "traffic_window_summaries")
+TABLES = ("traffic_recommendations", "traffic_window_summaries", "traffic_recovery_events")
 
 
 def local_client():
@@ -39,6 +39,9 @@ def bootstrap():
                 raise RuntimeError("DynamoDB Local did not become ready within 90 seconds")
             time.sleep(1)
     for name in TABLES:
+        recovery = name == "traffic_recovery_events"
+        partition = "publisher_id" if recovery else "intersection_id"
+        sort = "recovery_key" if recovery else "window_key"
         try:
             description = client.describe_table(TableName=name)["Table"]
         except ClientError as error:
@@ -46,11 +49,11 @@ def bootstrap():
                 raise
             description = client.create_table(
                 TableName=name, BillingMode="PAY_PER_REQUEST",
-                AttributeDefinitions=[{"AttributeName": "intersection_id", "AttributeType": "S"},
-                                      {"AttributeName": "window_key", "AttributeType": "S"}],
-                KeySchema=[{"AttributeName": "intersection_id", "KeyType": "HASH"},
-                           {"AttributeName": "window_key", "KeyType": "RANGE"}])["TableDescription"]
-        expected = [("intersection_id", "HASH"), ("window_key", "RANGE")]
+                AttributeDefinitions=[{"AttributeName": partition, "AttributeType": "S"},
+                                      {"AttributeName": sort, "AttributeType": "S"}],
+                KeySchema=[{"AttributeName": partition, "KeyType": "HASH"},
+                           {"AttributeName": sort, "KeyType": "RANGE"}])["TableDescription"]
+        expected = [(partition, "HASH"), (sort, "RANGE")]
         actual = [(item["AttributeName"], item["KeyType"]) for item in description["KeySchema"]]
         if actual != expected:
             raise RuntimeError(f"Existing {name} has a different key schema; no table was changed")

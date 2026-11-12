@@ -21,7 +21,7 @@ def validator(name):
 
 class ContractTests(unittest.TestCase):
     def test_all_schemas_and_examples(self):
-        for name in ("intersection", "sensor", "reading", "result", "incident", "alert", "alert-request", "alert-outcome"):
+        for name in ("intersection", "sensor", "reading", "result", "incident", "alert", "alert-request", "alert-outcome", "recovery-event"):
             with self.subTest(contract=name):
                 Draft202012Validator.check_schema(load(name))
                 validator(name).validate(load(name, example=True))

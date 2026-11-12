@@ -1,5 +1,9 @@
 # Versioned contracts
 
+Phase 7 adds `recovery-event.schema.json`: an Analytics-owned, deterministic record of
+publisher leader election and ZooKeeper session changes. It supports bounded recovery
+evidence, not exclusive publishing or exactly-once delivery.
+
 Phase 5 Step 2 adds `recommendation.schema.json` and `summary.schema.json` with examples.
 The recommendation carries the complete source result, a deterministic ID, a simulated
 action and a stable explanation. The summary preserves the result fields. Kafka consumers,

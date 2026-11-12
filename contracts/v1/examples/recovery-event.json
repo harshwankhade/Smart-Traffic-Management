@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.0",
+  "recovery_id": "publisher-a/publisher-0000000001/leader_elected/v1",
+  "publisher_id": "publisher-a",
+  "session_id": "publisher-0000000001",
+  "event_type": "leader_elected",
+  "occurred_at": "2026-11-12T10:00:00.000000Z",
+  "leader": true
+}

@@ -1,5 +1,14 @@
 # traffic-analytics
 
+## Phase 7 recovery events
+
+Traffic Analytics owns a separate `traffic_recovery_events` table and exposes
+`GET /traffic/recovery-events?publisher_id=...` plus a scoped detail route. The publisher
+posts compact v1 events only when `RECOVERY_EVENTS_ENABLED=1`; set `TRAFFIC_ANALYTICS_URL`
+to the Analytics service base URL. Event persistence failures are logged and counted by the
+publisher but do not make an elected publisher accept work when ZooKeeper is unavailable.
+Run `scripts/phase5_local.py bootstrap` once to create the local recovery table.
+
 Phase 5 Step 2 adds the `contracts/v1/summary.schema.json` record contract for
 persisting Phase 4 results. Step 4 adds an opt-in `traffic.results` consumer in group
 `traffic-analytics-v1`. It validates and persists the result without recomputing congestion,

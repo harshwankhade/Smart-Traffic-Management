@@ -8,3 +8,4 @@ protobuf==7.36.2
 confluent-kafka==2.16.1
 boto3==1.43.126
 aws-msk-iam-sasl-signer-python==1.0.2
+kazoo==2.10.0

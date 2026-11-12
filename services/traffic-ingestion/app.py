@@ -8,13 +8,17 @@ from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 
 from traffic_contracts.reading import Reading
-from ingestion.clients import PublisherClient, RegistryClient
+from ingestion.clients import PublisherClient, RegistryClient, ZooKeeperPublisherClient
 
 
 def create_app(registry=None, publisher=None):
     registry = registry or RegistryClient(os.environ.get("SENSOR_REGISTRY_URL", "http://127.0.0.1:8001"))
-    publisher = publisher or PublisherClient(os.environ.get("PUBLISHER_GRPC_TARGET", "127.0.0.1:50051"),
-                                             os.environ.get("PUBLISHER_HTTP_URL", "http://127.0.0.1:8003"))
+    if publisher is None:
+        if os.environ.get("PUBLISHER_ZOOKEEPER_ENABLED", "0") == "1":
+            publisher = ZooKeeperPublisherClient()
+        else:
+            publisher = PublisherClient(os.environ.get("PUBLISHER_GRPC_TARGET", "127.0.0.1:50051"),
+                                        os.environ.get("PUBLISHER_HTTP_URL", "http://127.0.0.1:8003"))
 
     @asynccontextmanager
     async def lifespan(app):
