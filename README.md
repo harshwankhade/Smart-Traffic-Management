@@ -13,8 +13,9 @@ Signal Recommendation sends high-congestion requests, and the Alert Service SQS 
 stores idempotent outcomes in its own DynamoDB table. Queue delivery is opt-in with
 `PHASE6_ALERTS_ENABLED=1` and `ALERT_QUEUE_URL` (and the Phase 5 consumer enabled for
 recommendations). Run the [local alert demo](docs/phase-6-local.md) to exercise both paths.
-Cloud queue/function provisioning and actual Lambda invocation remain future Phase 6 steps.
-See [the Phase 5 progress report](docs/progress/phase-5.md).
+Cloud queue/function provisioning and actual Lambda invocation were verified in a temporary Phase 6 AWS run and then removed; see [Phase 6 cloud evidence](docs/evidence/phase-6-cloud-attempt-4.md).
+The guarded [Phase 6 Terraform root](infrastructure/terraform/phase6/README.md) and
+Python 3.14 Lambda ZIP builder are verified; the temporary resources were destroyed after acceptance. See [the Phase 6 progress report](docs/progress/phase-6.md).
 
 **Phases 1-3 are complete for their approved local/preparation scope. Phase 4 is complete: local Flink and a temporary Amazon EMR on EC2 job produced verified Kafka results and restored an S3 checkpoint. The cloud stack was torn down.** The system remains an academic simulation; no physical signal control occurs.
 
@@ -131,7 +132,7 @@ instance remains unapplied. The separate, user-authorized Phase 4 temporary stac
 destroyed. Deployment approval defaults false. Provider downloads require Internet access; these
 local checks require no AWS credentials.
 
-The US$5 total cap and no-credit assumption remain binding, with approximately 20 minutes of
+The user-approved US$8 total cap and no-credit assumption remain binding, with approximately 20 minutes of
 demonstration requested. The temporary Phase 4 EMR/MSK/S3 test verified that specific region,
 runtime and private data path once, but actual billed cost and future capacity were not checked.
 Linux packaging of the Python services and live PostgreSQL remain unverified. Team/deadline

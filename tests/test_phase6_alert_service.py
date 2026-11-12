@@ -2,6 +2,7 @@
 
 import importlib.util
 import json
+import logging
 import sys
 import unittest
 from pathlib import Path
@@ -96,6 +97,7 @@ class AlertServiceTests(unittest.TestCase):
             self.repo.put({**incident, "intersection_id": "int-2"})
 
     def test_partial_batch_retries_only_failed_items(self):
+        self.assertEqual(handler_module.LOG.getEffectiveLevel(), logging.INFO)
         incident = {"schema_version": "1.0", "alert_id": "event-1/incident-alert/v1",
                     "source_type": "incident", "source_id": "event-1",
                     "intersection_id": "int-1", "reason": "incident_closure_open",

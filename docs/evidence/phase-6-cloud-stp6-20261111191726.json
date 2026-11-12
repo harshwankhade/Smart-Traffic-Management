@@ -1,0 +1,62 @@
+{
+  "started_at": "2026-11-11T19:19:36.656741+00:00",
+  "managed_verified": false,
+  "profile": "smarttraffic-sdk",
+  "region": "ap-south-1",
+  "identity": {
+    "account": "520646131316",
+    "principal_arn": "arn:aws:iam::520646131316:root",
+    "region": "ap-south-1"
+  },
+  "cost_preflight": {
+    "start": "2026-11-01",
+    "end_exclusive": "2026-11-12",
+    "unblended_usd_estimate": 2.167401,
+    "estimated_by_aws": true,
+    "required_reserve_usd": 0.5,
+    "below_predeployment_gate": true
+  },
+  "run_name": "stp6-20261111191726",
+  "paths": {
+    "congestion": true,
+    "incident": true,
+    "duplicate_preserved": true
+  },
+  "dlq": {
+    "same_body": true,
+    "receive_count": "6",
+    "same_body_recovery": true
+  },
+  "log_observation": {
+    "event_count": 0,
+    "congestion_id_present": false,
+    "incident_id_present": false,
+    "duplicate_info_present": false,
+    "conflict_retry_count": 0
+  },
+  "failure": "Timed out waiting for traceable Lambda logs",
+  "teardown_requested": true,
+  "outputs_before_destroy": {
+    "alert_queue_arn": "arn:aws:sqs:ap-south-1:520646131316:stp6-20261111191726-alerts",
+    "alert_queue_url": "https://sqs.ap-south-1.amazonaws.com/520646131316/stp6-20261111191726-alerts",
+    "alert_table_name": "stp6-20261111191726-alerts",
+    "dlq_url": "https://sqs.ap-south-1.amazonaws.com/520646131316/stp6-20261111191726-alerts-dlq",
+    "event_source_mapping_uuid": "efe3cc45-128e-4634-95d9-744867acc975",
+    "incident_manager_send_policy_arn": "arn:aws:iam::520646131316:policy/stp6-20261111191726-incident-alert-send",
+    "lambda_function_name": "stp6-20261111191726-alert-service",
+    "signal_recommendation_send_policy_arn": "arn:aws:iam::520646131316:policy/stp6-20261111191726-signal-alert-send"
+  },
+  "terraform_state_empty": true,
+  "absence_audit": {
+    "source_queue_absent": true,
+    "dlq_absent": true,
+    "table_absent": true,
+    "function_absent": true,
+    "mapping_absent": true,
+    "role_absent": true,
+    "signal_policy_absent": true,
+    "incident_policy_absent": true,
+    "log_group_absent": true
+  },
+  "finished_at": "2026-11-11T19:33:31.517634+00:00"
+}

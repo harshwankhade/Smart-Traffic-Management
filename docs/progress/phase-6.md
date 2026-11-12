@@ -1,0 +1,7 @@
+# Phase 6 progress report - Completed
+
+Phase 6 completes the prescribed asynchronous Alert Service without adding a ninth service. Signal Recommendation emits stable high-congestion alert requests, while Incident Manager writes an incident revision and transactional outbox entry together. Its lease-based worker marks an entry sent only after queue acknowledgement. The SQS-triggered Lambda validates both request kinds, conditionally records its owned DynamoDB alert outcome, returns partial batch failures, and emits IDs/outcomes without request bodies. Terraform defines the queue, DLQ, function, mapping, table, logs and least-privilege policies.
+
+Focused producer, handler, repository and cloud-runner tests passed, along with local demos for both paths. Cloud attempt 2 proved duplicate preservation plus DLQ redrive and same-body recovery. Attempt 4 used a real SQS queue, Lambda and DynamoDB table: both request types produced outcomes; duplicate and conflict handling appeared in 18 paginated CloudWatch events. All run-scoped cloud resources were removed and independently audited absent; the Terraform state is empty. The runner now checkpoints proof before teardown and preserves it during recovery-only cleanup.
+
+The temporary test sent approved request bodies directly to SQS. Attaching producer policies to deployed workload identities and proving a full production workload path remains Phase 8 work. Optional external SMS/email, ZooKeeper failover and HPA testing remain out of scope.

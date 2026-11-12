@@ -14,6 +14,7 @@ if __name__ == "__main__":
 from alerts import AlertRepository, validate_request
 
 LOG = logging.getLogger(__name__)
+LOG.setLevel(logging.INFO)
 
 
 def process_batch(event, repository):

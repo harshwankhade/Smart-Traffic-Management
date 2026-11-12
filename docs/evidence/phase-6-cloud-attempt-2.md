@@ -1,0 +1,7 @@
+# Phase 6 temporary cloud attempt 2 — 2026-11-12
+
+Run `stp6-20261111191726` used a newly approved, read-only reviewed plan after the handler INFO-level logging fix. Terraform created 11 resources. Real SQS delivered one congestion and one incident request to Lambda; the two run-owned DynamoDB records were observed. An identical replay preserved the record. A valid conflicting incident request reached the DLQ after repeated receives (observed receive count 6), and the exact DLQ body was successfully replayed after clearing the run-owned conflicting test item.
+
+The final in-run log check still timed out, so this run is **not a full acceptance pass**. The runner's saved `log_observation` showed zero events in its repeated single-page `FilterLogEvents` calls. A separate AWS CLI query during the run paginated through four responses (event counts 0, 0, 2, 0) and found two `outcome=created` INFO events. Thus the logging fix emitted success records, but the runner stopped at an empty first page. It now uses a CloudWatch paginator, with a regression test for an empty first page. The deleted log group means duplicate/conflict log markers from this run cannot be independently recovered.
+
+The runner then destroyed all 11 Terraform state-owned resources. Its audit found the exact queues, table, function, mapping, role, producer policies and log group absent, and state empty. See [machine-readable evidence](phase-6-cloud-stp6-20261111191726.json). A new cloud run requires a fresh cost review, create-only plan and explicit approval; Phase 6 remains In Progress.

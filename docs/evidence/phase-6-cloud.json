@@ -1,0 +1,25 @@
+{
+  "started_at": "2026-11-12T05:46:45.409617+00:00",
+  "managed_verified": false,
+  "profile": "smarttraffic-sdk",
+  "region": "ap-south-1",
+  "identity": {
+    "account": "520646131316",
+    "principal_arn": "arn:aws:iam::520646131316:root",
+    "region": "ap-south-1"
+  },
+  "cost_preflight": {
+    "start": "2026-11-01",
+    "end_exclusive": "2026-11-13",
+    "unblended_usd_estimate": 4.634739,
+    "estimated_by_aws": true,
+    "budget_cap_usd": 8.0,
+    "required_reserve_usd": 0.5,
+    "below_predeployment_gate": true
+  },
+  "run_name": "stp6-20261112051653",
+  "teardown_requested": true,
+  "outputs_before_destroy": {},
+  "terraform_state_empty": true,
+  "finished_at": "2026-11-12T05:47:39.935317+00:00"
+}

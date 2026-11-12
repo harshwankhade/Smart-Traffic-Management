@@ -13,7 +13,7 @@ The preceding planning conversation approved these directions:
 | A3 | Traffic Ingestion → Event Publisher is the service-to-service gRPC path | Approved; supersedes the brief's earlier example |
 | A4 | Phase 1 local scope is health checks and contract examples, without dependency containers or business logic | Approved |
 | A5 | API-first interface without custom UI | Approved |
-| A6 | Budget and demonstration constraint | US$5 total cap; existing AWS account with no credits; approximately 20-minute demo. Live access/cost/quota verification deferred by user; team/deadline unconfirmed |
+| A6 | Budget and demonstration constraint | Originally US$5; user approved an increase to a US$8 total cap on 2026-11-12. Existing AWS account has no credits; approximately 20-minute demo. Live access/cost/quota verification deferred by user; team/deadline unconfirmed |
 | A8 | User stated: "ok i have approved phase 1 decisions" | Approval recorded for P1-P7 and the presented v1 contract/domain/security choices; missing facts and unresolved protocol details are not invented |
 | A10 | Bounded ZooKeeper crash-recovery demonstration, fail-closed admission and duplicate handling; no complete stale-writer fencing guarantee | User explicitly approved the recommendation with "OK APPROVED."; implement and verify only in Phase 7 |
 | A9 | MSK Provisioned Standard: two kafka.t3.small brokers across two AZs; Python 3.14 APIs/Lambda; Java 17 Flink | User explicitly approved these recommendations; regional availability and Linux packaging still require verification before deployment |

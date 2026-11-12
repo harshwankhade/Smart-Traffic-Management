@@ -139,4 +139,4 @@ topic, verified both independent consumers and APIs, replayed the same result wi
 logical state, and read both records after restarting the service processes. The normal 47-test
 suite (five opt-in checks skipped by default), all eight smoke checks and documentation checks
 passed. Managed DynamoDB write/read/replay and cleanup evidence is recorded separately. Phase 5
-is Completed for its approved scope; Phase 6 remains Not Started.
+is Completed for its approved scope; Phase 6 was subsequently completed with separate evidence.

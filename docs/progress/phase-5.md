@@ -25,5 +25,5 @@ startup closed-connection condition is now retried by the bootstrap helper.
 Actual checks: the demo passed in 62.057 seconds; 47 Python tests passed with five opt-in
 integrations skipped; all eight smoke entry points passed. Local evidence remains distinct from
 managed DynamoDB evidence. Phase 5 is Completed for its approved scope; the separately
-authorized final closure audit is complete. Phase 6 remains Not Started. No alert, recovery-event, ZooKeeper,
+authorized final closure audit is complete. Phase 6 was subsequently completed; its alert evidence is recorded separately. No recovery-event, ZooKeeper,
 Kubernetes, or unrelated AWS resource was added.

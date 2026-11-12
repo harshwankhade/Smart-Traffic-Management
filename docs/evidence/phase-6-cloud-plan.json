@@ -1,0 +1,106 @@
+{
+  "started_at": "2026-11-12T05:16:16.632387+00:00",
+  "managed_verified": false,
+  "profile": "smarttraffic-sdk",
+  "region": "ap-south-1",
+  "identity": {
+    "account": "520646131316",
+    "principal_arn": "arn:aws:iam::520646131316:root",
+    "region": "ap-south-1"
+  },
+  "cost_preflight": {
+    "start": "2026-11-01",
+    "end_exclusive": "2026-11-13",
+    "unblended_usd_estimate": 4.634739,
+    "estimated_by_aws": true,
+    "budget_cap_usd": 8.0,
+    "required_reserve_usd": 0.5,
+    "below_predeployment_gate": true
+  },
+  "run_name": "stp6-20261112051653",
+  "package_bytes": 16740748,
+  "package_sha256": "79b3772b9cc8ff5a2d17c5f4a5c2bac04648c0bcf3cfad6b6f193539bbfc95f0",
+  "plan_sha256": "4b49d169fc1540c1c96abd2a8d9bb727bb13774626198800df915a4f6f5bba7e",
+  "changes": [
+    {
+      "address": "aws_cloudwatch_log_group.alerts",
+      "type": "aws_cloudwatch_log_group",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "aws_dynamodb_table.alerts",
+      "type": "aws_dynamodb_table",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "aws_iam_policy.incident_manager_send",
+      "type": "aws_iam_policy",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "aws_iam_policy.signal_recommendation_send",
+      "type": "aws_iam_policy",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "aws_iam_role.lambda",
+      "type": "aws_iam_role",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "aws_iam_role_policy.lambda",
+      "type": "aws_iam_role_policy",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "aws_lambda_event_source_mapping.alerts",
+      "type": "aws_lambda_event_source_mapping",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "aws_lambda_function.alerts",
+      "type": "aws_lambda_function",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "aws_sqs_queue.alerts",
+      "type": "aws_sqs_queue",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "aws_sqs_queue.dlq",
+      "type": "aws_sqs_queue",
+      "actions": [
+        "create"
+      ]
+    },
+    {
+      "address": "terraform_data.deployment_guard",
+      "type": "terraform_data",
+      "actions": [
+        "create"
+      ]
+    }
+  ],
+  "plan_only": true,
+  "created_resources": false,
+  "finished_at": "2026-11-12T05:17:09.880742+00:00"
+}
