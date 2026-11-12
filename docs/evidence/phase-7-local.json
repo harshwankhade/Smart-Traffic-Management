@@ -1,0 +1,29 @@
+{
+  "run_prefix": "p7-c9202a01c505",
+  "scope": "local_only",
+  "started_at": "2026-11-12T16:20:23.306280Z",
+  "initial_leader": "publisher-a",
+  "post_session_leader": "publisher-b",
+  "kafka_counts": {
+    "p7-c9202a01c505-before-crash": 1,
+    "p7-c9202a01c505-ambiguous-ack": 2,
+    "p7-c9202a01c505-after-crash": 1,
+    "p7-c9202a01c505-after-session-recovery": 1
+  },
+  "rejected_new_requests": [
+    "p7-c9202a01c505-follower-new-request",
+    "p7-c9202a01c505-session-unavailable"
+  ],
+  "recovery_event_types": [
+    "leader_elected",
+    "leader_lost",
+    "session_lost",
+    "session_rejoined",
+    "session_suspended"
+  ],
+  "limitations": [
+    "Delayed in-flight Kafka writes are not fenced by ZooKeeper readiness/session checks.",
+    "Kafka output is at least once; the lost-acknowledgement retry intentionally produced duplicate records.",
+    "This local crash/session test does not prove partition-safe exclusive publishing or zero loss."
+  ]
+}

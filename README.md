@@ -21,6 +21,15 @@ Python 3.14 Lambda ZIP builder are verified; the temporary resources were destro
 
 Read [requirements](PROJECT_BRIEF.md), [architecture](ARCHITECTURE.md), [roadmap](ROADMAP.md), and the [Phase 2 decisions](docs/decisions/phase-2.md). Root documents are authoritative; their `docs/` counterparts are location pointers.
 
+To repeat the Phase 7 local check from the project root with Docker Desktop running:
+
+```powershell
+.venv\Scripts\python scripts\phase3_local.py configure
+.venv\Scripts\python scripts\demo_phase7.py --report docs\evidence\phase-7-local.json
+```
+
+The demo starts its loopback dependencies, uses a unique ZooKeeper election path, stops its own service processes and retains Docker volumes. Its ZooKeeper stop/restart tests session recovery; see the evidence file for measured results and limits.
+
 ## Implemented locally
 
 - Sensor Registry: intersection/sensor create, read and update with persistent SQL data.
@@ -30,7 +39,7 @@ Read [requirements](PROJECT_BRIEF.md), [architecture](ARCHITECTURE.md), [roadmap
 - Local Kafka/SeaweedFS containers persist records/objects. Congestion Processor runs real Flink minute windows, bounded deduplication and checkpoint recovery. Signal Recommendation and Traffic Analytics consume its results and expose local read APIs; Alert Service retains Phase 1 health/smoke behavior.
 - Versioned response schemas, local HTTP restart demo, automated tests and private RDS Terraform prepared for mocked checks only.
 
-See [REST contracts, errors and examples](docs/phase-2-api.md) and [Flink processing/recovery](docs/phase-4-processing.md). Registry, Incident Manager and Ingestion expose local `/docs` and `/openapi.json`; Publisher exposes gRPC plus HTTP liveness/readiness. Queue delivery, ZooKeeper coordination, cloud deployment and dashboards remain unimplemented.
+See [REST contracts, errors and examples](docs/phase-2-api.md) and [Flink processing/recovery](docs/phase-4-processing.md). Registry, Incident Manager and Ingestion expose local `/docs` and `/openapi.json`; Publisher exposes gRPC plus HTTP liveness/readiness. Queue delivery has temporary-cloud evidence. Phase 7 ZooKeeper crash and session recovery passed the [real local demo](docs/evidence/phase-7-local.md). Integrated cloud deployment and dashboards remain future work.
 
 ## Phase 4 local Flink demo
 

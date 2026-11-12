@@ -15,8 +15,9 @@ from smoke import PROCESS_OPTIONS, ROOT, python_command
 
 
 class LocalService:
-    def __init__(self, name, temporary, environment):
+    def __init__(self, name, temporary, environment, port=0):
         self.name, self.temporary, self.environment = name, Path(temporary), environment
+        self.port = port
         self.process = None
         self.log = None
         self.base = None
@@ -25,7 +26,7 @@ class LocalService:
         self.port_file = self.temporary / f"{self.name}-{uuid4().hex}.json"
         self.log = (self.temporary / f"{self.name}-{uuid4().hex}.log").open("w+", encoding="utf-8")
         self.process = subprocess.Popen(
-            python_command(ROOT / "scripts/run_service.py", self.name, "--port", "0",
+            python_command(ROOT / "scripts/run_service.py", self.name, "--port", str(self.port),
                            "--port-file", str(self.port_file)),
             cwd=ROOT, env={**os.environ, **self.environment}, stdout=self.log, stderr=self.log,
             **PROCESS_OPTIONS)

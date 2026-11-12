@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 import os
 import socket
 import threading
+import time
 
 LOG = logging.getLogger("event-publisher.coordination")
 
@@ -31,6 +32,10 @@ class ZooKeeperElection:
         self._connected = False
         self._leader = False
         self._stopped = False
+        self._replacing = False
+        self._wake = threading.Event()
+        self._monitor_started = False
+        self._suspended_since = None
         self.reporter = reporter
         self._metrics = {"events_emitted": 0, "report_failures": 0, "leader_transitions": 0}
         self._lock = threading.RLock()
@@ -46,7 +51,26 @@ class ZooKeeperElection:
     def start(self):
         with self._lock:
             self._stopped = False
+            self._wake.clear()
+            if not self._monitor_started:
+                self._monitor_started = True
+                threading.Thread(target=self._monitor_membership, daemon=True).start()
         self._new_session()
+
+    def _monitor_membership(self):
+        """Detect an elected leader's vanished ephemeral node after local server reset."""
+        while True:
+            self._wake.wait(1)
+            self._wake.clear()
+            with self._lock:
+                if self._stopped:
+                    return
+                connected, replacing = self._connected, self._replacing
+                suspended_since = self._suspended_since
+            if connected and not replacing:
+                self._refresh()
+            elif suspended_since is not None and not replacing and time.monotonic() - suspended_since >= 5:
+                self._on_state("LOST")
 
     def _new_session(self):
         client = self._client_factory(self.hosts)
@@ -63,6 +87,7 @@ class ZooKeeperElection:
                 client.close()
                 return
             self._client, self._node, self._connected = client, node, True
+            self._suspended_since = None
             rejoined = self._metrics["events_emitted"] > 0
         self._refresh()
         if rejoined:
@@ -74,10 +99,15 @@ class ZooKeeperElection:
         if name == "CONNECTED":
             with self._lock:
                 self._connected = True
+                self._suspended_since = None
             self._refresh()
         elif name in ("SUSPENDED", "LOST"):
             with self._lock:
                 was_leader, self._connected, self._leader = self._leader, False, False
+                if name == "SUSPENDED" and self._suspended_since is None:
+                    self._suspended_since = time.monotonic()
+                elif name == "LOST":
+                    self._suspended_since = None
             if was_leader:
                 self._emit("leader_lost", False)
             self._emit("session_suspended" if name == "SUSPENDED" else "session_lost", False)
@@ -87,8 +117,9 @@ class ZooKeeperElection:
 
     def _replace_lost_session(self):
         with self._lock:
-            if self._stopped:
+            if self._stopped or self._replacing:
                 return
+            self._replacing = True
             old, self._client, self._node = self._client, None, None
         if old:
             try:
@@ -97,9 +128,20 @@ class ZooKeeperElection:
             except Exception:
                 LOG.warning("Unable to close expired ZooKeeper session", exc_info=True)
         try:
-            self._new_session()
-        except Exception:
-            LOG.exception("Unable to establish fresh ZooKeeper session")
+            while True:
+                with self._lock:
+                    if self._stopped:
+                        return
+                try:
+                    self._new_session()
+                    return
+                except Exception:
+                    LOG.warning("Unable to establish fresh ZooKeeper session; retrying", exc_info=True)
+                    self._wake.wait(1)
+                    self._wake.clear()
+        finally:
+            with self._lock:
+                self._replacing = False
 
     def _refresh(self, *_):
         with self._lock:
@@ -107,13 +149,16 @@ class ZooKeeperElection:
         if not client or not node or not connected:
             return
         try:
-            children = sorted(client.get_children(self.root))
             mine = node.rsplit("/", 1)[1]
-            position = children.index(mine)
-            leader = position == 0
-            predecessor = children[position - 1] if position else None
-            if predecessor:
-                client.exists(f"{self.root}/{predecessor}", watch=self._refresh)
+            while True:
+                children = sorted(client.get_children(self.root))
+                position = children.index(mine)
+                leader = position == 0
+                if leader:
+                    break
+                predecessor = children[position - 1]
+                if client.exists(f"{self.root}/{predecessor}", watch=self._refresh):
+                    break
             with self._lock:
                 was_leader = self._leader
                 self._leader = leader and self._connected and self._node == node
@@ -123,7 +168,21 @@ class ZooKeeperElection:
             if changed:
                 self._emit("leader_elected" if leader else "leader_lost", leader)
             LOG.info("ZooKeeper election instance_id=%s leader=%s", self.instance_id, leader)
-        except Exception:
+        except ValueError:
+            # A restarted ZooKeeper server no longer knows this ephemeral node. Treat that
+            # missing membership as session loss and join with a fresh session/node.
+            with self._lock:
+                self._connected = self._leader = False
+            LOG.warning("ZooKeeper election node disappeared; publisher is not ready")
+            self._on_state("LOST")
+        except Exception as error:
+            if error.__class__.__name__ == "NoNodeError":
+                # A fresh local ZooKeeper server also lacks the election root itself.
+                with self._lock:
+                    self._connected = self._leader = False
+                LOG.warning("ZooKeeper election path disappeared; publisher is not ready")
+                self._on_state("LOST")
+                return
             with self._lock:
                 self._leader = False
             LOG.warning("Unable to refresh ZooKeeper election; publisher is not ready", exc_info=True)
@@ -160,9 +219,11 @@ class ZooKeeperElection:
     def stop(self):
         with self._lock:
             self._stopped = True
+            self._wake.set()
             client, self._client = self._client, None
             self._node = None
             self._connected = self._leader = False
+            self._suspended_since = None
         if client:
             client.stop()
             client.close()

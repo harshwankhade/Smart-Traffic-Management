@@ -86,10 +86,19 @@ class ZooKeeperPublisherClient:
                 raise RuntimeError("ZooKeeper publisher discovery requires kazoo; install requirements-lock.txt") from error
             client_factory = lambda hosts: KazooClient(hosts=hosts, timeout=4)
         self.client = client_factory(self.hosts)
+        self._connected = True
+        if hasattr(self.client, "add_listener"):
+            self.client.add_listener(self._on_state)
         self.client.start(timeout=5)
         self.publisher_factory, self.sleeper = publisher_factory, sleeper
 
+    def _on_state(self, state):
+        name = getattr(state, "name", str(state)).upper()
+        self._connected = name == "CONNECTED"
+
     def _active_endpoint(self):
+        if not self._connected:
+            raise RuntimeError("Active publisher discovery unavailable")
         try:
             children = sorted(self.client.get_children(self.root))
             if not children:
