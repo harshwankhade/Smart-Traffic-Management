@@ -267,7 +267,8 @@ resource "aws_eks_pod_identity_association" "workloads" {
 }
 data "http" "aws_load_balancer_controller_policy" {
   # Pinned upstream policy recommended by the EKS controller installation guide.
-  url = "https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.14.1/docs/install/iam_policy.json"
+  url                = "https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.14.1/docs/install/iam_policy.json"
+  request_timeout_ms = 30000
 }
 
 resource "aws_iam_policy" "aws_load_balancer_controller" {
