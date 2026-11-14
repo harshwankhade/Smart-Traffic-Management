@@ -73,7 +73,7 @@ the pending window and duplicate suppression. The run was interrupted during MSK
 the exact cluster was imported into its partial Terraform state before continuation. The cluster
 terminated, the versioned run bucket was emptied, Terraform state is empty, the guard is disabled,
 and an independent audit found no run-owned resources. See [Phase 4 decisions](docs/decisions/phase-4.md).
-The written cost estimate was waived; actual billed cost and the unchanged US$5 ceiling were not
+The written cost estimate was waived; actual billed cost and the then-current US$5 ceiling were not
 verified. This temporary processor test does not establish a complete cloud deployment. Phase 5
 has started with approved design, pure rules, repositories, local Kafka consumers and
 read-only recommendation/summary APIs.
@@ -141,7 +141,7 @@ instance remains unapplied. The separate, user-authorized Phase 4 temporary stac
 destroyed. Deployment approval defaults false. Provider downloads require Internet access; these
 local checks require no AWS credentials.
 
-The user-approved US$8 total cap and no-credit assumption remain binding, with approximately 20 minutes of
+The user-approved US$10 total cap and no-credit assumption remain binding, with approximately 20 minutes of
 demonstration requested. The temporary Phase 4 EMR/MSK/S3 test verified that specific region,
 runtime and private data path once, but actual billed cost and future capacity were not checked.
 Linux packaging of the Python services and live PostgreSQL remain unverified. Team/deadline

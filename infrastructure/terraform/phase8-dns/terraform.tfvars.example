@@ -1,0 +1,8 @@
+aws_region          = "ap-south-1"
+domain_name         = "smarttrafficmgmt.online"
+public_api_hostname = "api.smarttrafficmgmt.online"
+existing_hosted_zone_id = null
+
+# First plan/apply: leave false to create only the hosted zone and outputs.
+# Set true only after Spaceship has delegated all four Route 53 nameservers.
+certificate_enabled = false

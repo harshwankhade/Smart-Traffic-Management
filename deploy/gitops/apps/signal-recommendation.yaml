@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: signal-recommendation
+  namespace: smarttraffic
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: signal-recommendation
+  namespace: smarttraffic
+spec:
+  selector: {app: signal-recommendation}
+  ports: [{name: http, port: 8000, targetPort: http}]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: signal-recommendation
+  namespace: smarttraffic
+spec:
+  replicas: 1
+  selector: {matchLabels: {app: signal-recommendation}}
+  template:
+    metadata: {labels: {app: signal-recommendation}}
+    spec:
+      serviceAccountName: signal-recommendation
+      containers:
+        - name: app
+          image: smarttraffic/signal-recommendation:phase8-local
+          imagePullPolicy: IfNotPresent
+          ports: [{name: http, containerPort: 8000}]
+          envFrom:
+            - configMapRef: {name: smarttraffic-runtime}
+            - secretRef: {name: signal-recommendation-runtime}
+          livenessProbe: {httpGet: {path: /healthz, port: http}, initialDelaySeconds: 10}
+          readinessProbe: {httpGet: {path: /readyz, port: http}, initialDelaySeconds: 15}
+          resources: {requests: {cpu: 100m, memory: 128Mi}, limits: {cpu: 500m, memory: 256Mi}}

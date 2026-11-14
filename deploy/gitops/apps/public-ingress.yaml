@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: smarttraffic-public
+  namespace: smarttraffic
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/load-balancer-attributes: routing.http.drop_invalid_header_fields.enabled=true
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/certificate-arn: REPLACE_WITH_ACM_CERTIFICATE_ARN
+    external-dns.alpha.kubernetes.io/hostname: REPLACE_WITH_PUBLIC_DNS_NAME
+spec:
+  ingressClassName: alb
+  rules:
+    - host: REPLACE_WITH_PUBLIC_DNS_NAME
+      http:
+        paths:
+          - {path: /readings, pathType: Prefix, backend: {service: {name: traffic-ingestion, port: {name: http}}}}
+          - {path: /intersections, pathType: Prefix, backend: {service: {name: sensor-registry, port: {name: http}}}}
+          - {path: /sensors, pathType: Prefix, backend: {service: {name: sensor-registry, port: {name: http}}}}
+          - {path: /incidents, pathType: Prefix, backend: {service: {name: incident-manager, port: {name: http}}}}
+          - {path: /recommendations, pathType: Prefix, backend: {service: {name: signal-recommendation, port: {name: http}}}}
+          - {path: /traffic, pathType: Prefix, backend: {service: {name: traffic-analytics, port: {name: http}}}}

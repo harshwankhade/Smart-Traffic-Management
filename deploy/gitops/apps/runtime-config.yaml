@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: smarttraffic-runtime
+  namespace: smarttraffic
+data:
+  AWS_REGION: ap-south-1
+  ARCHIVE_MODE: aws
+  KAFKA_AUTH_MODE: iam
+  KAFKA_RAW_TOPIC: traffic.raw
+  KAFKA_RESULTS_TOPIC: traffic.results
+  PUBLISHER_ZOOKEEPER_ENABLED: "1"
+  PUBLISHER_ZOOKEEPER_HOSTS: zookeeper.smarttraffic.svc.cluster.local:2181
+  PUBLISHER_ZOOKEEPER_ROOT: /smarttraffic/publishers
+  PHASE5_CONSUMER_ENABLED: "1"
+  PHASE6_ALERTS_ENABLED: "1"
+  SENSOR_REGISTRY_URL: http://sensor-registry.smarttraffic.svc.cluster.local:8000
+  TRAFFIC_ANALYTICS_URL: http://traffic-analytics.smarttraffic.svc.cluster.local:8000
+  RECOVERY_EVENTS_ENABLED: "1"

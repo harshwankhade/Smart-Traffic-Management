@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: smarttraffic-zookeeper
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://charts.bitnami.com/bitnami
+    chart: zookeeper
+    targetRevision: 13.8.6
+    helm:
+      releaseName: zookeeper
+      values: |
+        replicaCount: 3
+        auth:
+          client:
+            enabled: false
+        persistence:
+          enabled: true
+          size: 4Gi
+        service:
+          ports:
+            client: 2181
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: smarttraffic
+  syncPolicy:
+    automated: {prune: true, selfHeal: true}
+    syncOptions: [CreateNamespace=true]

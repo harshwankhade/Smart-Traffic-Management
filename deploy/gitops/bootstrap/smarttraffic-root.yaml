@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: smarttraffic-root
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: smarttraffic
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/harshwankhade/Smart-Traffic-Management.git
+    targetRevision: main
+    path: deploy/gitops/apps
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: smarttraffic
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PruneLast=true

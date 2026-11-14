@@ -4,7 +4,7 @@ Status: **preparation only**. This runbook does not authorize deployment. The Ph
 
 ## Read-only preparation
 
-Use an authenticated, reviewed AWS profile in `ap-south-1`. Verify current month-to-date account charges and the remaining US$5 total budget, account quotas, and an AWS-backed plan before seeking deployment approval. The default `smarttraffic-sdk` profile may need `aws login --profile smarttraffic` first.
+Use an authenticated, reviewed AWS profile in `ap-south-1`. Verify current month-to-date account charges and the remaining US$10 total budget with its US$0.50 reserve, account quotas, and an AWS-backed plan before seeking deployment approval. The default `smarttraffic-sdk` profile may need `aws login --profile smarttraffic` first.
 
 ```powershell
 $env:AWS_PROFILE = 'smarttraffic-sdk'
@@ -12,7 +12,7 @@ $env:AWS_REGION = 'ap-south-1'
 .venv\Scripts\python scripts\phase6_cloud.py --plan-only
 ```
 
-The runner checks AWS Cost Explorer's estimated month-to-date unblended spend, builds and checks the Lambda ZIP, creates a unique `stp6-<UTC timestamp>` run name, and writes a plan summary to `docs/evidence/phase-6-cloud-plan.json`. It rejects a plan unless it contains exactly eleven **create** actions: one guard, two queues, one table, one log group, one IAM role, one inline role policy, two unattached send policies, one Lambda function and one mapping. It does not apply resources. The execute mode checks spend again and refuses deployment if the estimate is unavailable or at least US$7.50, reserving US$0.50 below the user-approved US$8 cap. Cost Explorer can lag and this guard does not guarantee final billing.
+The runner checks AWS Cost Explorer's estimated month-to-date unblended spend, builds and checks the Lambda ZIP, creates a unique `stp6-<UTC timestamp>` run name, and writes a plan summary to `docs/evidence/phase-6-cloud-plan.json`. It rejects a plan unless it contains exactly eleven **create** actions: one guard, two queues, one table, one log group, one IAM role, one inline role policy, two unattached send policies, one Lambda function and one mapping. It does not apply resources. The execute mode checks spend again and refuses deployment if the estimate is unavailable or at least US$9.50, reserving US$0.50 below the user-approved US$10 cap. Cost Explorer can lag and this guard does not guarantee final billing.
 
 ## Separately approved temporary execution
 

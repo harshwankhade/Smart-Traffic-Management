@@ -56,7 +56,7 @@ Create a repeatable demo that sends known schema-valid results to actual Kafka, 
 
 ## 7. Prepare managed DynamoDB IaC and cloud verification
 
-Add guarded Terraform for the approved Phase 5 tables/indexes and least-privilege access policies, keeping service ownership separate. Run formatting, validation and mocked plan tests. Prepare a narrowly scoped managed test and teardown runbook using the actual service code, with replay/read-back assertions and evidence output. Review lifecycle costs against the unchanged US$5 total cap, authentication and cleanup boundaries. Do not recreate EMR/MSK or deploy EKS for this DynamoDB-specific proof. Any deviation requires approval.
+Add guarded Terraform for the approved Phase 5 tables/indexes and least-privilege access policies, keeping service ownership separate. Run formatting, validation and mocked plan tests. Prepare a narrowly scoped managed test and teardown runbook using the actual service code, with replay/read-back assertions and evidence output. Review lifecycle costs against the current US$10 total cap and US$0.50 reserve, authentication and cleanup boundaries. Do not recreate EMR/MSK or deploy EKS for this DynamoDB-specific proof. Any deviation requires approval.
 
 **Done when:** IaC checks pass and the exact managed test, planned resources, cost constraints and teardown are reviewable. No apply runs. Record any unresolved deployment gate.
 
@@ -68,7 +68,7 @@ After step 7 is reviewable and its deployment gates are satisfied, provision onl
 
 **Done when:** Actual managed DynamoDB writes/reads, recommendation correctness, scoped analytics and replay behavior have evidence; temporary resources are removed and cleanup verified. If access, cost or another required gate remains unresolved, leave this step unfinished and Phase 5 In Progress or Blocked as appropriate.
 
-**Prompt:** `Do Phase 5 step 8 from "phase-5 steps.md" only: execute the reviewed temporary DynamoDB verification from step 7 and tear down its run-created resources afterward. Preserve the US$5 total cap; do not proceed if a required deployment gate is unresolved. Then stop.`
+**Prompt:** `Do Phase 5 step 8 from "phase-5 steps.md" only: execute the reviewed temporary DynamoDB verification from step 7 and tear down its run-created resources afterward. Preserve the US$10 total cap and US$0.50 reserve; do not proceed if a required deployment gate is unresolved. Then stop.`
 
 ## 9. Verify acceptance and close Phase 5
 

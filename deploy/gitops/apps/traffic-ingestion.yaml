@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: traffic-ingestion
+  namespace: smarttraffic
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: traffic-ingestion
+  namespace: smarttraffic
+spec:
+  selector: {app: traffic-ingestion}
+  ports:
+    - name: http
+      port: 8000
+      targetPort: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: traffic-ingestion
+  namespace: smarttraffic
+spec:
+  replicas: 2
+  selector: {matchLabels: {app: traffic-ingestion}}
+  template:
+    metadata: {labels: {app: traffic-ingestion}}
+    spec:
+      serviceAccountName: traffic-ingestion
+      containers:
+        - name: app
+          image: smarttraffic/traffic-ingestion:phase8-local
+          imagePullPolicy: IfNotPresent
+          ports: [{name: http, containerPort: 8000}]
+          envFrom: [{configMapRef: {name: smarttraffic-runtime}}]
+          livenessProbe: {httpGet: {path: /healthz, port: http}, initialDelaySeconds: 10}
+          readinessProbe: {httpGet: {path: /readyz, port: http}, initialDelaySeconds: 10}
+          resources: {requests: {cpu: 100m, memory: 128Mi}, limits: {cpu: 500m, memory: 256Mi}}

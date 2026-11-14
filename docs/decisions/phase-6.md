@@ -37,7 +37,7 @@ Incident Manager adds an `alert_outbox` table in its own SQL schema with unique 
 1. Local unit tests: schema/identity stability, no alert for non-high windows or description-only incident edits, transaction rollback, optimistic conflict, outbox crash/lease/ambiguous-send recovery, duplicate and conflicting DynamoDB writes, malformed/transient Lambda records, and partial-batch response.
 2. Local integration/demo: use existing Kafka and DynamoDB Local plus a controllable SQS adapter or emulator; produce one high window and one incident, show two asynchronous alert records, duplicate replay, queue outage/recovery, and traceable logs. Record any emulation limits.
 3. Terraform format/validate/mock and read-only plan for queue, DLQ, function, mapping, table, IAM and log group. Package Python 3.14 Lambda dependencies for Linux and verify the artifact before deployment.
-4. Cloud acceptance requires a separate reviewed cost estimate and explicit temporary-deployment authorization under the US$8 total cap (increased by user approval on 2026-11-12). Send both requests through actual SQS, observe Lambda invocations/logs and DynamoDB records, test replay plus one controlled failure/redrive, then destroy and audit run-owned resources. No full cloud system or Phase 7 work is implied.
+4. Cloud acceptance requires a separate reviewed cost estimate and explicit temporary-deployment authorization under the current US$10 total cap (raised by user approval on 2026-11-12). Send both requests through actual SQS, observe Lambda invocations/logs and DynamoDB records, test replay plus one controlled failure/redrive, then destroy and audit run-owned resources. No full cloud system or Phase 7 work is implied.
 
 ## Step 2 implementation note
 

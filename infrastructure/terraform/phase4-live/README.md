@@ -6,7 +6,7 @@ instance, public client, EKS cluster or NAT gateway. Private IAM/TLS Kafka conne
 exercised from the EMR job itself.
 
 The user waived the written cost-estimate gate for this run and explicitly requested teardown.
-The US$5 total cap remains unchanged. `deployment_approved` defaults false; the runner writes
+The current US$10 total cap and US$0.50 reserve apply to any future run. `deployment_approved` defaults false; the runner writes
 run-specific approved variables under ignored `.data/phase4-cloud/` only after authorization.
 
 ```powershell

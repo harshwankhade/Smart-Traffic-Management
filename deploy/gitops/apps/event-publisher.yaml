@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: event-publisher
+  namespace: smarttraffic
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: event-publisher
+  namespace: smarttraffic
+spec:
+  clusterIP: None
+  selector: {app: event-publisher}
+  ports:
+    - {name: http, port: 8000, targetPort: http}
+    - {name: grpc, port: 50051, targetPort: grpc}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: event-publisher
+  namespace: smarttraffic
+spec:
+  serviceName: event-publisher
+  replicas: 2
+  selector: {matchLabels: {app: event-publisher}}
+  template:
+    metadata: {labels: {app: event-publisher}}
+    spec:
+      serviceAccountName: event-publisher
+      containers:
+        - name: app
+          image: smarttraffic/event-publisher:phase8-local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - {name: http, containerPort: 8000}
+            - {name: grpc, containerPort: 50051}
+          env:
+            - name: POD_NAME
+              valueFrom: {fieldRef: {fieldPath: metadata.name}}
+            - {name: PUBLISHER_INSTANCE_ID, value: "$(POD_NAME)"}
+            - {name: PUBLISHER_GRPC_BIND, value: 0.0.0.0:50051}
+            - {name: PUBLISHER_ADVERTISED_GRPC_TARGET, value: "$(POD_NAME).event-publisher.smarttraffic.svc.cluster.local:50051"}
+            - {name: PUBLISHER_ADVERTISED_HTTP_URL, value: "http://$(POD_NAME).event-publisher.smarttraffic.svc.cluster.local:8000"}
+          envFrom:
+            - configMapRef: {name: smarttraffic-runtime}
+            - secretRef: {name: event-publisher-runtime}
+          livenessProbe: {httpGet: {path: /healthz, port: http}, initialDelaySeconds: 10}
+          readinessProbe: {httpGet: {path: /readyz, port: http}, initialDelaySeconds: 15}
+          resources: {requests: {cpu: 200m, memory: 256Mi}, limits: {cpu: 1, memory: 512Mi}}

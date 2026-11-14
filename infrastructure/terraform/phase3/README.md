@@ -1,6 +1,6 @@
 # Phase 3 MSK/S3 preparation - unapplied
 
-This root uses AWS provider 6.45.0 and creates no resources until a separately reviewed deployment is approved. Only `init -backend=false`, formatting checks, `validate` and mocked `test` are authorized. Do not run an AWS-backed plan or apply under the current US$5/no-credit budget assumptions.
+This root uses AWS provider 6.45.0 and creates no resources until a separately reviewed deployment is approved. Only `init -backend=false`, formatting checks, `validate` and mocked `test` are authorized. Do not run an AWS-backed plan or apply under the current US$10/no-credit budget assumptions.
 
 ```powershell
 terraform -chdir=infrastructure/terraform/phase3 init -backend=false -input=false

@@ -38,7 +38,7 @@ EXPECTED = Counter({"terraform_data": 1, "aws_sqs_queue": 2,
                     "aws_iam_role": 1, "aws_iam_role_policy": 1,
                     "aws_iam_policy": 2, "aws_lambda_function": 1,
                     "aws_lambda_event_source_mapping": 1})
-BUDGET_CAP_USD = 8.00
+BUDGET_CAP_USD = 10.00
 RESERVED_CLEANUP_USD = 0.50
 PREDEPLOYMENT_GATE_USD = BUDGET_CAP_USD - RESERVED_CLEANUP_USD
 
@@ -348,7 +348,7 @@ def main():
         except Exception as exc:
             evidence["cost_preflight"] = {"unavailable": type(exc).__name__}
         if args.execute and not evidence["cost_preflight"].get("below_predeployment_gate"):
-            raise RuntimeError("Current account spend was unavailable or lacks the US$0.50 reserve below the US$8 cap")
+            raise RuntimeError("Current account spend was unavailable or lacks the US$0.50 reserve below the US$10 cap")
         tf("init", "-backend=false", "-input=false", "-no-color")
         if args.plan_only:
             evidence.update(plan_only())

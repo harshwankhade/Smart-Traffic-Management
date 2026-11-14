@@ -17,7 +17,7 @@ The ZIP builder checks versions against `requirements-lock.txt`, includes applic
 
 ## Later temporary deployment and teardown
 
-**Do not run these commands in Step 4.** Before any billable deployment, obtain a reviewed full-lifecycle cost estimate within the US$5 total ceiling, check account access/quotas, and get explicit authorization for the exact temporary run. Use a unique lowercase run ID and the approved AWS profile. Keep the same Terraform state and `project_name` for teardown.
+**Do not run these commands in Step 4.** Before any billable deployment, obtain a reviewed full-lifecycle cost estimate within the US$10 total ceiling and US$0.50 reserve, check account access/quotas, and get explicit authorization for the exact temporary run. Use a unique lowercase run ID and the approved AWS profile. Keep the same Terraform state and `project_name` for teardown.
 
 ```powershell
 $env:AWS_PROFILE = 'APPROVED_PROFILE'

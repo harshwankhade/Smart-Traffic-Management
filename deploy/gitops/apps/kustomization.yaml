@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml
+  - runtime-config.yaml
+  - network-policy.yaml
+  - zookeeper.yaml
+  - sensor-registry.yaml
+  - traffic-ingestion.yaml
+  - event-publisher.yaml
+  - signal-recommendation.yaml
+  - incident-manager.yaml
+  - traffic-analytics.yaml
+  - public-ingress.yaml

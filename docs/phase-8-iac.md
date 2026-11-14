@@ -1,0 +1,11 @@
+# Phase 8 Step 2: integrated IaC and package preparation
+
+Status: **prepared and locally validated; not deployed**. The guarded Terraform root at `infrastructure/terraform/phase8/` composes the existing MSK/S3, EMR/Flink, DynamoDB, and Lambda/SQS roots with a new two-AZ VPC, NAT egress, EKS/node group, ECR repositories, RDS PostgreSQL, ACM DNS validation, HTTPS ALB, and Argo CD Helm bootstrap. It defaults to `deployment_approved=false`.
+
+`infrastructure/container/Dockerfile` packages the six Kubernetes services using `SERVICE_DIR`; `scripts/phase8_package.py` statically verifies every service source and prints the six exact Docker build commands. The root owns AWS infrastructure and the Argo CD bootstrap. GitOps application manifests, runtime environment values, workload IAM associations, and ZooKeeper are deliberately deferred to Step 3.
+
+Checks run on 2026-11-13: Terraform `fmt -check` and `validate` passed after `init -backend=false`; the static package checker passed; and all six local images built and were inspected with their expected `smarttraffic/<service>:phase8-local` tags and service working directories. A read-only false-guard plan authenticated through the `smarttraffic-sdk` credential chain, enumerated only two preliminary creates, then stopped at the intended Phase 8 and imported-module deployment guards. It created nothing. An enabled plan remains intentionally unavailable until the real DNS/CIDR inputs, artifacts, cost evidence, and separate deployment approval exist; no apply was run.
+
+Cost Explorer refreshed through 2026-11-14 reports estimated account-wide unblended usage of US$6.4865880038. The US$10 cap and US$0.50 reserve leave US$3.0134119962 below the US$9.50 predeployment gate. This is insufficient proof that the planned EKS/MSK/EMR stack is affordable.
+
+Before a later enabled plan: set a unique run prefix; supply a real public DNS name, authoritative Route 53 zone, and approved administrator CIDRs; build the Lambda ZIP and EMR JAR; obtain a Mumbai full-lifecycle calculator estimate and explicit deployment authorization. For teardown, first remove GitOps Applications through Git and wait for pruning, then terminate EMR, empty only the state-owned bucket, run Terraform destroy with the same run prefix, and audit tagged resources/state.

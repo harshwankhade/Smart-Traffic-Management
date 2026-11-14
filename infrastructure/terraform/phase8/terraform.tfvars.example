@@ -1,0 +1,10 @@
+# Keep deployment_approved=false. Step 2 validates only; Step 4 needs separate authorization.
+deployment_approved = false
+project_name        = "stp8-example"
+aws_region          = "ap-south-1"
+availability_zones  = ["ap-south-1a", "ap-south-1b"]
+# Replace with approved deployment values before a reviewed plan.
+admin_cidrs     = ["203.0.113.0/24"]
+public_dns_name = "api.example.com"
+route53_zone_id = "ZREPLACE"
+public_certificate_arn = "arn:aws:acm:ap-south-1:123456789012:certificate/REPLACE"

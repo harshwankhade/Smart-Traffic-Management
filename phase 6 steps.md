@@ -1,6 +1,6 @@
 # Phase 6: actionable steps
 
-Run one numbered step per prompt. Each step includes its own focused checks and documentation. Do not begin the next step automatically. The existing eight-service boundary, US$5 total cap, and separate authorization for billable cloud resources remain in force.
+Run one numbered step per prompt. Each step includes its own focused checks and documentation. Do not begin the next step automatically. The existing eight-service boundary, US$10 total cap, and separate authorization for billable cloud resources remain in force.
 
 1. **Settle the Phase 6 contract and delivery design.** Inspect the current Incident Manager, Signal Recommendation, Alert Service scaffold, Phase 5 storage conventions, and Phase 1 decisions. Specify and obtain approval for the v1 alert request/record schemas, deterministic IDs, SQS Standard + DLQ retry behavior, Lambda partial-batch handling, DynamoDB alert ownership, incident transactional outbox, and local/cloud test plan. Record approved choices in `docs/decisions/phase-6.md`. This step changes no runtime behavior or cloud resources.
 

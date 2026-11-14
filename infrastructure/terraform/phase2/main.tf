@@ -2,7 +2,7 @@ resource "terraform_data" "deployment_guard" {
   lifecycle {
     precondition {
       condition     = var.deployment_approved
-      error_message = "Deployment is not approved. Phase 2 permits validate and mocked tests only; preserve the US$5 cap."
+      error_message = "Deployment is not approved. Phase 2 permits validate and mocked tests only; preserve the US$10 cap."
     }
   }
 }

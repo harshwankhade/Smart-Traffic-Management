@@ -60,5 +60,5 @@ private MSK input/results, S3 checkpoint recovery and Terraform teardown. Both E
 the independent AWS audit found no run-owned resources afterward. See the
 [composite runbook](../phase4-live/README.md), [managed result](../../../docs/evidence/phase-4-cloud.json)
 and [cleanup audit](../../../docs/evidence/phase-4-cleanup.json). The run tested this configuration
-once; future regional capacity and actual billed cost against the US$5 cap are not established.
+once; future regional capacity and actual billed cost against the US$10 cap are not established.
 The deployment guard is disabled, and any new apply requires separate authorization.
