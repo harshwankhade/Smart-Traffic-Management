@@ -13,3 +13,22 @@ resources:
   - incident-manager.yaml
   - traffic-analytics.yaml
   - public-ingress.yaml
+images:
+  - name: smarttraffic/sensor-registry
+    newName: 520646131316.dkr.ecr.ap-south-1.amazonaws.com/smarttraffic-phase8/sensor-registry
+    digest: sha256:85a2e8663660a820737f4ca61bc392728d71e6d5bc0017dd180b5df9674bfb2d
+  - name: smarttraffic/traffic-ingestion
+    newName: 520646131316.dkr.ecr.ap-south-1.amazonaws.com/smarttraffic-phase8/traffic-ingestion
+    digest: sha256:828114929c18cb84f73f8e888a8155a42c062d18f27bfb064caa66cdcab866f9
+  - name: smarttraffic/event-publisher
+    newName: 520646131316.dkr.ecr.ap-south-1.amazonaws.com/smarttraffic-phase8/event-publisher
+    digest: sha256:c2fb781ec3ead19ea90ea0b170b313d1d6f243f8f165fc90d2e1579548e7b971
+  - name: smarttraffic/signal-recommendation
+    newName: 520646131316.dkr.ecr.ap-south-1.amazonaws.com/smarttraffic-phase8/signal-recommendation
+    digest: sha256:d062cf5457acf0969d492628f9c2925249640f305df4b90e613d9efa339c15c6
+  - name: smarttraffic/incident-manager
+    newName: 520646131316.dkr.ecr.ap-south-1.amazonaws.com/smarttraffic-phase8/incident-manager
+    digest: sha256:bc935a6e86228da4e3d2bdcac502cef92efe222f804060d13bbc74b5c8d44ea9
+  - name: smarttraffic/traffic-analytics
+    newName: 520646131316.dkr.ecr.ap-south-1.amazonaws.com/smarttraffic-phase8/traffic-analytics
+    digest: sha256:7901117f2d8eb9e06045551e4af371e72b1a115e08de0f05f8a8d18502d752be

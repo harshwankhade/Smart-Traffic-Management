@@ -31,6 +31,7 @@ def main() -> None:
     parser.add_argument("--repositories-json", required=True,
                         help="JSON object from `terraform output -json ecr_repositories`.")
     parser.add_argument("--tag", default="phase8-run", help="Immutable tag to push once per run.")
+    parser.add_argument("--docker-config", help="Isolated Docker config directory for a short-lived registry login.")
     args = parser.parse_args()
     repositories = json.loads(Path(args.repositories_json).read_text(encoding="utf-8"))
     if set(repositories) != set(SERVICES):
@@ -39,21 +40,39 @@ def main() -> None:
     session = boto3.Session(profile_name=os.environ.get("AWS_PROFILE"), region_name=region)
     token = session.client("ecr").get_authorization_token()["authorizationData"][0]
     username, password = base64.b64decode(token["authorizationToken"]).decode().split(":", 1)
+    if username != "AWS":
+        raise RuntimeError("unexpected ECR authorization username")
     registry = token["proxyEndpoint"].removeprefix("https://")
-    subprocess.run(["docker", "login", "--username", username, "--password-stdin", registry],
-                   input=password, text=True, check=True)
+    docker = ["docker"]
+    if args.docker_config:
+        config_directory = Path(args.docker_config)
+        config_directory.mkdir(parents=True, exist_ok=True)
+        # Avoid a workstation-wide credential helper; this temporary inline
+        # ECR authorization expires and is never written into the repository.
+        (config_directory / "config.json").write_text(
+            json.dumps({"auths": {registry: {"auth": token["authorizationToken"]}}}) + "\n",
+            encoding="utf-8")
+        docker.extend(["--config", str(config_directory)])
+    else:
+        subprocess.run([*docker, "login", "--username", username, "--password-stdin", registry],
+                       input=password, text=True, check=True)
     images = []
     ecr = session.client("ecr")
     for service in SERVICES:
-        local = f"smarttraffic/{service}:{args.tag}"
-        remote = f"{repositories[service]}:{args.tag}"
-        run("docker", "build", "-f", "infrastructure/container/Dockerfile",
-            "--build-arg", f"SERVICE_DIR=services/{service}", "-t", local, ".")
-        run("docker", "tag", local, remote)
-        run("docker", "push", remote)
         repository_name = repositories[service].split("/", 1)[1]
-        digest = ecr.describe_images(repositoryName=repository_name,
-                                     imageIds=[{"imageTag": args.tag}])["imageDetails"][0]["imageDigest"]
+        try:
+            digest = ecr.describe_images(repositoryName=repository_name,
+                                         imageIds=[{"imageTag": args.tag}])["imageDetails"][0]["imageDigest"]
+            print(f"Reusing existing immutable image {service}@{digest}")
+        except ecr.exceptions.ImageNotFoundException:
+            local = f"smarttraffic/{service}:{args.tag}"
+            remote = f"{repositories[service]}:{args.tag}"
+            run(*docker, "build", "-f", "infrastructure/container/Dockerfile",
+                "--build-arg", f"SERVICE_DIR=services/{service}", "-t", local, ".")
+            run(*docker, "tag", local, remote)
+            run(*docker, "push", remote)
+            digest = ecr.describe_images(repositoryName=repository_name,
+                                         imageIds=[{"imageTag": args.tag}])["imageDetails"][0]["imageDigest"]
         images.append((f"smarttraffic/{service}", repositories[service], digest))
     document = KUSTOMIZATION.read_text(encoding="utf-8").rstrip() + "\n"
     marker = "\nimages:\n"
