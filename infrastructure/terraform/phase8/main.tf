@@ -16,8 +16,8 @@ locals {
     "traffic-analytics"     = module.derived.traffic_analytics_policy_arn
     "incident-manager"      = module.alerts.incident_manager_send_policy_arn
   }
-  public   = { for i, az in var.availability_zones : az => cidrsubnet("10.80.0.0/16", 8, i) }
-  private  = { for i, az in var.availability_zones : az => cidrsubnet("10.80.0.0/16", 8, i + 10) }
+  public  = { for i, az in var.availability_zones : az => cidrsubnet("10.80.0.0/16", 8, i) }
+  private = { for i, az in var.availability_zones : az => cidrsubnet("10.80.0.0/16", 8, i + 10) }
 }
 
 resource "aws_vpc" "main" {
@@ -43,7 +43,7 @@ resource "aws_subnet" "private" {
   vpc_id            = aws_vpc.main.id
   availability_zone = each.key
   cidr_block        = each.value
-  tags              = merge(local.tags, { "kubernetes.io/role/internal-elb" = "1" })
+  tags              = merge(local.tags, { "kubernetes.io/role/internal-elb" = "1", "for-use-with-amazon-emr-managed-policies" = "true" })
 }
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
@@ -67,7 +67,7 @@ resource "aws_nat_gateway" "main" {
   allocation_id = aws_eip.nat.id
   subnet_id     = values(aws_subnet.public)[0].id
   tags          = local.tags
-  depends_on    = [aws_internet_gateway.main]
+  depends_on    = [aws_route.public_internet, aws_route_table_association.public]
 }
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
@@ -128,7 +128,8 @@ resource "aws_eks_node_group" "main" {
     min_size     = 2
     max_size     = 3
   }
-  depends_on = [aws_iam_role_policy_attachment.eks_nodes]
+  # Private nodes need working egress during bootstrap, including ECR and STS.
+  depends_on = [aws_iam_role_policy_attachment.eks_nodes, aws_route.private_nat, aws_route_table_association.private]
 }
 resource "aws_ecr_repository" "services" {
   for_each             = local.services
@@ -222,7 +223,7 @@ resource "aws_secretsmanager_secret" "runtime_config" {
 resource "aws_secretsmanager_secret_version" "runtime_config" {
   secret_id = aws_secretsmanager_secret.runtime_config.id
   secret_string = jsonencode({
-    SENSOR_REGISTRY_DATABASE_SECRET_ARN = aws_db_instance.main.master_user_secret[0].secret_arn
+    SENSOR_REGISTRY_DATABASE_SECRET_ARN  = aws_db_instance.main.master_user_secret[0].secret_arn
     INCIDENT_MANAGER_DATABASE_SECRET_ARN = aws_db_instance.main.master_user_secret[0].secret_arn
     KAFKA_BOOTSTRAP_SERVERS              = module.streaming.kafka_bootstrap_servers
     ARCHIVE_BUCKET                       = module.streaming.archive_bucket
@@ -233,7 +234,7 @@ resource "aws_secretsmanager_secret_version" "runtime_config" {
 }
 
 resource "aws_iam_role" "workloads" {
-  for_each    = local.services
+  for_each = local.services
   # IAM role name_prefix is limited to 38 characters; service names are enough
   # to distinguish these run-scoped workload identities.
   name_prefix = "p8-${each.key}-"
@@ -253,7 +254,7 @@ resource "aws_iam_role_policy" "workload_database_secret" {
   for_each = toset(["sensor-registry", "incident-manager"])
   role     = aws_iam_role.workloads[each.key].name
   policy = jsonencode({ Version = "2012-10-17", Statement = [{
-    Effect = "Allow", Action = ["secretsmanager:GetSecretValue"],
+    Effect   = "Allow", Action = ["secretsmanager:GetSecretValue"],
     Resource = aws_db_instance.main.master_user_secret[0].secret_arn
   }] })
 }
@@ -265,17 +266,13 @@ resource "aws_eks_pod_identity_association" "workloads" {
   role_arn        = aws_iam_role.workloads[each.key].arn
   depends_on      = [aws_eks_addon.pod_identity]
 }
-data "http" "aws_load_balancer_controller_policy" {
-  # Pinned upstream policy recommended by the EKS controller installation guide.
-  url                = "https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.14.1/docs/install/iam_policy.json"
-  request_timeout_ms = 30000
-}
 
 resource "aws_iam_policy" "aws_load_balancer_controller" {
   name_prefix = "${var.project_name}-aws-lbc-"
-  policy      = data.http.aws_load_balancer_controller_policy.response_body
-  tags        = local.tags
-  depends_on  = [terraform_data.deployment_guard]
+  # Vendored verbatim from controller v2.14.1; SHA-256 16f232c9d9f79366fe949c4550ad517a202380058a9e48d45a4e215044a20a6a.
+  policy     = file("${path.module}/aws-load-balancer-controller-v2.14.1-iam-policy.json")
+  tags       = local.tags
+  depends_on = [terraform_data.deployment_guard]
 }
 
 resource "aws_iam_role" "aws_load_balancer_controller" {
@@ -391,7 +388,7 @@ resource "aws_iam_role" "external_secrets" {
 resource "aws_iam_role_policy" "external_secrets" {
   role = aws_iam_role.external_secrets.name
   policy = jsonencode({ Version = "2012-10-17", Statement = [{
-    Effect = "Allow", Action = ["secretsmanager:GetSecretValue"],
+    Effect   = "Allow", Action = ["secretsmanager:GetSecretValue"],
     Resource = aws_secretsmanager_secret.runtime_config.arn
   }] })
 }
@@ -412,7 +409,7 @@ resource "helm_release" "external_secrets" {
   atomic           = true
   wait             = true
   values = [yamlencode({
-    installCRDs = true
+    installCRDs    = true
     serviceAccount = { create = true, name = "external-secrets" }
   })]
   depends_on = [aws_eks_pod_identity_association.external_secrets]
