@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - runtime-config.yaml
+  - runtime-secrets.yaml
   - network-policy.yaml
   - zookeeper.yaml
   - sensor-registry.yaml

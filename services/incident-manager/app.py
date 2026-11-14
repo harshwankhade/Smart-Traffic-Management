@@ -23,7 +23,7 @@ def create_app(database_url=None, registry_url=None, registry_transport=None, al
     @asynccontextmanager
     async def lifespan(app):
         try:
-            database.initialize()
+            database.initialize(create_tables=os.getenv("CREATE_DATABASE_SCHEMA") == "1")
             app.state.outbox_worker = None
             sender = alert_sender or (SqsAlertSender() if os.getenv("PHASE6_ALERTS_ENABLED") == "1" else None)
             if sender is not None:

@@ -32,9 +32,11 @@ def main() -> None:
                 raise RuntimeError(f"rendered manifests lack {required!r}")
     if "kind: StatefulSet" not in rendered or "name: smarttraffic-zookeeper" not in rendered:
         raise RuntimeError("ZooKeeper GitOps Application is absent")
-    if "REPLACE_WITH_ACM_CERTIFICATE_ARN" not in rendered or "REPLACE_WITH_PUBLIC_DNS_NAME" not in rendered:
-        raise RuntimeError("public ingress placeholders were unexpectedly removed")
-    print("PASS GitOps manifests rendered; root ownership, all six services, ZooKeeper and deliberate deployment placeholders were verified locally.")
+    for required in ("api.smarttrafficmgmt.online", "external-secrets.io/v1",
+                     "smarttraffic-runtime-values", "be73c68e-0709-409e-b7b8-de4121081b6c"):
+        if required not in rendered:
+            raise RuntimeError(f"rendered manifests lack deployment input {required!r}")
+    print("PASS GitOps manifests rendered; root ownership, six services, ZooKeeper, HTTPS ingress, and External Secrets references were verified locally.")
 
 
 if __name__ == "__main__":

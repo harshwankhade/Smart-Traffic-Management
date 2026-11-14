@@ -13,10 +13,13 @@ The six workloads use private DNS. Traffic Ingestion resolves Registry and the
 elected Event Publisher via ZooKeeper; Event Publisher is a two-replica StatefulSet
 with per-pod gRPC addresses. Readiness probes use dependency-aware `/readyz` where
 the service provides one; basic APIs use `/healthz`. The public Ingress exposes
-only documented REST paths. Its public DNS name, ACM ARN, per-service image digests,
-service-account IAM associations, private runtime identifiers and externally managed
-Secrets remain explicit deployment inputs. They are deliberate placeholders, not
-credentials or values to apply unchanged.
+only documented REST paths. Its public DNS name and ACM ARN are now the approved
+`api.smarttrafficmgmt.online` and regional certificate. Terraform creates scoped
+Pod Identity associations for every workload and External Secrets; the Git-tracked
+ExternalSecret retrieves only a runtime-reference record, while Registry and
+Incident Manager read the RDS-generated password through their own identities.
+No credential is committed. Before Argo's first sync, the staged ECR publisher
+writes the six immutable image digests into Kustomize.
 
 `scripts/phase8_acceptance.py` defaults to a static, cloud-run-locked workflow.
 After separate authorization, `--cloud-run --allow-cloud-run` requires the public
@@ -38,13 +41,13 @@ the same load-balancing resources. Terraform also bootstraps ExternalDNS with a
 separate Pod Identity role limited to the approved Route 53 hosted zone; it creates
 the Ingress hostname alias after the controller publishes the ALB address.
 
-Checks run on 2026-11-13: `kubectl kustomize deploy/gitops/apps` rendered locally;
+Checks run on 2026-11-14: `kubectl kustomize deploy/gitops/apps` rendered locally;
 `scripts/phase8_gitops_check.py` verified root ownership, all six service manifests,
-ZooKeeper and intentional deployment placeholders; `scripts/phase8_acceptance.py`
-confirmed the cloud-run safety lock and required inputs. No Kubernetes cluster, AWS
-resource, Terraform apply or cloud demo was run. Terraform `init -backend=false`,
-formatting and `validate` passed after adding the controller and ExternalDNS
-configuration; the two Python scripts also compiled successfully.
+ZooKeeper, HTTPS ingress and External Secrets references. Terraform formatting and
+`validate` passed; the Phase 2 database regression tests passed. No Kubernetes
+cluster, AWS resource, Terraform apply or cloud demo was run.
 
-Before a separately authorized run, replace the DNS, certificate, image and secret
-placeholders. ExternalDNS, not a manual console change, creates the Route 53 alias.
+Before a separately authorized run, create only the ECR repositories from the
+reviewed state, run `scripts/phase8_publish_images.py`, commit/push the generated
+digest pins, then apply the remaining reviewed root. ExternalDNS, not a manual
+console change, creates the Route 53 alias.

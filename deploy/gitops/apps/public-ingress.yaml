@@ -8,12 +8,12 @@ metadata:
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/load-balancer-attributes: routing.http.drop_invalid_header_fields.enabled=true
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
-    alb.ingress.kubernetes.io/certificate-arn: REPLACE_WITH_ACM_CERTIFICATE_ARN
-    external-dns.alpha.kubernetes.io/hostname: REPLACE_WITH_PUBLIC_DNS_NAME
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:520646131316:certificate/be73c68e-0709-409e-b7b8-de4121081b6c
+    external-dns.alpha.kubernetes.io/hostname: api.smarttrafficmgmt.online
 spec:
   ingressClassName: alb
   rules:
-    - host: REPLACE_WITH_PUBLIC_DNS_NAME
+    - host: api.smarttrafficmgmt.online
       http:
         paths:
           - {path: /readings, pathType: Prefix, backend: {service: {name: traffic-ingestion, port: {name: http}}}}

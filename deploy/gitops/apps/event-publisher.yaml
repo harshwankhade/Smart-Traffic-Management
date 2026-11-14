@@ -45,7 +45,7 @@ spec:
             - {name: PUBLISHER_ADVERTISED_HTTP_URL, value: "http://$(POD_NAME).event-publisher.smarttraffic.svc.cluster.local:8000"}
           envFrom:
             - configMapRef: {name: smarttraffic-runtime}
-            - secretRef: {name: event-publisher-runtime}
+            - secretRef: {name: smarttraffic-runtime-values}
           livenessProbe: {httpGet: {path: /healthz, port: http}, initialDelaySeconds: 10}
           readinessProbe: {httpGet: {path: /readyz, port: http}, initialDelaySeconds: 15}
           resources: {requests: {cpu: 200m, memory: 256Mi}, limits: {cpu: 1, memory: 512Mi}}

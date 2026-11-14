@@ -12,13 +12,16 @@ Application during an explicitly authorized Phase 8 run. It must not manage
 anything under `apps/`. The root Application creates the namespace, and Argo CD
 reconciles all child objects.
 
-Before an authorized sync, replace each `smarttraffic/<service>:phase8-local`
-image with the immutable digest pushed to the matching run-scoped ECR repository,
-and create the externally managed per-service runtime Secrets: `sensor-registry-runtime`,
-`incident-manager-runtime`, `event-publisher-runtime`, `signal-recommendation-runtime`,
-and `traffic-analytics-runtime`. They provide only the relevant database URL,
-broker/bucket/table/queue identifiers, never static AWS credentials. The Secrets
-and per-workload IAM identities are deployment inputs, not Git content.
+Before an authorized sync, create the six ECR repositories in the reviewed,
+ECR-only Terraform stage, then run `scripts/phase8_publish_images.py` to build,
+push, and write immutable digest pins into `apps/kustomization.yaml`. Commit and
+push that revision before the Argo CD root Application is installed.
+
+Terraform stores only resource identifiers and RDS secret ARNs in the named
+Secrets Manager runtime-reference record. External Secrets materializes those
+values as `smarttraffic-runtime-values`; the Registry and Incident Manager use
+their scoped Pod Identity roles to retrieve the generated RDS password directly.
+No password, static AWS credential, or runtime Secret is committed to Git.
 
 Render and statically verify manifests without a cluster:
 

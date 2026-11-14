@@ -1,4 +1,5 @@
 """Registry API; all domain writes belong to the Registry schema."""
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI, HTTPException
@@ -18,7 +19,7 @@ def create_app(database_url=None):
     @asynccontextmanager
     async def lifespan(app):
         try:
-            database.initialize()
+            database.initialize(create_tables=os.getenv("CREATE_DATABASE_SCHEMA") == "1")
             yield
         finally:
             database.engine.dispose()

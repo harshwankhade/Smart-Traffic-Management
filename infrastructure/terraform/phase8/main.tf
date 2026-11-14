@@ -10,6 +10,12 @@ resource "terraform_data" "deployment_guard" {
 locals {
   tags     = { Project = "SmartTraffic", Phase = "8", ManagedBy = "Terraform" }
   services = toset(["sensor-registry", "traffic-ingestion", "event-publisher", "signal-recommendation", "incident-manager", "traffic-analytics"])
+  workload_policy_arns = {
+    "event-publisher"       = module.streaming.publisher_policy_arn
+    "signal-recommendation" = module.derived.signal_recommendation_policy_arn
+    "traffic-analytics"     = module.derived.traffic_analytics_policy_arn
+    "incident-manager"      = module.alerts.incident_manager_send_policy_arn
+  }
   public   = { for i, az in var.availability_zones : az => cidrsubnet("10.80.0.0/16", 8, i) }
   private  = { for i, az in var.availability_zones : az => cidrsubnet("10.80.0.0/16", 8, i + 10) }
 }
@@ -173,6 +179,20 @@ resource "aws_db_subnet_group" "main" {
   tags        = local.tags
   depends_on  = [terraform_data.deployment_guard]
 }
+resource "aws_security_group" "rds" {
+  name_prefix = "${var.project_name}-rds-"
+  description = "PostgreSQL ingress only from the EKS cluster security group"
+  vpc_id      = aws_vpc.main.id
+  tags        = local.tags
+  depends_on  = [terraform_data.deployment_guard]
+}
+resource "aws_vpc_security_group_ingress_rule" "rds_from_eks" {
+  security_group_id            = aws_security_group.rds.id
+  referenced_security_group_id = aws_eks_cluster.main.vpc_config[0].cluster_security_group_id
+  ip_protocol                  = "tcp"
+  from_port                    = 5432
+  to_port                      = 5432
+}
 resource "aws_db_instance" "main" {
   identifier                  = "${var.project_name}-postgres"
   engine                      = "postgres"
@@ -184,10 +204,66 @@ resource "aws_db_instance" "main" {
   manage_master_user_password = true
   storage_encrypted           = true
   publicly_accessible         = false
+  vpc_security_group_ids      = [aws_security_group.rds.id]
   skip_final_snapshot         = true
   db_subnet_group_name        = aws_db_subnet_group.main.name
   tags                        = local.tags
   depends_on                  = [terraform_data.deployment_guard]
+}
+
+# This value contains resource identifiers and the generated RDS-secret ARN,
+# never the RDS password. External Secrets exposes it only inside the cluster.
+resource "aws_secretsmanager_secret" "runtime_config" {
+  name                    = "${var.project_name}-runtime-config"
+  recovery_window_in_days = 0
+  tags                    = local.tags
+  depends_on              = [terraform_data.deployment_guard]
+}
+resource "aws_secretsmanager_secret_version" "runtime_config" {
+  secret_id = aws_secretsmanager_secret.runtime_config.id
+  secret_string = jsonencode({
+    SENSOR_REGISTRY_DATABASE_SECRET_ARN = aws_db_instance.main.master_user_secret[0].secret_arn
+    INCIDENT_MANAGER_DATABASE_SECRET_ARN = aws_db_instance.main.master_user_secret[0].secret_arn
+    KAFKA_BOOTSTRAP_SERVERS              = module.streaming.kafka_bootstrap_servers
+    ARCHIVE_BUCKET                       = module.streaming.archive_bucket
+    RECOMMENDATIONS_TABLE                = module.derived.recommendations_table
+    SUMMARIES_TABLE                      = module.derived.summaries_table
+    ALERT_QUEUE_URL                      = module.alerts.alert_queue_url
+  })
+}
+
+resource "aws_iam_role" "workloads" {
+  for_each    = local.services
+  # IAM role name_prefix is limited to 38 characters; service names are enough
+  # to distinguish these run-scoped workload identities.
+  name_prefix = "p8-${each.key}-"
+  assume_role_policy = jsonencode({ Version = "2012-10-17", Statement = [{
+    Effect = "Allow", Principal = { Service = "pods.eks.amazonaws.com" },
+    Action = ["sts:AssumeRole", "sts:TagSession"]
+  }] })
+  tags       = local.tags
+  depends_on = [terraform_data.deployment_guard]
+}
+resource "aws_iam_role_policy_attachment" "workload_service" {
+  for_each   = local.workload_policy_arns
+  role       = aws_iam_role.workloads[each.key].name
+  policy_arn = each.value
+}
+resource "aws_iam_role_policy" "workload_database_secret" {
+  for_each = toset(["sensor-registry", "incident-manager"])
+  role     = aws_iam_role.workloads[each.key].name
+  policy = jsonencode({ Version = "2012-10-17", Statement = [{
+    Effect = "Allow", Action = ["secretsmanager:GetSecretValue"],
+    Resource = aws_db_instance.main.master_user_secret[0].secret_arn
+  }] })
+}
+resource "aws_eks_pod_identity_association" "workloads" {
+  for_each        = local.services
+  cluster_name    = aws_eks_cluster.main.name
+  namespace       = "smarttraffic"
+  service_account = each.key
+  role_arn        = aws_iam_role.workloads[each.key].arn
+  depends_on      = [aws_eks_addon.pod_identity]
 }
 data "http" "aws_load_balancer_controller_policy" {
   # Pinned upstream policy recommended by the EKS controller installation guide.
@@ -298,6 +374,48 @@ resource "helm_release" "external_dns" {
   })]
   depends_on = [aws_eks_pod_identity_association.external_dns]
 }
+
+# External Secrets is the only workload that may read the runtime-reference
+# secret. Database passwords stay in the RDS-managed secret and are read only
+# by the two database-owning service identities.
+resource "aws_iam_role" "external_secrets" {
+  name_prefix = "${var.project_name}-external-secrets-"
+  assume_role_policy = jsonencode({ Version = "2012-10-17", Statement = [{
+    Effect = "Allow", Principal = { Service = "pods.eks.amazonaws.com" },
+    Action = ["sts:AssumeRole", "sts:TagSession"]
+  }] })
+  tags       = local.tags
+  depends_on = [terraform_data.deployment_guard]
+}
+resource "aws_iam_role_policy" "external_secrets" {
+  role = aws_iam_role.external_secrets.name
+  policy = jsonencode({ Version = "2012-10-17", Statement = [{
+    Effect = "Allow", Action = ["secretsmanager:GetSecretValue"],
+    Resource = aws_secretsmanager_secret.runtime_config.arn
+  }] })
+}
+resource "aws_eks_pod_identity_association" "external_secrets" {
+  cluster_name    = aws_eks_cluster.main.name
+  namespace       = "external-secrets"
+  service_account = "external-secrets"
+  role_arn        = aws_iam_role.external_secrets.arn
+  depends_on      = [aws_eks_addon.pod_identity, aws_iam_role_policy.external_secrets]
+}
+resource "helm_release" "external_secrets" {
+  name             = "external-secrets"
+  repository       = "https://charts.external-secrets.io"
+  chart            = "external-secrets"
+  namespace        = "external-secrets"
+  create_namespace = true
+  version          = "0.20.4"
+  atomic           = true
+  wait             = true
+  values = [yamlencode({
+    installCRDs = true
+    serviceAccount = { create = true, name = "external-secrets" }
+  })]
+  depends_on = [aws_eks_pod_identity_association.external_secrets]
+}
 resource "helm_release" "argocd" {
   name             = "argocd"
   repository       = "https://argoproj.github.io/argo-helm"
@@ -307,7 +425,7 @@ resource "helm_release" "argocd" {
   version          = "7.8.26"
   atomic           = true
   wait             = true
-  depends_on       = [helm_release.aws_load_balancer_controller, helm_release.external_dns]
+  depends_on       = [helm_release.aws_load_balancer_controller, helm_release.external_dns, helm_release.external_secrets]
 }
 
 # Terraform seeds only Argo CD's root Application. Argo then reconciles every
