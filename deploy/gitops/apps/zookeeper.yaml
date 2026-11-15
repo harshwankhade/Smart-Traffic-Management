@@ -1,30 +1,84 @@
-apiVersion: argoproj.io/v1alpha1
-kind: Application
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
 metadata:
-  name: smarttraffic-zookeeper
-  namespace: argocd
+  name: smarttraffic-gp3
+provisioner: ebs.csi.aws.com
+parameters: {type: gp3}
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer
+---
+apiVersion: v1
+kind: Service
+metadata: {name: zookeeper-headless, namespace: smarttraffic}
 spec:
-  project: default
-  source:
-    repoURL: https://charts.bitnami.com/bitnami
-    chart: zookeeper
-    targetRevision: 13.8.6
-    helm:
-      releaseName: zookeeper
-      values: |
-        replicaCount: 3
-        auth:
-          client:
-            enabled: false
-        persistence:
-          enabled: true
-          size: 4Gi
-        service:
+  clusterIP: None
+  publishNotReadyAddresses: true
+  selector: {app: zookeeper}
+  ports:
+    - {name: client, port: 2181}
+    - {name: follower, port: 2888}
+    - {name: election, port: 3888}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: zookeeper, namespace: smarttraffic}
+spec:
+  selector: {app: zookeeper}
+  ports:
+    - {name: client, port: 2181}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata: {name: zookeeper, namespace: smarttraffic}
+spec:
+  serviceName: zookeeper-headless
+  replicas: 3
+  podManagementPolicy: Parallel
+  selector:
+    matchLabels: {app: zookeeper}
+  template:
+    metadata:
+      labels: {app: zookeeper}
+    spec:
+      containers:
+        - name: zookeeper
+          image: docker.io/library/zookeeper:3.9.7
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+            - -ec
+            - |
+              export ZOO_MY_ID=$(( ${HOSTNAME##*-} + 1 ))
+              exec /docker-entrypoint.sh zkServer.sh start-foreground
+          env:
+            - name: ZOO_SERVERS
+              value: >-
+                server.1=zookeeper-0.zookeeper-headless.smarttraffic.svc.cluster.local:2888:3888;2181
+                server.2=zookeeper-1.zookeeper-headless.smarttraffic.svc.cluster.local:2888:3888;2181
+                server.3=zookeeper-2.zookeeper-headless.smarttraffic.svc.cluster.local:2888:3888;2181
+            - {name: ZOO_STANDALONE_ENABLED, value: "false"}
+            - {name: ZOO_4LW_COMMANDS_WHITELIST, value: "ruok,srvr,mntr"}
           ports:
-            client: 2181
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: smarttraffic
-  syncPolicy:
-    automated: {prune: true, selfHeal: true}
-    syncOptions: [CreateNamespace=true]
+            - {name: client, containerPort: 2181}
+            - {name: follower, containerPort: 2888}
+            - {name: election, containerPort: 3888}
+          readinessProbe:
+            tcpSocket: {port: client}
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          resources:
+            requests: {cpu: 100m, memory: 256Mi}
+            limits: {memory: 768Mi}
+          volumeMounts:
+            - {name: data, mountPath: /data}
+            - {name: datalog, mountPath: /datalog}
+      volumes:
+        - name: datalog
+          emptyDir: {}
+  volumeClaimTemplates:
+    - metadata: {name: data}
+      spec:
+        accessModes: [ReadWriteOnce]
+        storageClassName: smarttraffic-gp3
+        resources:
+          requests: {storage: 4Gi}

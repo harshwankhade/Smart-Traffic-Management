@@ -226,6 +226,7 @@ resource "aws_secretsmanager_secret_version" "runtime_config" {
   secret_string = jsonencode({
     SENSOR_REGISTRY_DATABASE_SECRET_ARN  = aws_db_instance.main.master_user_secret[0].secret_arn
     INCIDENT_MANAGER_DATABASE_SECRET_ARN = aws_db_instance.main.master_user_secret[0].secret_arn
+    SMARTTRAFFIC_RDS_HOST                = aws_db_instance.main.address
     KAFKA_BOOTSTRAP_SERVERS              = module.streaming.kafka_bootstrap_servers
     ARCHIVE_BUCKET                       = module.streaming.archive_bucket
     RECOMMENDATIONS_TABLE                = module.derived.recommendations_table
@@ -300,6 +301,32 @@ resource "aws_eks_addon" "pod_identity" {
   addon_name                  = "eks-pod-identity-agent"
   resolve_conflicts_on_create = "OVERWRITE"
   depends_on                  = [aws_eks_node_group.main]
+}
+
+resource "aws_iam_role" "ebs_csi" {
+  name_prefix = "${var.project_name}-ebs-csi-"
+  assume_role_policy = jsonencode({ Version = "2012-10-17", Statement = [{
+    Effect = "Allow", Principal = { Service = "pods.eks.amazonaws.com" },
+    Action = ["sts:AssumeRole", "sts:TagSession"]
+  }] })
+  tags = local.tags
+}
+resource "aws_iam_role_policy_attachment" "ebs_csi" {
+  role       = aws_iam_role.ebs_csi.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+}
+resource "aws_eks_pod_identity_association" "ebs_csi" {
+  cluster_name    = aws_eks_cluster.main.name
+  namespace       = "kube-system"
+  service_account = "ebs-csi-controller-sa"
+  role_arn        = aws_iam_role.ebs_csi.arn
+  depends_on      = [aws_eks_addon.pod_identity, aws_iam_role_policy_attachment.ebs_csi]
+}
+resource "aws_eks_addon" "ebs_csi" {
+  cluster_name                = aws_eks_cluster.main.name
+  addon_name                  = "aws-ebs-csi-driver"
+  resolve_conflicts_on_create = "OVERWRITE"
+  depends_on                  = [aws_eks_pod_identity_association.ebs_csi]
 }
 
 resource "aws_eks_pod_identity_association" "aws_load_balancer_controller" {
@@ -432,7 +459,7 @@ resource "helm_release" "argocd" {
 resource "helm_release" "argocd_root_application" {
   name       = "smarttraffic-root"
   repository = "https://argoproj.github.io/argo-helm"
-  chart      = "argocd-applications"
+  chart      = "argocd-apps"
   namespace  = "argocd"
   version    = "1.4.1"
   atomic     = true

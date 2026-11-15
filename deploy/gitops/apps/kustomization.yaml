@@ -16,19 +16,19 @@ resources:
 images:
   - name: smarttraffic/sensor-registry
     newName: 520646131316.dkr.ecr.ap-south-1.amazonaws.com/smarttraffic-phase8/sensor-registry
-    digest: sha256:21d574488230a38409f1a94d6eece9cb67061b7d3020a4bf5e7e5a49923659cf
+    digest: sha256:c78393995be00fa313ad79756193abf62367f6452c4af413a5cdb2a2fec4bcde
   - name: smarttraffic/traffic-ingestion
     newName: 520646131316.dkr.ecr.ap-south-1.amazonaws.com/smarttraffic-phase8/traffic-ingestion
-    digest: sha256:4b8aa54631d268b16b7e3baa6af75cb564382d2038d293340d46d8a84555a383
+    digest: sha256:19f0e6fff2d7bf03e180d33fd1e0e26aaed7018a1c9bc4a9475b2c1e7f5a0f28
   - name: smarttraffic/event-publisher
     newName: 520646131316.dkr.ecr.ap-south-1.amazonaws.com/smarttraffic-phase8/event-publisher
-    digest: sha256:eb672592e6a49199c9b62d50944bdad12f66a0a5d626f932a0614bb97c1102df
+    digest: sha256:846682867ea448417c74aa517767092ca4ed49963ab3afe676ebff28cd69ca64
   - name: smarttraffic/signal-recommendation
     newName: 520646131316.dkr.ecr.ap-south-1.amazonaws.com/smarttraffic-phase8/signal-recommendation
-    digest: sha256:939879e120b942952e24e2a57e48d69cee0e4ccf483901644b48d41cd70c3e3a
+    digest: sha256:14f26d6944dcffb0e4366bedc5a395dde5c3185825034bbb51263db5f06639d2
   - name: smarttraffic/incident-manager
     newName: 520646131316.dkr.ecr.ap-south-1.amazonaws.com/smarttraffic-phase8/incident-manager
-    digest: sha256:8a115e2483ada52117fee4ffabfc36cba30b2f334079b19223b4fbf7eb55b688
+    digest: sha256:7f64b1ee1464b4cc552d84641d147aa16b94b014ac12a5510adf1466a38c085b
   - name: smarttraffic/traffic-analytics
     newName: 520646131316.dkr.ecr.ap-south-1.amazonaws.com/smarttraffic-phase8/traffic-analytics
-    digest: sha256:185f3a6a70dae8ac4212f1d86425acd4b4e3fcfcaa5224793e02b704eccabda0
+    digest: sha256:258ada363848e51b838ccabb1d3b3152448bf5259dfab42283fd2e7c0c3b1f2a

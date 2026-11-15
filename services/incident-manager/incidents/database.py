@@ -48,7 +48,7 @@ class Database:
             SecretId=arn)["SecretString"]
         credential = json.loads(value)
         return (f"postgresql+psycopg://{quote_plus(credential['username'])}:"
-                f"{quote_plus(credential['password'])}@{credential['host']}:"
+                f"{quote_plus(credential['password'])}@{credential.get('host') or os.environ['SMARTTRAFFIC_RDS_HOST']}:"
                 f"{credential.get('port', 5432)}/smarttraffic")
 
     def initialize(self, create_tables=False):

@@ -158,6 +158,8 @@ resource "aws_vpc_endpoint" "s3" {
     Statement = [
       { Effect = "Allow", Principal = "*", Action = ["s3:GetObject", "s3:GetObjectVersion", "s3:PutObject", "s3:ListBucket", "s3:AbortMultipartUpload"], Resource = [aws_s3_bucket.archive.arn, "${aws_s3_bucket.archive.arn}/*"] },
       { Effect = "Allow", Principal = "*", Action = ["s3:GetObject"], Resource = ["arn:aws:s3:::al2023-repos-ap-south-1-de612dc2/*", "arn:aws:s3:::repo.ap-south-1.emr.amazonaws.com/*"] },
+      { Effect = "Allow", Principal = "*", Action = ["s3:GetObject"], Resource = "arn:aws:s3:::prod-ap-south-1-starport-layer-bucket/*" },
+      { Effect = "Allow", Principal = "*", Action = ["s3:GetObject"], Resource = "arn:aws:s3:::prod-registry-k8s-io-ap-south-1/*" },
       { Effect = "Allow", Principal = "*", Action = ["s3:PutObject"], Resource = "arn:aws:s3:::aws157-logs-prod-ap-south-1/*" }
     ]
   })
