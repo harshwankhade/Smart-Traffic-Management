@@ -57,6 +57,7 @@ class CoordinationTests(unittest.TestCase):
         first.start(); second.start()
         self.assertTrue(first.ready())
         self.assertFalse(second.ready())
+        self.assertTrue(second.connected())
         self.assertEqual(second.status()["leader"], False)
         first_node = first.status()["node"]
         first.stop()
@@ -74,10 +75,12 @@ class CoordinationTests(unittest.TestCase):
         election.start()
         election._on_state("SUSPENDED")
         self.assertFalse(election.ready())
+        self.assertFalse(election.connected())
         election.stop()
         legacy = SinglePublisher()
         legacy.start()
         self.assertTrue(legacy.ready())
+        self.assertTrue(legacy.connected())
         self.assertEqual(legacy.status()["enabled"], False)
 
     def test_follower_rejects_publication_before_archive_or_kafka(self):

@@ -191,6 +191,16 @@ class ZooKeeperElection:
         with self._lock:
             return self._connected and self._leader
 
+    def connected(self):
+        """Return whether this participant can observe and take part in election.
+
+        This deliberately differs from ``ready()``: only the elected leader may
+        publish, while a connected follower is healthy standby capacity and must
+        remain reachable for prompt takeover.
+        """
+        with self._lock:
+            return self._connected
+
     def _emit(self, event_type, leader):
         with self._lock:
             session_id = (self._node or "unknown").rsplit("/", 1)[-1]
@@ -213,6 +223,7 @@ class ZooKeeperElection:
         with self._lock:
             return {"enabled": True, "instance_id": self.instance_id, "node": self._node,
                     "leader": self._leader, "ready": self._connected and self._leader,
+                    "connected": self._connected,
                     "grpc_target": self.grpc_target, "http_url": self.http_url,
                     "metrics": dict(self._metrics)}
 
@@ -238,8 +249,11 @@ class SinglePublisher:
     def ready(self):
         return True
 
+    def connected(self):
+        return True
+
     def status(self):
-        return {"enabled": False, "leader": True, "ready": True}
+        return {"enabled": False, "leader": True, "ready": True, "connected": True}
 
     def stop(self):
         pass

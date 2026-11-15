@@ -183,7 +183,7 @@ resource "aws_iam_policy" "publisher" {
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
-      { Effect = "Allow", Action = ["kafka-cluster:Connect", "kafka-cluster:WriteDataIdempotently"], Resource = aws_msk_cluster.main.arn },
+      { Effect = "Allow", Action = ["kafka-cluster:Connect", "kafka-cluster:DescribeCluster", "kafka-cluster:WriteDataIdempotently"], Resource = aws_msk_cluster.main.arn },
       { Effect = "Allow", Action = ["kafka-cluster:DescribeTopic", "kafka-cluster:WriteData"], Resource = "${local.topic_arn}/traffic.raw" },
       { Effect = "Allow", Action = ["s3:GetObject", "s3:PutObject"], Resource = "${aws_s3_bucket.archive.arn}/normalized/v1/*" },
       { Effect = "Allow", Action = ["s3:ListBucket"], Resource = aws_s3_bucket.archive.arn }

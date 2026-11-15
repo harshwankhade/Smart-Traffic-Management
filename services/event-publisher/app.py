@@ -70,8 +70,10 @@ def create_app(archive=None, sink=None, coordination=None):
                 raise RuntimeError("Dependencies not configured")
             app.state.archive.ready()
             app.state.sink.ready()
-            if not app.state.coordination.ready():
-                raise RuntimeError("Not elected ZooKeeper leader")
+            # A connected follower is ready as failover capacity.  Publication
+            # itself still checks ``coordination.ready()`` and is leader-only.
+            if not app.state.coordination.connected():
+                raise RuntimeError("ZooKeeper participant unavailable")
             return {"status": "ready", "grpc_port": app.state.grpc_port,
                     "coordination": app.state.coordination.status()}
         except Exception:

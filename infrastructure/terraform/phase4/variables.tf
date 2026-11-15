@@ -29,3 +29,8 @@ variable "emr_instance_type" {
   default     = "m5.xlarge"
   description = "One primary and one core on-demand node for the temporary verification."
 }
+variable "emr_single_node" {
+  type        = bool
+  default     = false
+  description = "Run only the primary node when the account vCPU quota requires a single-node EMR cluster."
+}

@@ -250,12 +250,15 @@ resource "aws_emr_cluster" "congestion" {
     instance_type  = var.emr_instance_type
     instance_count = 1
   }
-  core_instance_group {
-    name           = "Core"
-    instance_type  = var.emr_instance_type
-    instance_count = 1
+  dynamic "core_instance_group" {
+    for_each = var.emr_single_node ? [] : [1]
+    content {
+      name           = "Core"
+      instance_type  = var.emr_instance_type
+      instance_count = 1
+    }
   }
-  auto_termination_policy { idle_timeout = 7200 }
+  auto_termination_policy { idle_timeout = 14400 }
   tags = merge(local.emr_tag, { Project = "SmartTraffic", Purpose = "Phase4TemporaryVerification" })
   depends_on = [
     aws_iam_role_policy_attachment.emr_service,

@@ -122,11 +122,11 @@ resource "aws_eks_node_group" "main" {
   node_group_name = "application"
   node_role_arn   = aws_iam_role.eks_nodes.arn
   subnet_ids      = values(aws_subnet.private)[*].id
-  instance_types  = ["t3.medium"]
+  instance_types  = ["t3.large"]
   scaling_config {
     desired_size = 2
     min_size     = 2
-    max_size     = 3
+    max_size     = 2
   }
   # Private nodes need working egress during bootstrap, including ECR and STS.
   depends_on = [aws_iam_role_policy_attachment.eks_nodes, aws_route.private_nat, aws_route_table_association.private]
@@ -154,6 +154,8 @@ module "processing" {
   source                  = "../phase4"
   deployment_approved     = var.deployment_approved
   project_name            = "${var.project_name}-emr"
+  emr_instance_type       = "m5.xlarge"
+  emr_single_node         = true
   vpc_id                  = aws_vpc.main.id
   private_subnet_ids      = values(aws_subnet.private)[*].id
   kafka_cluster_arn       = module.streaming.kafka_cluster_arn
@@ -260,6 +262,15 @@ resource "aws_iam_role_policy" "workload_database_secret" {
     Resource = aws_db_instance.main.master_user_secret[0].secret_arn
   }] })
 }
+resource "aws_iam_role_policy" "results_consumers" {
+  for_each = toset(["signal-recommendation", "traffic-analytics"])
+  role     = aws_iam_role.workloads[each.key].name
+  policy = jsonencode({ Version = "2012-10-17", Statement = [
+    { Effect = "Allow", Action = ["kafka-cluster:Connect", "kafka-cluster:DescribeCluster"], Resource = module.streaming.kafka_cluster_arn },
+    { Effect = "Allow", Action = ["kafka-cluster:DescribeTopic", "kafka-cluster:ReadData"], Resource = "${replace(module.streaming.kafka_cluster_arn, ":cluster/", ":topic/")}/traffic.results" },
+    { Effect = "Allow", Action = ["kafka-cluster:DescribeGroup", "kafka-cluster:AlterGroup"], Resource = "${replace(module.streaming.kafka_cluster_arn, ":cluster/", ":group/")}/${each.key}-v1" }
+  ] })
+}
 resource "aws_eks_pod_identity_association" "workloads" {
   for_each        = local.services
   cluster_name    = aws_eks_cluster.main.name
@@ -346,9 +357,10 @@ resource "helm_release" "aws_load_balancer_controller" {
   atomic     = true
   wait       = true
   values = [yamlencode({
-    clusterName = aws_eks_cluster.main.name
-    region      = var.aws_region
-    vpcId       = aws_vpc.main.id
+    clusterName  = aws_eks_cluster.main.name
+    region       = var.aws_region
+    vpcId        = aws_vpc.main.id
+    replicaCount = 1
     serviceAccount = {
       create = true
       name   = "aws-load-balancer-controller"
@@ -391,11 +403,14 @@ resource "helm_release" "external_dns" {
   atomic     = true
   wait       = true
   values = [yamlencode({
-    provider       = { name = "aws" }
-    policy         = "sync"
-    registry       = "txt"
-    txtOwnerId     = var.project_name
-    domainFilters  = [var.public_dns_name]
+    provider   = { name = "aws" }
+    policy     = "sync"
+    registry   = "txt"
+    txtOwnerId = var.project_name
+    # The AWS provider matches a hosted-zone name, not an individual record.
+    # `public_dns_name` is the approved one-label API host (api.<zone>), so
+    # remove that label while retaining a narrowly scoped zone filter.
+    domainFilters  = [join(".", slice(split(".", var.public_dns_name), 1, length(split(".", var.public_dns_name))))]
     serviceAccount = { create = true, name = "external-dns" }
   })]
   depends_on = [aws_eks_pod_identity_association.external_dns]
