@@ -254,6 +254,14 @@ resource "aws_iam_role_policy_attachment" "workload_service" {
   role       = aws_iam_role.workloads[each.key].name
   policy_arn = each.value
 }
+
+# High-congestion recommendations enqueue the same durable alert request as
+# Incident Manager.  Keep this permission separate and scoped to only the
+# Signal Recommendation workload and the Terraform-owned alerts queue.
+resource "aws_iam_role_policy_attachment" "signal_recommendation_alerts" {
+  role       = aws_iam_role.workloads["signal-recommendation"].name
+  policy_arn = module.alerts.signal_recommendation_send_policy_arn
+}
 resource "aws_iam_role_policy" "workload_database_secret" {
   for_each = toset(["sensor-registry", "incident-manager"])
   role     = aws_iam_role.workloads[each.key].name

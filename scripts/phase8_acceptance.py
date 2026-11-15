@@ -5,7 +5,7 @@ import argparse
 import json
 import os
 import time
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
 
@@ -40,7 +40,9 @@ def cloud_run() -> None:
 
     prefix = f"phase8-{uuid4().hex[:10]}"
     base = os.environ["PHASE8_PUBLIC_URL"].rstrip("/")
-    timestamp = datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+    observed_at = datetime.now(UTC).replace(second=0, microsecond=0)
+    timestamp = observed_at.isoformat().replace("+00:00", "Z")
+    advance_timestamp = (observed_at + timedelta(minutes=2)).isoformat().replace("+00:00", "Z")
     intersection = f"{prefix}-intersection"
     sensor = f"{prefix}-sensor"
     event = f"{prefix}-reading"
@@ -48,8 +50,16 @@ def cloud_run() -> None:
     try:
         responses = [
             client.post(base + "/intersections", json={"intersection_id": intersection, "name": "Phase 8 demo", "location": "synthetic"}),
-            client.post(base + "/sensors", json={"sensor_id": sensor, "intersection_id": intersection, "sensor_type": "camera"}),
-            client.post(base + "/readings", json={"event_id": event, "sensor_id": sensor, "observed_at": timestamp, "vehicle_count": 100, "average_speed_kph": 8.0, "occupancy": 0.95}),
+            client.post(base + "/sensors", json={"sensor_id": sensor, "intersection_id": intersection,
+                                                  "location": "synthetic", "status": "active"}),
+            client.post(base + "/readings", json={"event_id": event, "sensor_id": sensor,
+                                                    "intersection_id": intersection, "observed_at": timestamp,
+                                                    "vehicle_count": 100, "average_speed": 8.0, "occupancy": 0.95}),
+            # Event-time windows need a later reading to advance the watermark
+            # and close the first minute deterministically.
+            client.post(base + "/readings", json={"event_id": f"{prefix}-watermark", "sensor_id": sensor,
+                                                    "intersection_id": intersection, "observed_at": advance_timestamp,
+                                                    "vehicle_count": 0}),
         ]
         for response in responses:
             if response.status_code not in (201, 202):
@@ -66,7 +76,10 @@ def cloud_run() -> None:
             time.sleep(5)
         if not summary or not summary.get("items") or not recommendation or not recommendation.get("items"):
             raise RuntimeError("Flink result, recommendation, or analytics did not arrive within 180 seconds")
-        incident_response = client.post(base + "/incidents", json={"incident_id": f"{prefix}-incident", "intersection_id": intersection, "kind": "collision", "status": "open", "reported_at": timestamp})
+        incident_response = client.post(base + "/incidents", json={"incident_id": f"{prefix}-incident",
+                                                                        "intersection_id": intersection,
+                                                                        "type": "collision",
+                                                                        "description": "Phase 8 acceptance incident"})
         if incident_response.status_code != 201:
             raise RuntimeError(f"incident REST failed: {incident_response.status_code} {incident_response.text}")
     finally:
