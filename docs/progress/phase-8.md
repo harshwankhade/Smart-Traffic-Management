@@ -1,0 +1,9 @@
+# Phase 8 progress report
+
+**Status: In Progress — integrated run and teardown complete; strict public HTTPS client verification outstanding.**
+
+Phase 8 integrated the prescribed six Kubernetes services on EKS, Apache Flink 1.20 on EMR on EC2, and the Lambda Alert Service. Terraform provisioned the VPC, EKS, MSK, EMR, RDS, DynamoDB, S3, SQS/Lambda, IAM, ECR and GitOps bootstrap. Argo CD reconciled the Git-tracked applications and three-node ZooKeeper; no application Deployment was created through direct `kubectl apply`.
+
+The accepted run recorded REST sensor/reading traffic through Traffic Ingestion's gRPC Event Publisher path, Kafka `traffic.raw`, EMR Flink and `traffic.results`, then persisted/retrieved analytics and a simulated recommendation. An incident reached SQS, triggered Lambda and was recorded in DynamoDB. S3 archival, RDS and DynamoDB use were observed. Deleting the elected publisher proved ZooKeeper successor takeover. A missing scoped SQS permission in Signal Recommendation was corrected and retested. Terraform validation and focused coordination tests passed; the acceptance workflow exposed and corrected payload-contract errors.
+
+DNS resolved `api.smarttrafficmgmt.online`, and the ALB listener used the issued ACM certificate. However, this workstation's outbound TLS interception prevented a strict certificate-validating public request, so that roadmap criterion remains unverified. The full runtime was removed and independently audited; controller-created ALB artifacts and versioned S3 checkpoints required scoped cleanup before final Terraform reconciliation. Route 53 and ACM remain intentionally. The first authorized Phase 9 cloud run must perform this HTTPS check from an independent trusted network before teardown, but only after separate explicit user approval; Phase 9 has not started.

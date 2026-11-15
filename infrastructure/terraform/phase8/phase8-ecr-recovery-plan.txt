@@ -1,0 +1,173 @@
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # aws_ecr_repository.services["event-publisher"] will be created
+  + resource "aws_ecr_repository" "services" {
+      + arn                  = (known after apply)
+      + id                   = (known after apply)
+      + image_tag_mutability = "IMMUTABLE"
+      + name                 = "smarttraffic-phase8/event-publisher"
+      + region               = "ap-south-1"
+      + registry_id          = (known after apply)
+      + repository_url       = (known after apply)
+      + tags                 = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + tags_all             = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+
+      + image_scanning_configuration {
+          + scan_on_push = true
+        }
+    }
+
+  # aws_ecr_repository.services["incident-manager"] will be created
+  + resource "aws_ecr_repository" "services" {
+      + arn                  = (known after apply)
+      + id                   = (known after apply)
+      + image_tag_mutability = "IMMUTABLE"
+      + name                 = "smarttraffic-phase8/incident-manager"
+      + region               = "ap-south-1"
+      + registry_id          = (known after apply)
+      + repository_url       = (known after apply)
+      + tags                 = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + tags_all             = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+
+      + image_scanning_configuration {
+          + scan_on_push = true
+        }
+    }
+
+  # aws_ecr_repository.services["sensor-registry"] will be created
+  + resource "aws_ecr_repository" "services" {
+      + arn                  = (known after apply)
+      + id                   = (known after apply)
+      + image_tag_mutability = "IMMUTABLE"
+      + name                 = "smarttraffic-phase8/sensor-registry"
+      + region               = "ap-south-1"
+      + registry_id          = (known after apply)
+      + repository_url       = (known after apply)
+      + tags                 = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + tags_all             = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+
+      + image_scanning_configuration {
+          + scan_on_push = true
+        }
+    }
+
+  # aws_ecr_repository.services["signal-recommendation"] will be created
+  + resource "aws_ecr_repository" "services" {
+      + arn                  = (known after apply)
+      + id                   = (known after apply)
+      + image_tag_mutability = "IMMUTABLE"
+      + name                 = "smarttraffic-phase8/signal-recommendation"
+      + region               = "ap-south-1"
+      + registry_id          = (known after apply)
+      + repository_url       = (known after apply)
+      + tags                 = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + tags_all             = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+
+      + image_scanning_configuration {
+          + scan_on_push = true
+        }
+    }
+
+  # aws_ecr_repository.services["traffic-analytics"] will be created
+  + resource "aws_ecr_repository" "services" {
+      + arn                  = (known after apply)
+      + id                   = (known after apply)
+      + image_tag_mutability = "IMMUTABLE"
+      + name                 = "smarttraffic-phase8/traffic-analytics"
+      + region               = "ap-south-1"
+      + registry_id          = (known after apply)
+      + repository_url       = (known after apply)
+      + tags                 = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + tags_all             = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+
+      + image_scanning_configuration {
+          + scan_on_push = true
+        }
+    }
+
+  # aws_ecr_repository.services["traffic-ingestion"] will be created
+  + resource "aws_ecr_repository" "services" {
+      + arn                  = (known after apply)
+      + id                   = (known after apply)
+      + image_tag_mutability = "IMMUTABLE"
+      + name                 = "smarttraffic-phase8/traffic-ingestion"
+      + region               = "ap-south-1"
+      + registry_id          = (known after apply)
+      + repository_url       = (known after apply)
+      + tags                 = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + tags_all             = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+
+      + image_scanning_configuration {
+          + scan_on_push = true
+        }
+    }
+
+  # terraform_data.deployment_guard will be created
+  + resource "terraform_data" "deployment_guard" {
+      + id = (known after apply)
+    }
+
+Plan: 7 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + ecr_repositories = {
+      + event-publisher       = (known after apply)
+      + incident-manager      = (known after apply)
+      + sensor-registry       = (known after apply)
+      + signal-recommendation = (known after apply)
+      + traffic-analytics     = (known after apply)
+      + traffic-ingestion     = (known after apply)
+    }

@@ -1,6 +1,6 @@
 # Phase 8 Step 3: GitOps and integrated acceptance preparation
 
-Status: **prepared and statically validated; not deployed**. Argo CD receives one
+Status: **implemented and exercised in one authorized run; runtime teardown complete**. Argo CD receives one
 Terraform-seeded root Application, `smarttraffic-root`. It reconciles the Git
 revision at `main:deploy/gitops/apps` with automated prune and self-heal. The
 Git tree owns the namespace, private ClusterIP services, six workload service
@@ -41,13 +41,13 @@ the same load-balancing resources. Terraform also bootstraps ExternalDNS with a
 separate Pod Identity role limited to the approved Route 53 hosted zone; it creates
 the Ingress hostname alias after the controller publishes the ALB address.
 
-Checks run on 2026-11-14: `kubectl kustomize deploy/gitops/apps` rendered locally;
+Preparation checks run on 2026-11-14: `kubectl kustomize deploy/gitops/apps` rendered locally;
 `scripts/phase8_gitops_check.py` verified root ownership, all six service manifests,
 ZooKeeper, HTTPS ingress and External Secrets references. Terraform formatting and
 `validate` passed; the Phase 2 database regression tests passed. No Kubernetes
-cluster, AWS resource, Terraform apply or cloud demo was run.
+cluster, AWS resource, Terraform apply or cloud demo was run during these preparation checks.
 
-Before a separately authorized run, create only the ECR repositories from the
+The historical pre-run instructions below apply to any future authorized run. The 2026-11-15 run reached a healthy Argo CD reconciliation at commit `280fc39`, with the six workloads and ZooKeeper ready before acceptance and teardown. Before another separately authorized run, create only the ECR repositories from the
 reviewed state, run `scripts/phase8_publish_images.py`, commit/push the generated
 digest pins, then apply the remaining reviewed root. ExternalDNS, not a manual
 console change, creates the Route 53 alias.

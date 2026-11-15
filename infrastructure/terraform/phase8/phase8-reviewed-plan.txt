@@ -1,0 +1,3306 @@
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+  ~ update in-place
+ <= read (data resources)
+
+Terraform will perform the following actions:
+
+  # data.aws_eks_cluster_auth.main will be read during apply
+  # (depends on a resource or a module with changes pending)
+ <= data "aws_eks_cluster_auth" "main" {
+      + id     = (known after apply)
+      + name   = "smarttraffic-phase8"
+      + region = (known after apply)
+      + token  = (sensitive value)
+    }
+
+  # aws_db_instance.main will be created
+  + resource "aws_db_instance" "main" {
+      + address                               = (known after apply)
+      + allocated_storage                     = 20
+      + apply_immediately                     = false
+      + arn                                   = (known after apply)
+      + auto_minor_version_upgrade            = true
+      + availability_zone                     = (known after apply)
+      + backup_retention_period               = (known after apply)
+      + backup_target                         = (known after apply)
+      + backup_window                         = (known after apply)
+      + ca_cert_identifier                    = (known after apply)
+      + character_set_name                    = (known after apply)
+      + copy_tags_to_snapshot                 = false
+      + database_insights_mode                = (known after apply)
+      + db_name                               = "smarttraffic"
+      + db_subnet_group_name                  = (known after apply)
+      + dedicated_log_volume                  = false
+      + delete_automated_backups              = true
+      + domain_fqdn                           = (known after apply)
+      + endpoint                              = (known after apply)
+      + engine                                = "postgres"
+      + engine_lifecycle_support              = (known after apply)
+      + engine_version                        = "17"
+      + engine_version_actual                 = (known after apply)
+      + hosted_zone_id                        = (known after apply)
+      + id                                    = (known after apply)
+      + identifier                            = "smarttraffic-phase8-postgres"
+      + identifier_prefix                     = (known after apply)
+      + instance_class                        = "db.t4g.micro"
+      + iops                                  = (known after apply)
+      + kms_key_id                            = (known after apply)
+      + latest_restorable_time                = (known after apply)
+      + license_model                         = (known after apply)
+      + listener_endpoint                     = (known after apply)
+      + maintenance_window                    = (known after apply)
+      + manage_master_user_password           = true
+      + master_user_secret                    = (known after apply)
+      + master_user_secret_kms_key_id         = (known after apply)
+      + monitoring_interval                   = 0
+      + monitoring_role_arn                   = (known after apply)
+      + multi_az                              = (known after apply)
+      + nchar_character_set_name              = (known after apply)
+      + network_type                          = (known after apply)
+      + option_group_name                     = (known after apply)
+      + parameter_group_name                  = (known after apply)
+      + password_wo                           = (write-only attribute)
+      + performance_insights_enabled          = false
+      + performance_insights_kms_key_id       = (known after apply)
+      + performance_insights_retention_period = (known after apply)
+      + port                                  = (known after apply)
+      + publicly_accessible                   = false
+      + region                                = "ap-south-1"
+      + replica_mode                          = (known after apply)
+      + replicas                              = (known after apply)
+      + resource_id                           = (known after apply)
+      + skip_final_snapshot                   = true
+      + snapshot_identifier                   = (known after apply)
+      + status                                = (known after apply)
+      + storage_encrypted                     = true
+      + storage_throughput                    = (known after apply)
+      + storage_type                          = (known after apply)
+      + tags                                  = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + tags_all                              = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + timezone                              = (known after apply)
+      + upgrade_rollout_order                 = (known after apply)
+      + username                              = "traffic_admin"
+      + vpc_security_group_ids                = (known after apply)
+    }
+
+  # aws_db_subnet_group.main will be created
+  + resource "aws_db_subnet_group" "main" {
+      + arn                     = (known after apply)
+      + description             = "Managed by Terraform"
+      + id                      = (known after apply)
+      + name                    = (known after apply)
+      + name_prefix             = "smarttraffic-phase8-"
+      + region                  = "ap-south-1"
+      + subnet_ids              = (known after apply)
+      + supported_network_types = (known after apply)
+      + tags                    = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + tags_all                = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + vpc_id                  = (known after apply)
+    }
+
+  # aws_ecr_repository.services["event-publisher"] will be updated in-place
+  ~ resource "aws_ecr_repository" "services" {
+      + force_delete         = true
+        id                   = "smarttraffic-phase8/event-publisher"
+        name                 = "smarttraffic-phase8/event-publisher"
+        tags                 = {
+            "ManagedBy" = "Terraform"
+            "Phase"     = "8"
+            "Project"   = "SmartTraffic"
+        }
+        # (6 unchanged attributes hidden)
+
+        # (2 unchanged blocks hidden)
+    }
+
+  # aws_ecr_repository.services["incident-manager"] will be updated in-place
+  ~ resource "aws_ecr_repository" "services" {
+      + force_delete         = true
+        id                   = "smarttraffic-phase8/incident-manager"
+        name                 = "smarttraffic-phase8/incident-manager"
+        tags                 = {
+            "ManagedBy" = "Terraform"
+            "Phase"     = "8"
+            "Project"   = "SmartTraffic"
+        }
+        # (6 unchanged attributes hidden)
+
+        # (2 unchanged blocks hidden)
+    }
+
+  # aws_ecr_repository.services["sensor-registry"] will be updated in-place
+  ~ resource "aws_ecr_repository" "services" {
+      + force_delete         = true
+        id                   = "smarttraffic-phase8/sensor-registry"
+        name                 = "smarttraffic-phase8/sensor-registry"
+        tags                 = {
+            "ManagedBy" = "Terraform"
+            "Phase"     = "8"
+            "Project"   = "SmartTraffic"
+        }
+        # (6 unchanged attributes hidden)
+
+        # (2 unchanged blocks hidden)
+    }
+
+  # aws_ecr_repository.services["signal-recommendation"] will be updated in-place
+  ~ resource "aws_ecr_repository" "services" {
+      + force_delete         = true
+        id                   = "smarttraffic-phase8/signal-recommendation"
+        name                 = "smarttraffic-phase8/signal-recommendation"
+        tags                 = {
+            "ManagedBy" = "Terraform"
+            "Phase"     = "8"
+            "Project"   = "SmartTraffic"
+        }
+        # (6 unchanged attributes hidden)
+
+        # (2 unchanged blocks hidden)
+    }
+
+  # aws_ecr_repository.services["traffic-analytics"] will be updated in-place
+  ~ resource "aws_ecr_repository" "services" {
+      + force_delete         = true
+        id                   = "smarttraffic-phase8/traffic-analytics"
+        name                 = "smarttraffic-phase8/traffic-analytics"
+        tags                 = {
+            "ManagedBy" = "Terraform"
+            "Phase"     = "8"
+            "Project"   = "SmartTraffic"
+        }
+        # (6 unchanged attributes hidden)
+
+        # (2 unchanged blocks hidden)
+    }
+
+  # aws_ecr_repository.services["traffic-ingestion"] will be updated in-place
+  ~ resource "aws_ecr_repository" "services" {
+      + force_delete         = true
+        id                   = "smarttraffic-phase8/traffic-ingestion"
+        name                 = "smarttraffic-phase8/traffic-ingestion"
+        tags                 = {
+            "ManagedBy" = "Terraform"
+            "Phase"     = "8"
+            "Project"   = "SmartTraffic"
+        }
+        # (6 unchanged attributes hidden)
+
+        # (2 unchanged blocks hidden)
+    }
+
+  # aws_eip.nat will be created
+  + resource "aws_eip" "nat" {
+      + allocation_id        = (known after apply)
+      + arn                  = (known after apply)
+      + association_id       = (known after apply)
+      + carrier_ip           = (known after apply)
+      + customer_owned_ip    = (known after apply)
+      + domain               = "vpc"
+      + id                   = (known after apply)
+      + instance             = (known after apply)
+      + ipam_pool_id         = (known after apply)
+      + network_border_group = (known after apply)
+      + network_interface    = (known after apply)
+      + private_dns          = (known after apply)
+      + private_ip           = (known after apply)
+      + ptr_record           = (known after apply)
+      + public_dns           = (known after apply)
+      + public_ip            = (known after apply)
+      + public_ipv4_pool     = (known after apply)
+      + region               = "ap-south-1"
+      + tags                 = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + tags_all             = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+    }
+
+  # aws_eks_addon.pod_identity will be created
+  + resource "aws_eks_addon" "pod_identity" {
+      + addon_name                  = "eks-pod-identity-agent"
+      + addon_version               = (known after apply)
+      + arn                         = (known after apply)
+      + cluster_name                = "smarttraffic-phase8"
+      + configuration_values        = (known after apply)
+      + created_at                  = (known after apply)
+      + id                          = (known after apply)
+      + modified_at                 = (known after apply)
+      + region                      = "ap-south-1"
+      + resolve_conflicts_on_create = "OVERWRITE"
+      + tags_all                    = (known after apply)
+
+      + namespace_config (known after apply)
+    }
+
+  # aws_eks_cluster.main will be created
+  + resource "aws_eks_cluster" "main" {
+      + arn                           = (known after apply)
+      + bootstrap_self_managed_addons = true
+      + certificate_authority         = (known after apply)
+      + cluster_id                    = (known after apply)
+      + created_at                    = (known after apply)
+      + deletion_protection           = (known after apply)
+      + endpoint                      = (known after apply)
+      + id                            = (known after apply)
+      + identity                      = (known after apply)
+      + name                          = "smarttraffic-phase8"
+      + platform_version              = (known after apply)
+      + region                        = "ap-south-1"
+      + role_arn                      = (known after apply)
+      + status                        = (known after apply)
+      + tags                          = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + tags_all                      = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + version                       = (known after apply)
+
+      + access_config (known after apply)
+
+      + compute_config (known after apply)
+
+      + control_plane_scaling_config (known after apply)
+
+      + kubernetes_network_config (known after apply)
+
+      + storage_config (known after apply)
+
+      + upgrade_policy (known after apply)
+
+      + vpc_config {
+          + cluster_security_group_id = (known after apply)
+          + endpoint_private_access   = true
+          + endpoint_public_access    = true
+          + public_access_cidrs       = [
+              + "103.144.92.233/32",
+            ]
+          + subnet_ids                = (known after apply)
+          + vpc_id                    = (known after apply)
+        }
+    }
+
+  # aws_eks_node_group.main will be created
+  + resource "aws_eks_node_group" "main" {
+      + ami_type               = (known after apply)
+      + arn                    = (known after apply)
+      + capacity_type          = (known after apply)
+      + cluster_name           = "smarttraffic-phase8"
+      + disk_size              = (known after apply)
+      + id                     = (known after apply)
+      + instance_types         = [
+          + "t3.medium",
+        ]
+      + node_group_name        = "application"
+      + node_group_name_prefix = (known after apply)
+      + node_role_arn          = (known after apply)
+      + region                 = "ap-south-1"
+      + release_version        = (known after apply)
+      + resources              = (known after apply)
+      + status                 = (known after apply)
+      + subnet_ids             = (known after apply)
+      + tags_all               = (known after apply)
+      + version                = (known after apply)
+
+      + node_repair_config (known after apply)
+
+      + scaling_config {
+          + desired_size = 2
+          + max_size     = 3
+          + min_size     = 2
+        }
+
+      + update_config (known after apply)
+    }
+
+  # aws_eks_pod_identity_association.aws_load_balancer_controller will be created
+  + resource "aws_eks_pod_identity_association" "aws_load_balancer_controller" {
+      + association_arn      = (known after apply)
+      + association_id       = (known after apply)
+      + cluster_name         = "smarttraffic-phase8"
+      + disable_session_tags = false
+      + external_id          = (known after apply)
+      + id                   = (known after apply)
+      + namespace            = "kube-system"
+      + region               = "ap-south-1"
+      + role_arn             = (known after apply)
+      + service_account      = "aws-load-balancer-controller"
+      + tags_all             = {}
+    }
+
+  # aws_eks_pod_identity_association.external_dns will be created
+  + resource "aws_eks_pod_identity_association" "external_dns" {
+      + association_arn      = (known after apply)
+      + association_id       = (known after apply)
+      + cluster_name         = "smarttraffic-phase8"
+      + disable_session_tags = false
+      + external_id          = (known after apply)
+      + id                   = (known after apply)
+      + namespace            = "kube-system"
+      + region               = "ap-south-1"
+      + role_arn             = (known after apply)
+      + service_account      = "external-dns"
+      + tags_all             = {}
+    }
+
+  # aws_eks_pod_identity_association.external_secrets will be created
+  + resource "aws_eks_pod_identity_association" "external_secrets" {
+      + association_arn      = (known after apply)
+      + association_id       = (known after apply)
+      + cluster_name         = "smarttraffic-phase8"
+      + disable_session_tags = false
+      + external_id          = (known after apply)
+      + id                   = (known after apply)
+      + namespace            = "external-secrets"
+      + region               = "ap-south-1"
+      + role_arn             = (known after apply)
+      + service_account      = "external-secrets"
+      + tags_all             = {}
+    }
+
+  # aws_eks_pod_identity_association.workloads["event-publisher"] will be created
+  + resource "aws_eks_pod_identity_association" "workloads" {
+      + association_arn      = (known after apply)
+      + association_id       = (known after apply)
+      + cluster_name         = "smarttraffic-phase8"
+      + disable_session_tags = false
+      + external_id          = (known after apply)
+      + id                   = (known after apply)
+      + namespace            = "smarttraffic"
+      + region               = "ap-south-1"
+      + role_arn             = (known after apply)
+      + service_account      = "event-publisher"
+      + tags_all             = {}
+    }
+
+  # aws_eks_pod_identity_association.workloads["incident-manager"] will be created
+  + resource "aws_eks_pod_identity_association" "workloads" {
+      + association_arn      = (known after apply)
+      + association_id       = (known after apply)
+      + cluster_name         = "smarttraffic-phase8"
+      + disable_session_tags = false
+      + external_id          = (known after apply)
+      + id                   = (known after apply)
+      + namespace            = "smarttraffic"
+      + region               = "ap-south-1"
+      + role_arn             = (known after apply)
+      + service_account      = "incident-manager"
+      + tags_all             = {}
+    }
+
+  # aws_eks_pod_identity_association.workloads["sensor-registry"] will be created
+  + resource "aws_eks_pod_identity_association" "workloads" {
+      + association_arn      = (known after apply)
+      + association_id       = (known after apply)
+      + cluster_name         = "smarttraffic-phase8"
+      + disable_session_tags = false
+      + external_id          = (known after apply)
+      + id                   = (known after apply)
+      + namespace            = "smarttraffic"
+      + region               = "ap-south-1"
+      + role_arn             = (known after apply)
+      + service_account      = "sensor-registry"
+      + tags_all             = {}
+    }
+
+  # aws_eks_pod_identity_association.workloads["signal-recommendation"] will be created
+  + resource "aws_eks_pod_identity_association" "workloads" {
+      + association_arn      = (known after apply)
+      + association_id       = (known after apply)
+      + cluster_name         = "smarttraffic-phase8"
+      + disable_session_tags = false
+      + external_id          = (known after apply)
+      + id                   = (known after apply)
+      + namespace            = "smarttraffic"
+      + region               = "ap-south-1"
+      + role_arn             = (known after apply)
+      + service_account      = "signal-recommendation"
+      + tags_all             = {}
+    }
+
+  # aws_eks_pod_identity_association.workloads["traffic-analytics"] will be created
+  + resource "aws_eks_pod_identity_association" "workloads" {
+      + association_arn      = (known after apply)
+      + association_id       = (known after apply)
+      + cluster_name         = "smarttraffic-phase8"
+      + disable_session_tags = false
+      + external_id          = (known after apply)
+      + id                   = (known after apply)
+      + namespace            = "smarttraffic"
+      + region               = "ap-south-1"
+      + role_arn             = (known after apply)
+      + service_account      = "traffic-analytics"
+      + tags_all             = {}
+    }
+
+  # aws_eks_pod_identity_association.workloads["traffic-ingestion"] will be created
+  + resource "aws_eks_pod_identity_association" "workloads" {
+      + association_arn      = (known after apply)
+      + association_id       = (known after apply)
+      + cluster_name         = "smarttraffic-phase8"
+      + disable_session_tags = false
+      + external_id          = (known after apply)
+      + id                   = (known after apply)
+      + namespace            = "smarttraffic"
+      + region               = "ap-south-1"
+      + role_arn             = (known after apply)
+      + service_account      = "traffic-ingestion"
+      + tags_all             = {}
+    }
+
+  # aws_iam_policy.aws_load_balancer_controller will be created
+  + resource "aws_iam_policy" "aws_load_balancer_controller" {
+      + arn              = (known after apply)
+      + attachment_count = (known after apply)
+      + id               = (known after apply)
+      + name             = (known after apply)
+      + name_prefix      = "smarttraffic-phase8-aws-lbc-"
+      + path             = "/"
+      + policy           = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = [
+                          + "iam:CreateServiceLinkedRole",
+                        ]
+                      + Condition = {
+                          + StringEquals = {
+                              + "iam:AWSServiceName" = "elasticloadbalancing.amazonaws.com"
+                            }
+                        }
+                      + Effect    = "Allow"
+                      + Resource  = "*"
+                    },
+                  + {
+                      + Action   = [
+                          + "ec2:DescribeAccountAttributes",
+                          + "ec2:DescribeAddresses",
+                          + "ec2:DescribeAvailabilityZones",
+                          + "ec2:DescribeInternetGateways",
+                          + "ec2:DescribeVpcs",
+                          + "ec2:DescribeVpcPeeringConnections",
+                          + "ec2:DescribeSubnets",
+                          + "ec2:DescribeSecurityGroups",
+                          + "ec2:DescribeInstances",
+                          + "ec2:DescribeNetworkInterfaces",
+                          + "ec2:DescribeTags",
+                          + "ec2:GetCoipPoolUsage",
+                          + "ec2:DescribeCoipPools",
+                          + "ec2:GetSecurityGroupsForVpc",
+                          + "ec2:DescribeIpamPools",
+                          + "ec2:DescribeRouteTables",
+                          + "elasticloadbalancing:DescribeLoadBalancers",
+                          + "elasticloadbalancing:DescribeLoadBalancerAttributes",
+                          + "elasticloadbalancing:DescribeListeners",
+                          + "elasticloadbalancing:DescribeListenerCertificates",
+                          + "elasticloadbalancing:DescribeSSLPolicies",
+                          + "elasticloadbalancing:DescribeRules",
+                          + "elasticloadbalancing:DescribeTargetGroups",
+                          + "elasticloadbalancing:DescribeTargetGroupAttributes",
+                          + "elasticloadbalancing:DescribeTargetHealth",
+                          + "elasticloadbalancing:DescribeTags",
+                          + "elasticloadbalancing:DescribeTrustStores",
+                          + "elasticloadbalancing:DescribeListenerAttributes",
+                          + "elasticloadbalancing:DescribeCapacityReservation",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = "*"
+                    },
+                  + {
+                      + Action   = [
+                          + "cognito-idp:DescribeUserPoolClient",
+                          + "acm:ListCertificates",
+                          + "acm:DescribeCertificate",
+                          + "iam:ListServerCertificates",
+                          + "iam:GetServerCertificate",
+                          + "waf-regional:GetWebACL",
+                          + "waf-regional:GetWebACLForResource",
+                          + "waf-regional:AssociateWebACL",
+                          + "waf-regional:DisassociateWebACL",
+                          + "wafv2:GetWebACL",
+                          + "wafv2:GetWebACLForResource",
+                          + "wafv2:AssociateWebACL",
+                          + "wafv2:DisassociateWebACL",
+                          + "shield:GetSubscriptionState",
+                          + "shield:DescribeProtection",
+                          + "shield:CreateProtection",
+                          + "shield:DeleteProtection",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = "*"
+                    },
+                  + {
+                      + Action   = [
+                          + "ec2:AuthorizeSecurityGroupIngress",
+                          + "ec2:RevokeSecurityGroupIngress",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = "*"
+                    },
+                  + {
+                      + Action   = [
+                          + "ec2:CreateSecurityGroup",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = "*"
+                    },
+                  + {
+                      + Action    = [
+                          + "ec2:CreateTags",
+                        ]
+                      + Condition = {
+                          + Null         = {
+                              + "aws:RequestTag/elbv2.k8s.aws/cluster" = "false"
+                            }
+                          + StringEquals = {
+                              + "ec2:CreateAction" = "CreateSecurityGroup"
+                            }
+                        }
+                      + Effect    = "Allow"
+                      + Resource  = "arn:aws:ec2:*:*:security-group/*"
+                    },
+                  + {
+                      + Action    = [
+                          + "ec2:CreateTags",
+                          + "ec2:DeleteTags",
+                        ]
+                      + Condition = {
+                          + Null = {
+                              + "aws:RequestTag/elbv2.k8s.aws/cluster"  = "true"
+                              + "aws:ResourceTag/elbv2.k8s.aws/cluster" = "false"
+                            }
+                        }
+                      + Effect    = "Allow"
+                      + Resource  = "arn:aws:ec2:*:*:security-group/*"
+                    },
+                  + {
+                      + Action    = [
+                          + "ec2:AuthorizeSecurityGroupIngress",
+                          + "ec2:RevokeSecurityGroupIngress",
+                          + "ec2:DeleteSecurityGroup",
+                        ]
+                      + Condition = {
+                          + Null = {
+                              + "aws:ResourceTag/elbv2.k8s.aws/cluster" = "false"
+                            }
+                        }
+                      + Effect    = "Allow"
+                      + Resource  = "*"
+                    },
+                  + {
+                      + Action    = [
+                          + "elasticloadbalancing:CreateLoadBalancer",
+                          + "elasticloadbalancing:CreateTargetGroup",
+                        ]
+                      + Condition = {
+                          + Null = {
+                              + "aws:RequestTag/elbv2.k8s.aws/cluster" = "false"
+                            }
+                        }
+                      + Effect    = "Allow"
+                      + Resource  = "*"
+                    },
+                  + {
+                      + Action   = [
+                          + "elasticloadbalancing:CreateListener",
+                          + "elasticloadbalancing:DeleteListener",
+                          + "elasticloadbalancing:CreateRule",
+                          + "elasticloadbalancing:DeleteRule",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = "*"
+                    },
+                  + {
+                      + Action    = [
+                          + "elasticloadbalancing:AddTags",
+                          + "elasticloadbalancing:RemoveTags",
+                        ]
+                      + Condition = {
+                          + Null = {
+                              + "aws:RequestTag/elbv2.k8s.aws/cluster"  = "true"
+                              + "aws:ResourceTag/elbv2.k8s.aws/cluster" = "false"
+                            }
+                        }
+                      + Effect    = "Allow"
+                      + Resource  = [
+                          + "arn:aws:elasticloadbalancing:*:*:targetgroup/*/*",
+                          + "arn:aws:elasticloadbalancing:*:*:loadbalancer/net/*/*",
+                          + "arn:aws:elasticloadbalancing:*:*:loadbalancer/app/*/*",
+                        ]
+                    },
+                  + {
+                      + Action   = [
+                          + "elasticloadbalancing:AddTags",
+                          + "elasticloadbalancing:RemoveTags",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = [
+                          + "arn:aws:elasticloadbalancing:*:*:listener/net/*/*/*",
+                          + "arn:aws:elasticloadbalancing:*:*:listener/app/*/*/*",
+                          + "arn:aws:elasticloadbalancing:*:*:listener-rule/net/*/*/*",
+                          + "arn:aws:elasticloadbalancing:*:*:listener-rule/app/*/*/*",
+                        ]
+                    },
+                  + {
+                      + Action    = [
+                          + "elasticloadbalancing:ModifyLoadBalancerAttributes",
+                          + "elasticloadbalancing:SetIpAddressType",
+                          + "elasticloadbalancing:SetSecurityGroups",
+                          + "elasticloadbalancing:SetSubnets",
+                          + "elasticloadbalancing:DeleteLoadBalancer",
+                          + "elasticloadbalancing:ModifyTargetGroup",
+                          + "elasticloadbalancing:ModifyTargetGroupAttributes",
+                          + "elasticloadbalancing:DeleteTargetGroup",
+                          + "elasticloadbalancing:ModifyListenerAttributes",
+                          + "elasticloadbalancing:ModifyCapacityReservation",
+                          + "elasticloadbalancing:ModifyIpPools",
+                        ]
+                      + Condition = {
+                          + Null = {
+                              + "aws:ResourceTag/elbv2.k8s.aws/cluster" = "false"
+                            }
+                        }
+                      + Effect    = "Allow"
+                      + Resource  = "*"
+                    },
+                  + {
+                      + Action    = [
+                          + "elasticloadbalancing:AddTags",
+                        ]
+                      + Condition = {
+                          + Null         = {
+                              + "aws:RequestTag/elbv2.k8s.aws/cluster" = "false"
+                            }
+                          + StringEquals = {
+                              + "elasticloadbalancing:CreateAction" = [
+                                  + "CreateTargetGroup",
+                                  + "CreateLoadBalancer",
+                                ]
+                            }
+                        }
+                      + Effect    = "Allow"
+                      + Resource  = [
+                          + "arn:aws:elasticloadbalancing:*:*:targetgroup/*/*",
+                          + "arn:aws:elasticloadbalancing:*:*:loadbalancer/net/*/*",
+                          + "arn:aws:elasticloadbalancing:*:*:loadbalancer/app/*/*",
+                        ]
+                    },
+                  + {
+                      + Action   = [
+                          + "elasticloadbalancing:RegisterTargets",
+                          + "elasticloadbalancing:DeregisterTargets",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = "arn:aws:elasticloadbalancing:*:*:targetgroup/*/*"
+                    },
+                  + {
+                      + Action   = [
+                          + "elasticloadbalancing:SetWebAcl",
+                          + "elasticloadbalancing:ModifyListener",
+                          + "elasticloadbalancing:AddListenerCertificates",
+                          + "elasticloadbalancing:RemoveListenerCertificates",
+                          + "elasticloadbalancing:ModifyRule",
+                          + "elasticloadbalancing:SetRulePriorities",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = "*"
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + policy_id        = (known after apply)
+      + tags             = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + tags_all         = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+    }
+
+  # aws_iam_role.aws_load_balancer_controller will be created
+  + resource "aws_iam_role" "aws_load_balancer_controller" {
+      + arn                   = (known after apply)
+      + assume_role_policy    = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = [
+                          + "sts:AssumeRole",
+                          + "sts:TagSession",
+                        ]
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + Service = "pods.eks.amazonaws.com"
+                        }
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + create_date           = (known after apply)
+      + force_detach_policies = false
+      + id                    = (known after apply)
+      + managed_policy_arns   = (known after apply)
+      + max_session_duration  = 3600
+      + name                  = (known after apply)
+      + name_prefix           = "smarttraffic-phase8-aws-lbc-"
+      + path                  = "/"
+      + tags                  = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + tags_all              = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + unique_id             = (known after apply)
+
+      + inline_policy (known after apply)
+    }
+
+  # aws_iam_role.eks_cluster will be created
+  + resource "aws_iam_role" "eks_cluster" {
+      + arn                   = (known after apply)
+      + assume_role_policy    = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = "sts:AssumeRole"
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + Service = "eks.amazonaws.com"
+                        }
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + create_date           = (known after apply)
+      + force_detach_policies = false
+      + id                    = (known after apply)
+      + managed_policy_arns   = (known after apply)
+      + max_session_duration  = 3600
+      + name                  = (known after apply)
+      + name_prefix           = "smarttraffic-phase8-eks-"
+      + path                  = "/"
+      + tags                  = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + tags_all              = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + unique_id             = (known after apply)
+
+      + inline_policy (known after apply)
+    }
+
+  # aws_iam_role.eks_nodes will be created
+  + resource "aws_iam_role" "eks_nodes" {
+      + arn                   = (known after apply)
+      + assume_role_policy    = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = "sts:AssumeRole"
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + Service = "ec2.amazonaws.com"
+                        }
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + create_date           = (known after apply)
+      + force_detach_policies = false
+      + id                    = (known after apply)
+      + managed_policy_arns   = (known after apply)
+      + max_session_duration  = 3600
+      + name                  = (known after apply)
+      + name_prefix           = "smarttraffic-phase8-nodes-"
+      + path                  = "/"
+      + tags                  = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + tags_all              = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + unique_id             = (known after apply)
+
+      + inline_policy (known after apply)
+    }
+
+  # aws_iam_role.external_dns will be created
+  + resource "aws_iam_role" "external_dns" {
+      + arn                   = (known after apply)
+      + assume_role_policy    = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = [
+                          + "sts:AssumeRole",
+                          + "sts:TagSession",
+                        ]
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + Service = "pods.eks.amazonaws.com"
+                        }
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + create_date           = (known after apply)
+      + force_detach_policies = false
+      + id                    = (known after apply)
+      + managed_policy_arns   = (known after apply)
+      + max_session_duration  = 3600
+      + name                  = (known after apply)
+      + name_prefix           = "smarttraffic-phase8-external-dns-"
+      + path                  = "/"
+      + tags                  = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + tags_all              = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + unique_id             = (known after apply)
+
+      + inline_policy (known after apply)
+    }
+
+  # aws_iam_role.external_secrets will be created
+  + resource "aws_iam_role" "external_secrets" {
+      + arn                   = (known after apply)
+      + assume_role_policy    = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = [
+                          + "sts:AssumeRole",
+                          + "sts:TagSession",
+                        ]
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + Service = "pods.eks.amazonaws.com"
+                        }
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + create_date           = (known after apply)
+      + force_detach_policies = false
+      + id                    = (known after apply)
+      + managed_policy_arns   = (known after apply)
+      + max_session_duration  = 3600
+      + name                  = (known after apply)
+      + name_prefix           = "smarttraffic-phase8-external-secrets-"
+      + path                  = "/"
+      + tags                  = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + tags_all              = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + unique_id             = (known after apply)
+
+      + inline_policy (known after apply)
+    }
+
+  # aws_iam_role.workloads["event-publisher"] will be created
+  + resource "aws_iam_role" "workloads" {
+      + arn                   = (known after apply)
+      + assume_role_policy    = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = [
+                          + "sts:AssumeRole",
+                          + "sts:TagSession",
+                        ]
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + Service = "pods.eks.amazonaws.com"
+                        }
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + create_date           = (known after apply)
+      + force_detach_policies = false
+      + id                    = (known after apply)
+      + managed_policy_arns   = (known after apply)
+      + max_session_duration  = 3600
+      + name                  = (known after apply)
+      + name_prefix           = "p8-event-publisher-"
+      + path                  = "/"
+      + tags                  = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + tags_all              = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + unique_id             = (known after apply)
+
+      + inline_policy (known after apply)
+    }
+
+  # aws_iam_role.workloads["incident-manager"] will be created
+  + resource "aws_iam_role" "workloads" {
+      + arn                   = (known after apply)
+      + assume_role_policy    = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = [
+                          + "sts:AssumeRole",
+                          + "sts:TagSession",
+                        ]
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + Service = "pods.eks.amazonaws.com"
+                        }
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + create_date           = (known after apply)
+      + force_detach_policies = false
+      + id                    = (known after apply)
+      + managed_policy_arns   = (known after apply)
+      + max_session_duration  = 3600
+      + name                  = (known after apply)
+      + name_prefix           = "p8-incident-manager-"
+      + path                  = "/"
+      + tags                  = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + tags_all              = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + unique_id             = (known after apply)
+
+      + inline_policy (known after apply)
+    }
+
+  # aws_iam_role.workloads["sensor-registry"] will be created
+  + resource "aws_iam_role" "workloads" {
+      + arn                   = (known after apply)
+      + assume_role_policy    = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = [
+                          + "sts:AssumeRole",
+                          + "sts:TagSession",
+                        ]
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + Service = "pods.eks.amazonaws.com"
+                        }
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + create_date           = (known after apply)
+      + force_detach_policies = false
+      + id                    = (known after apply)
+      + managed_policy_arns   = (known after apply)
+      + max_session_duration  = 3600
+      + name                  = (known after apply)
+      + name_prefix           = "p8-sensor-registry-"
+      + path                  = "/"
+      + tags                  = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + tags_all              = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + unique_id             = (known after apply)
+
+      + inline_policy (known after apply)
+    }
+
+  # aws_iam_role.workloads["signal-recommendation"] will be created
+  + resource "aws_iam_role" "workloads" {
+      + arn                   = (known after apply)
+      + assume_role_policy    = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = [
+                          + "sts:AssumeRole",
+                          + "sts:TagSession",
+                        ]
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + Service = "pods.eks.amazonaws.com"
+                        }
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + create_date           = (known after apply)
+      + force_detach_policies = false
+      + id                    = (known after apply)
+      + managed_policy_arns   = (known after apply)
+      + max_session_duration  = 3600
+      + name                  = (known after apply)
+      + name_prefix           = "p8-signal-recommendation-"
+      + path                  = "/"
+      + tags                  = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + tags_all              = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + unique_id             = (known after apply)
+
+      + inline_policy (known after apply)
+    }
+
+  # aws_iam_role.workloads["traffic-analytics"] will be created
+  + resource "aws_iam_role" "workloads" {
+      + arn                   = (known after apply)
+      + assume_role_policy    = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = [
+                          + "sts:AssumeRole",
+                          + "sts:TagSession",
+                        ]
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + Service = "pods.eks.amazonaws.com"
+                        }
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + create_date           = (known after apply)
+      + force_detach_policies = false
+      + id                    = (known after apply)
+      + managed_policy_arns   = (known after apply)
+      + max_session_duration  = 3600
+      + name                  = (known after apply)
+      + name_prefix           = "p8-traffic-analytics-"
+      + path                  = "/"
+      + tags                  = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + tags_all              = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + unique_id             = (known after apply)
+
+      + inline_policy (known after apply)
+    }
+
+  # aws_iam_role.workloads["traffic-ingestion"] will be created
+  + resource "aws_iam_role" "workloads" {
+      + arn                   = (known after apply)
+      + assume_role_policy    = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = [
+                          + "sts:AssumeRole",
+                          + "sts:TagSession",
+                        ]
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + Service = "pods.eks.amazonaws.com"
+                        }
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + create_date           = (known after apply)
+      + force_detach_policies = false
+      + id                    = (known after apply)
+      + managed_policy_arns   = (known after apply)
+      + max_session_duration  = 3600
+      + name                  = (known after apply)
+      + name_prefix           = "p8-traffic-ingestion-"
+      + path                  = "/"
+      + tags                  = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + tags_all              = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + unique_id             = (known after apply)
+
+      + inline_policy (known after apply)
+    }
+
+  # aws_iam_role_policy.external_dns will be created
+  + resource "aws_iam_role_policy" "external_dns" {
+      + id          = (known after apply)
+      + name        = (known after apply)
+      + name_prefix = (known after apply)
+      + policy      = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action   = [
+                          + "route53:ChangeResourceRecordSets",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = "arn:aws:route53:::hostedzone/Z000164619NSI2EZR8UJP"
+                    },
+                  + {
+                      + Action   = [
+                          + "route53:ListHostedZones",
+                          + "route53:ListResourceRecordSets",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = "*"
+                    },
+                  + {
+                      + Action   = [
+                          + "route53:GetChange",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = "arn:aws:route53:::change/*"
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + role        = (known after apply)
+    }
+
+  # aws_iam_role_policy.external_secrets will be created
+  + resource "aws_iam_role_policy" "external_secrets" {
+      + id          = (known after apply)
+      + name        = (known after apply)
+      + name_prefix = (known after apply)
+      + policy      = (known after apply)
+      + role        = (known after apply)
+    }
+
+  # aws_iam_role_policy.workload_database_secret["incident-manager"] will be created
+  + resource "aws_iam_role_policy" "workload_database_secret" {
+      + id          = (known after apply)
+      + name        = (known after apply)
+      + name_prefix = (known after apply)
+      + policy      = (known after apply)
+      + role        = (known after apply)
+    }
+
+  # aws_iam_role_policy.workload_database_secret["sensor-registry"] will be created
+  + resource "aws_iam_role_policy" "workload_database_secret" {
+      + id          = (known after apply)
+      + name        = (known after apply)
+      + name_prefix = (known after apply)
+      + policy      = (known after apply)
+      + role        = (known after apply)
+    }
+
+  # aws_iam_role_policy_attachment.aws_load_balancer_controller will be created
+  + resource "aws_iam_role_policy_attachment" "aws_load_balancer_controller" {
+      + id         = (known after apply)
+      + policy_arn = (known after apply)
+      + role       = (known after apply)
+    }
+
+  # aws_iam_role_policy_attachment.eks_cluster will be created
+  + resource "aws_iam_role_policy_attachment" "eks_cluster" {
+      + id         = (known after apply)
+      + policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+      + role       = (known after apply)
+    }
+
+  # aws_iam_role_policy_attachment.eks_nodes["arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPullOnly"] will be created
+  + resource "aws_iam_role_policy_attachment" "eks_nodes" {
+      + id         = (known after apply)
+      + policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPullOnly"
+      + role       = (known after apply)
+    }
+
+  # aws_iam_role_policy_attachment.eks_nodes["arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"] will be created
+  + resource "aws_iam_role_policy_attachment" "eks_nodes" {
+      + id         = (known after apply)
+      + policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+      + role       = (known after apply)
+    }
+
+  # aws_iam_role_policy_attachment.eks_nodes["arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"] will be created
+  + resource "aws_iam_role_policy_attachment" "eks_nodes" {
+      + id         = (known after apply)
+      + policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+      + role       = (known after apply)
+    }
+
+  # aws_iam_role_policy_attachment.workload_service["event-publisher"] will be created
+  + resource "aws_iam_role_policy_attachment" "workload_service" {
+      + id         = (known after apply)
+      + policy_arn = (known after apply)
+      + role       = (known after apply)
+    }
+
+  # aws_iam_role_policy_attachment.workload_service["incident-manager"] will be created
+  + resource "aws_iam_role_policy_attachment" "workload_service" {
+      + id         = (known after apply)
+      + policy_arn = (known after apply)
+      + role       = (known after apply)
+    }
+
+  # aws_iam_role_policy_attachment.workload_service["signal-recommendation"] will be created
+  + resource "aws_iam_role_policy_attachment" "workload_service" {
+      + id         = (known after apply)
+      + policy_arn = (known after apply)
+      + role       = (known after apply)
+    }
+
+  # aws_iam_role_policy_attachment.workload_service["traffic-analytics"] will be created
+  + resource "aws_iam_role_policy_attachment" "workload_service" {
+      + id         = (known after apply)
+      + policy_arn = (known after apply)
+      + role       = (known after apply)
+    }
+
+  # aws_internet_gateway.main will be created
+  + resource "aws_internet_gateway" "main" {
+      + arn      = (known after apply)
+      + id       = (known after apply)
+      + owner_id = (known after apply)
+      + region   = "ap-south-1"
+      + tags     = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + tags_all = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + vpc_id   = (known after apply)
+    }
+
+  # aws_nat_gateway.main will be created
+  + resource "aws_nat_gateway" "main" {
+      + allocation_id                      = (known after apply)
+      + association_id                     = (known after apply)
+      + auto_provision_zones               = (known after apply)
+      + auto_scaling_ips                   = (known after apply)
+      + availability_mode                  = (known after apply)
+      + connectivity_type                  = "public"
+      + id                                 = (known after apply)
+      + network_interface_id               = (known after apply)
+      + private_ip                         = (known after apply)
+      + public_ip                          = (known after apply)
+      + region                             = "ap-south-1"
+      + regional_nat_gateway_address       = (known after apply)
+      + regional_nat_gateway_auto_mode     = (known after apply)
+      + route_table_id                     = (known after apply)
+      + secondary_allocation_ids           = (known after apply)
+      + secondary_private_ip_address_count = (known after apply)
+      + secondary_private_ip_addresses     = (known after apply)
+      + subnet_id                          = (known after apply)
+      + tags                               = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + tags_all                           = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + vpc_id                             = (known after apply)
+    }
+
+  # aws_route.private_nat will be created
+  + resource "aws_route" "private_nat" {
+      + destination_cidr_block = "0.0.0.0/0"
+      + id                     = (known after apply)
+      + instance_id            = (known after apply)
+      + instance_owner_id      = (known after apply)
+      + nat_gateway_id         = (known after apply)
+      + network_interface_id   = (known after apply)
+      + origin                 = (known after apply)
+      + region                 = "ap-south-1"
+      + route_table_id         = (known after apply)
+      + state                  = (known after apply)
+    }
+
+  # aws_route.public_internet will be created
+  + resource "aws_route" "public_internet" {
+      + destination_cidr_block = "0.0.0.0/0"
+      + gateway_id             = (known after apply)
+      + id                     = (known after apply)
+      + instance_id            = (known after apply)
+      + instance_owner_id      = (known after apply)
+      + network_interface_id   = (known after apply)
+      + origin                 = (known after apply)
+      + region                 = "ap-south-1"
+      + route_table_id         = (known after apply)
+      + state                  = (known after apply)
+    }
+
+  # aws_route_table.private will be created
+  + resource "aws_route_table" "private" {
+      + arn              = (known after apply)
+      + id               = (known after apply)
+      + owner_id         = (known after apply)
+      + propagating_vgws = (known after apply)
+      + region           = "ap-south-1"
+      + route            = (known after apply)
+      + tags             = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + tags_all         = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + vpc_id           = (known after apply)
+    }
+
+  # aws_route_table.public will be created
+  + resource "aws_route_table" "public" {
+      + arn              = (known after apply)
+      + id               = (known after apply)
+      + owner_id         = (known after apply)
+      + propagating_vgws = (known after apply)
+      + region           = "ap-south-1"
+      + route            = (known after apply)
+      + tags             = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + tags_all         = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + vpc_id           = (known after apply)
+    }
+
+  # aws_route_table_association.private["ap-south-1a"] will be created
+  + resource "aws_route_table_association" "private" {
+      + id             = (known after apply)
+      + region         = "ap-south-1"
+      + route_table_id = (known after apply)
+      + subnet_id      = (known after apply)
+    }
+
+  # aws_route_table_association.private["ap-south-1b"] will be created
+  + resource "aws_route_table_association" "private" {
+      + id             = (known after apply)
+      + region         = "ap-south-1"
+      + route_table_id = (known after apply)
+      + subnet_id      = (known after apply)
+    }
+
+  # aws_route_table_association.public["ap-south-1a"] will be created
+  + resource "aws_route_table_association" "public" {
+      + id             = (known after apply)
+      + region         = "ap-south-1"
+      + route_table_id = (known after apply)
+      + subnet_id      = (known after apply)
+    }
+
+  # aws_route_table_association.public["ap-south-1b"] will be created
+  + resource "aws_route_table_association" "public" {
+      + id             = (known after apply)
+      + region         = "ap-south-1"
+      + route_table_id = (known after apply)
+      + subnet_id      = (known after apply)
+    }
+
+  # aws_secretsmanager_secret.runtime_config will be created
+  + resource "aws_secretsmanager_secret" "runtime_config" {
+      + arn                            = (known after apply)
+      + force_overwrite_replica_secret = false
+      + id                             = (known after apply)
+      + name                           = "smarttraffic-phase8-runtime-config"
+      + name_prefix                    = (known after apply)
+      + policy                         = (known after apply)
+      + recovery_window_in_days        = 0
+      + region                         = "ap-south-1"
+      + tags                           = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + tags_all                       = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+
+      + replica (known after apply)
+    }
+
+  # aws_secretsmanager_secret_version.runtime_config will be created
+  + resource "aws_secretsmanager_secret_version" "runtime_config" {
+      + arn                  = (known after apply)
+      + has_secret_string_wo = (known after apply)
+      + id                   = (known after apply)
+      + region               = "ap-south-1"
+      + secret_id            = (known after apply)
+      + secret_string        = (sensitive value)
+      + secret_string_wo     = (write-only attribute)
+      + version_id           = (known after apply)
+      + version_stages       = (known after apply)
+    }
+
+  # aws_security_group.rds will be created
+  + resource "aws_security_group" "rds" {
+      + arn                    = (known after apply)
+      + description            = "PostgreSQL ingress only from the EKS cluster security group"
+      + egress                 = (known after apply)
+      + id                     = (known after apply)
+      + ingress                = (known after apply)
+      + name                   = (known after apply)
+      + name_prefix            = "smarttraffic-phase8-rds-"
+      + owner_id               = (known after apply)
+      + region                 = "ap-south-1"
+      + revoke_rules_on_delete = false
+      + tags                   = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + tags_all               = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + vpc_id                 = (known after apply)
+    }
+
+  # aws_subnet.private["ap-south-1a"] will be created
+  + resource "aws_subnet" "private" {
+      + arn                                            = (known after apply)
+      + assign_ipv6_address_on_creation                = false
+      + availability_zone                              = "ap-south-1a"
+      + availability_zone_id                           = (known after apply)
+      + cidr_block                                     = "10.80.10.0/24"
+      + enable_dns64                                   = false
+      + enable_resource_name_dns_a_record_on_launch    = false
+      + enable_resource_name_dns_aaaa_record_on_launch = false
+      + id                                             = (known after apply)
+      + ipv6_cidr_block                                = (known after apply)
+      + ipv6_cidr_block_association_id                 = (known after apply)
+      + ipv6_native                                    = false
+      + map_public_ip_on_launch                        = false
+      + owner_id                                       = (known after apply)
+      + private_dns_hostname_type_on_launch            = (known after apply)
+      + region                                         = "ap-south-1"
+      + tags                                           = {
+          + "ManagedBy"                                = "Terraform"
+          + "Phase"                                    = "8"
+          + "Project"                                  = "SmartTraffic"
+          + "for-use-with-amazon-emr-managed-policies" = "true"
+          + "kubernetes.io/role/internal-elb"          = "1"
+        }
+      + tags_all                                       = {
+          + "ManagedBy"                                = "Terraform"
+          + "Phase"                                    = "8"
+          + "Project"                                  = "SmartTraffic"
+          + "for-use-with-amazon-emr-managed-policies" = "true"
+          + "kubernetes.io/role/internal-elb"          = "1"
+        }
+      + vpc_id                                         = (known after apply)
+    }
+
+  # aws_subnet.private["ap-south-1b"] will be created
+  + resource "aws_subnet" "private" {
+      + arn                                            = (known after apply)
+      + assign_ipv6_address_on_creation                = false
+      + availability_zone                              = "ap-south-1b"
+      + availability_zone_id                           = (known after apply)
+      + cidr_block                                     = "10.80.11.0/24"
+      + enable_dns64                                   = false
+      + enable_resource_name_dns_a_record_on_launch    = false
+      + enable_resource_name_dns_aaaa_record_on_launch = false
+      + id                                             = (known after apply)
+      + ipv6_cidr_block                                = (known after apply)
+      + ipv6_cidr_block_association_id                 = (known after apply)
+      + ipv6_native                                    = false
+      + map_public_ip_on_launch                        = false
+      + owner_id                                       = (known after apply)
+      + private_dns_hostname_type_on_launch            = (known after apply)
+      + region                                         = "ap-south-1"
+      + tags                                           = {
+          + "ManagedBy"                                = "Terraform"
+          + "Phase"                                    = "8"
+          + "Project"                                  = "SmartTraffic"
+          + "for-use-with-amazon-emr-managed-policies" = "true"
+          + "kubernetes.io/role/internal-elb"          = "1"
+        }
+      + tags_all                                       = {
+          + "ManagedBy"                                = "Terraform"
+          + "Phase"                                    = "8"
+          + "Project"                                  = "SmartTraffic"
+          + "for-use-with-amazon-emr-managed-policies" = "true"
+          + "kubernetes.io/role/internal-elb"          = "1"
+        }
+      + vpc_id                                         = (known after apply)
+    }
+
+  # aws_subnet.public["ap-south-1a"] will be created
+  + resource "aws_subnet" "public" {
+      + arn                                            = (known after apply)
+      + assign_ipv6_address_on_creation                = false
+      + availability_zone                              = "ap-south-1a"
+      + availability_zone_id                           = (known after apply)
+      + cidr_block                                     = "10.80.0.0/24"
+      + enable_dns64                                   = false
+      + enable_resource_name_dns_a_record_on_launch    = false
+      + enable_resource_name_dns_aaaa_record_on_launch = false
+      + id                                             = (known after apply)
+      + ipv6_cidr_block                                = (known after apply)
+      + ipv6_cidr_block_association_id                 = (known after apply)
+      + ipv6_native                                    = false
+      + map_public_ip_on_launch                        = false
+      + owner_id                                       = (known after apply)
+      + private_dns_hostname_type_on_launch            = (known after apply)
+      + region                                         = "ap-south-1"
+      + tags                                           = {
+          + "ManagedBy"              = "Terraform"
+          + "Phase"                  = "8"
+          + "Project"                = "SmartTraffic"
+          + "kubernetes.io/role/elb" = "1"
+        }
+      + tags_all                                       = {
+          + "ManagedBy"              = "Terraform"
+          + "Phase"                  = "8"
+          + "Project"                = "SmartTraffic"
+          + "kubernetes.io/role/elb" = "1"
+        }
+      + vpc_id                                         = (known after apply)
+    }
+
+  # aws_subnet.public["ap-south-1b"] will be created
+  + resource "aws_subnet" "public" {
+      + arn                                            = (known after apply)
+      + assign_ipv6_address_on_creation                = false
+      + availability_zone                              = "ap-south-1b"
+      + availability_zone_id                           = (known after apply)
+      + cidr_block                                     = "10.80.1.0/24"
+      + enable_dns64                                   = false
+      + enable_resource_name_dns_a_record_on_launch    = false
+      + enable_resource_name_dns_aaaa_record_on_launch = false
+      + id                                             = (known after apply)
+      + ipv6_cidr_block                                = (known after apply)
+      + ipv6_cidr_block_association_id                 = (known after apply)
+      + ipv6_native                                    = false
+      + map_public_ip_on_launch                        = false
+      + owner_id                                       = (known after apply)
+      + private_dns_hostname_type_on_launch            = (known after apply)
+      + region                                         = "ap-south-1"
+      + tags                                           = {
+          + "ManagedBy"              = "Terraform"
+          + "Phase"                  = "8"
+          + "Project"                = "SmartTraffic"
+          + "kubernetes.io/role/elb" = "1"
+        }
+      + tags_all                                       = {
+          + "ManagedBy"              = "Terraform"
+          + "Phase"                  = "8"
+          + "Project"                = "SmartTraffic"
+          + "kubernetes.io/role/elb" = "1"
+        }
+      + vpc_id                                         = (known after apply)
+    }
+
+  # aws_vpc.main will be created
+  + resource "aws_vpc" "main" {
+      + arn                                  = (known after apply)
+      + cidr_block                           = "10.80.0.0/16"
+      + default_network_acl_id               = (known after apply)
+      + default_route_table_id               = (known after apply)
+      + default_security_group_id            = (known after apply)
+      + dhcp_options_id                      = (known after apply)
+      + enable_dns_hostnames                 = true
+      + enable_dns_support                   = true
+      + enable_network_address_usage_metrics = (known after apply)
+      + id                                   = (known after apply)
+      + instance_tenancy                     = "default"
+      + ipv6_association_id                  = (known after apply)
+      + ipv6_cidr_block                      = (known after apply)
+      + ipv6_cidr_block_network_border_group = (known after apply)
+      + main_route_table_id                  = (known after apply)
+      + owner_id                             = (known after apply)
+      + region                               = "ap-south-1"
+      + tags                                 = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+      + tags_all                             = {
+          + "ManagedBy" = "Terraform"
+          + "Phase"     = "8"
+          + "Project"   = "SmartTraffic"
+        }
+    }
+
+  # aws_vpc_security_group_ingress_rule.rds_from_eks will be created
+  + resource "aws_vpc_security_group_ingress_rule" "rds_from_eks" {
+      + arn                          = (known after apply)
+      + from_port                    = 5432
+      + id                           = (known after apply)
+      + ip_protocol                  = "tcp"
+      + referenced_security_group_id = (known after apply)
+      + region                       = "ap-south-1"
+      + security_group_id            = (known after apply)
+      + security_group_rule_id       = (known after apply)
+      + tags_all                     = {}
+      + to_port                      = 5432
+    }
+
+  # helm_release.argocd will be created
+  + resource "helm_release" "argocd" {
+      + atomic                     = true
+      + chart                      = "argo-cd"
+      + cleanup_on_fail            = false
+      + create_namespace           = true
+      + dependency_update          = false
+      + disable_crd_hooks          = false
+      + disable_openapi_validation = false
+      + disable_webhooks           = false
+      + force_update               = false
+      + id                         = (known after apply)
+      + lint                       = false
+      + manifest                   = (known after apply)
+      + max_history                = 0
+      + metadata                   = (known after apply)
+      + name                       = "argocd"
+      + namespace                  = "argocd"
+      + pass_credentials           = false
+      + recreate_pods              = false
+      + render_subchart_notes      = true
+      + replace                    = false
+      + repository                 = "https://argoproj.github.io/argo-helm"
+      + reset_values               = false
+      + reuse_values               = false
+      + skip_crds                  = false
+      + status                     = "deployed"
+      + timeout                    = 300
+      + verify                     = false
+      + version                    = "7.8.26"
+      + wait                       = true
+      + wait_for_jobs              = false
+    }
+
+  # helm_release.argocd_root_application will be created
+  + resource "helm_release" "argocd_root_application" {
+      + atomic                     = true
+      + chart                      = "argocd-applications"
+      + cleanup_on_fail            = false
+      + create_namespace           = false
+      + dependency_update          = false
+      + disable_crd_hooks          = false
+      + disable_openapi_validation = false
+      + disable_webhooks           = false
+      + force_update               = false
+      + id                         = (known after apply)
+      + lint                       = false
+      + manifest                   = (known after apply)
+      + max_history                = 0
+      + metadata                   = (known after apply)
+      + name                       = "smarttraffic-root"
+      + namespace                  = "argocd"
+      + pass_credentials           = false
+      + recreate_pods              = false
+      + render_subchart_notes      = true
+      + replace                    = false
+      + repository                 = "https://argoproj.github.io/argo-helm"
+      + reset_values               = false
+      + reuse_values               = false
+      + skip_crds                  = false
+      + status                     = "deployed"
+      + timeout                    = 300
+      + values                     = [
+          + <<-EOT
+                "applications":
+                - "destination":
+                    "namespace": "smarttraffic"
+                    "server": "https://kubernetes.default.svc"
+                  "name": "smarttraffic-root"
+                  "namespace": "argocd"
+                  "project": "default"
+                  "source":
+                    "path": "deploy/gitops/apps"
+                    "repoURL": "https://github.com/harshwankhade/Smart-Traffic-Management.git"
+                    "targetRevision": "main"
+                  "syncPolicy":
+                    "automated":
+                      "prune": true
+                      "selfHeal": true
+                    "syncOptions":
+                    - "CreateNamespace=true"
+                    - "PruneLast=true"
+            EOT,
+        ]
+      + verify                     = false
+      + version                    = "1.4.1"
+      + wait                       = true
+      + wait_for_jobs              = false
+    }
+
+  # helm_release.aws_load_balancer_controller will be created
+  + resource "helm_release" "aws_load_balancer_controller" {
+      + atomic                     = true
+      + chart                      = "aws-load-balancer-controller"
+      + cleanup_on_fail            = false
+      + create_namespace           = false
+      + dependency_update          = false
+      + disable_crd_hooks          = false
+      + disable_openapi_validation = false
+      + disable_webhooks           = false
+      + force_update               = false
+      + id                         = (known after apply)
+      + lint                       = false
+      + manifest                   = (known after apply)
+      + max_history                = 0
+      + metadata                   = (known after apply)
+      + name                       = "aws-load-balancer-controller"
+      + namespace                  = "kube-system"
+      + pass_credentials           = false
+      + recreate_pods              = false
+      + render_subchart_notes      = true
+      + replace                    = false
+      + repository                 = "https://aws.github.io/eks-charts"
+      + reset_values               = false
+      + reuse_values               = false
+      + skip_crds                  = false
+      + status                     = "deployed"
+      + timeout                    = 300
+      + values                     = (known after apply)
+      + verify                     = false
+      + version                    = "1.14.1"
+      + wait                       = true
+      + wait_for_jobs              = false
+    }
+
+  # helm_release.external_dns will be created
+  + resource "helm_release" "external_dns" {
+      + atomic                     = true
+      + chart                      = "external-dns"
+      + cleanup_on_fail            = false
+      + create_namespace           = false
+      + dependency_update          = false
+      + disable_crd_hooks          = false
+      + disable_openapi_validation = false
+      + disable_webhooks           = false
+      + force_update               = false
+      + id                         = (known after apply)
+      + lint                       = false
+      + manifest                   = (known after apply)
+      + max_history                = 0
+      + metadata                   = (known after apply)
+      + name                       = "external-dns"
+      + namespace                  = "kube-system"
+      + pass_credentials           = false
+      + recreate_pods              = false
+      + render_subchart_notes      = true
+      + replace                    = false
+      + repository                 = "https://kubernetes-sigs.github.io/external-dns/"
+      + reset_values               = false
+      + reuse_values               = false
+      + skip_crds                  = false
+      + status                     = "deployed"
+      + timeout                    = 300
+      + values                     = [
+          + <<-EOT
+                "domainFilters":
+                - "api.smarttrafficmgmt.online"
+                "policy": "sync"
+                "provider":
+                  "name": "aws"
+                "registry": "txt"
+                "serviceAccount":
+                  "create": true
+                  "name": "external-dns"
+                "txtOwnerId": "smarttraffic-phase8"
+            EOT,
+        ]
+      + verify                     = false
+      + version                    = "1.23.0"
+      + wait                       = true
+      + wait_for_jobs              = false
+    }
+
+  # helm_release.external_secrets will be created
+  + resource "helm_release" "external_secrets" {
+      + atomic                     = true
+      + chart                      = "external-secrets"
+      + cleanup_on_fail            = false
+      + create_namespace           = true
+      + dependency_update          = false
+      + disable_crd_hooks          = false
+      + disable_openapi_validation = false
+      + disable_webhooks           = false
+      + force_update               = false
+      + id                         = (known after apply)
+      + lint                       = false
+      + manifest                   = (known after apply)
+      + max_history                = 0
+      + metadata                   = (known after apply)
+      + name                       = "external-secrets"
+      + namespace                  = "external-secrets"
+      + pass_credentials           = false
+      + recreate_pods              = false
+      + render_subchart_notes      = true
+      + replace                    = false
+      + repository                 = "https://charts.external-secrets.io"
+      + reset_values               = false
+      + reuse_values               = false
+      + skip_crds                  = false
+      + status                     = "deployed"
+      + timeout                    = 300
+      + values                     = [
+          + <<-EOT
+                "installCRDs": true
+                "serviceAccount":
+                  "create": true
+                  "name": "external-secrets"
+            EOT,
+        ]
+      + verify                     = false
+      + version                    = "0.20.4"
+      + wait                       = true
+      + wait_for_jobs              = false
+    }
+
+  # module.alerts.aws_cloudwatch_log_group.alerts will be created
+  + resource "aws_cloudwatch_log_group" "alerts" {
+      + arn                         = (known after apply)
+      + deletion_protection_enabled = (known after apply)
+      + id                          = (known after apply)
+      + log_group_class             = (known after apply)
+      + name                        = "/aws/lambda/smarttraffic-phase8-alert-service"
+      + name_prefix                 = (known after apply)
+      + region                      = "ap-south-1"
+      + retention_in_days           = 7
+      + skip_destroy                = false
+      + tags                        = {
+          + "Phase"   = "6"
+          + "Project" = "SmartTraffic"
+          + "Purpose" = "TemporaryAlertVerification"
+        }
+      + tags_all                    = {
+          + "Phase"   = "6"
+          + "Project" = "SmartTraffic"
+          + "Purpose" = "TemporaryAlertVerification"
+        }
+    }
+
+  # module.alerts.aws_dynamodb_table.alerts will be created
+  + resource "aws_dynamodb_table" "alerts" {
+      + arn              = (known after apply)
+      + billing_mode     = "PAY_PER_REQUEST"
+      + hash_key         = "alert_id"
+      + id               = (known after apply)
+      + name             = "smarttraffic-phase8-alerts"
+      + read_capacity    = (known after apply)
+      + region           = "ap-south-1"
+      + stream_arn       = (known after apply)
+      + stream_label     = (known after apply)
+      + stream_view_type = (known after apply)
+      + tags             = {
+          + "Owner"   = "AlertService"
+          + "Phase"   = "6"
+          + "Project" = "SmartTraffic"
+          + "Purpose" = "TemporaryAlertVerification"
+        }
+      + tags_all         = {
+          + "Owner"   = "AlertService"
+          + "Phase"   = "6"
+          + "Project" = "SmartTraffic"
+          + "Purpose" = "TemporaryAlertVerification"
+        }
+      + write_capacity   = (known after apply)
+
+      + attribute {
+          + name = "alert_id"
+          + type = "S"
+        }
+
+      + global_secondary_index (known after apply)
+
+      + global_table_witness (known after apply)
+
+      + point_in_time_recovery (known after apply)
+
+      + server_side_encryption {
+          + enabled     = true
+          + kms_key_arn = (known after apply)
+        }
+
+      + ttl (known after apply)
+
+      + warm_throughput (known after apply)
+    }
+
+  # module.alerts.aws_iam_policy.incident_manager_send will be created
+  + resource "aws_iam_policy" "incident_manager_send" {
+      + arn              = (known after apply)
+      + attachment_count = (known after apply)
+      + id               = (known after apply)
+      + name             = "smarttraffic-phase8-incident-alert-send"
+      + name_prefix      = (known after apply)
+      + path             = "/"
+      + policy           = (known after apply)
+      + policy_id        = (known after apply)
+      + tags_all         = (known after apply)
+    }
+
+  # module.alerts.aws_iam_policy.signal_recommendation_send will be created
+  + resource "aws_iam_policy" "signal_recommendation_send" {
+      + arn              = (known after apply)
+      + attachment_count = (known after apply)
+      + id               = (known after apply)
+      + name             = "smarttraffic-phase8-signal-alert-send"
+      + name_prefix      = (known after apply)
+      + path             = "/"
+      + policy           = (known after apply)
+      + policy_id        = (known after apply)
+      + tags_all         = (known after apply)
+    }
+
+  # module.alerts.aws_iam_role.lambda will be created
+  + resource "aws_iam_role" "lambda" {
+      + arn                   = (known after apply)
+      + assume_role_policy    = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = "sts:AssumeRole"
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + Service = "lambda.amazonaws.com"
+                        }
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + create_date           = (known after apply)
+      + force_detach_policies = false
+      + id                    = (known after apply)
+      + managed_policy_arns   = (known after apply)
+      + max_session_duration  = 3600
+      + name                  = "smarttraffic-phase8-alert-lambda"
+      + name_prefix           = (known after apply)
+      + path                  = "/"
+      + tags                  = {
+          + "Phase"   = "6"
+          + "Project" = "SmartTraffic"
+          + "Purpose" = "TemporaryAlertVerification"
+        }
+      + tags_all              = {
+          + "Phase"   = "6"
+          + "Project" = "SmartTraffic"
+          + "Purpose" = "TemporaryAlertVerification"
+        }
+      + unique_id             = (known after apply)
+
+      + inline_policy (known after apply)
+    }
+
+  # module.alerts.aws_iam_role_policy.lambda will be created
+  + resource "aws_iam_role_policy" "lambda" {
+      + id          = (known after apply)
+      + name        = "smarttraffic-phase8-alert-runtime"
+      + name_prefix = (known after apply)
+      + policy      = (known after apply)
+      + role        = (known after apply)
+    }
+
+  # module.alerts.aws_lambda_event_source_mapping.alerts will be created
+  + resource "aws_lambda_event_source_mapping" "alerts" {
+      + arn                           = (known after apply)
+      + batch_size                    = 5
+      + enabled                       = true
+      + event_source_arn              = (known after apply)
+      + function_arn                  = (known after apply)
+      + function_name                 = (known after apply)
+      + function_response_types       = [
+          + "ReportBatchItemFailures",
+        ]
+      + id                            = (known after apply)
+      + last_modified                 = (known after apply)
+      + last_processing_result        = (known after apply)
+      + maximum_record_age_in_seconds = (known after apply)
+      + maximum_retry_attempts        = (known after apply)
+      + parallelization_factor        = (known after apply)
+      + region                        = "ap-south-1"
+      + state                         = (known after apply)
+      + state_transition_reason       = (known after apply)
+      + tags_all                      = (known after apply)
+      + uuid                          = (known after apply)
+
+      + amazon_managed_kafka_event_source_config (known after apply)
+
+      + scaling_config {
+          + maximum_concurrency = 2
+        }
+
+      + self_managed_kafka_event_source_config (known after apply)
+    }
+
+  # module.alerts.aws_lambda_function.alerts will be created
+  + resource "aws_lambda_function" "alerts" {
+      + architectures                  = (known after apply)
+      + arn                            = (known after apply)
+      + code_sha256                    = (known after apply)
+      + filename                       = "C:/Users/harsh/OneDrive - MSFT/Desktop/STUDY BITS/25-26 SEM 3/CLOUD COMPUTING/PROJECT/Smart Traffic Management/.data/phase6/alert-service.zip"
+      + function_name                  = "smarttraffic-phase8-alert-service"
+      + handler                        = "handler.handler"
+      + id                             = (known after apply)
+      + invoke_arn                     = (known after apply)
+      + last_modified                  = (known after apply)
+      + memory_size                    = 128
+      + package_type                   = "Zip"
+      + publish                        = false
+      + qualified_arn                  = (known after apply)
+      + qualified_invoke_arn           = (known after apply)
+      + region                         = "ap-south-1"
+      + reserved_concurrent_executions = -1
+      + response_streaming_invoke_arn  = (known after apply)
+      + role                           = (known after apply)
+      + runtime                        = "python3.14"
+      + signing_job_arn                = (known after apply)
+      + signing_profile_version_arn    = (known after apply)
+      + skip_destroy                   = false
+      + source_code_hash               = "ebN3K5zI/1otF8X0pcK6wEZIwLzzz61rbxk1Obv8lfA="
+      + source_code_size               = (known after apply)
+      + tags                           = {
+          + "Phase"   = "6"
+          + "Project" = "SmartTraffic"
+          + "Purpose" = "TemporaryAlertVerification"
+        }
+      + tags_all                       = {
+          + "Phase"   = "6"
+          + "Project" = "SmartTraffic"
+          + "Purpose" = "TemporaryAlertVerification"
+        }
+      + timeout                        = 10
+      + version                        = (known after apply)
+
+      + environment {
+          + variables = {
+              + "ALERTS_TABLE" = "smarttraffic-phase8-alerts"
+            }
+        }
+
+      + ephemeral_storage (known after apply)
+
+      + logging_config (known after apply)
+
+      + tracing_config (known after apply)
+    }
+
+  # module.alerts.aws_sqs_queue.alerts will be created
+  + resource "aws_sqs_queue" "alerts" {
+      + arn                               = (known after apply)
+      + content_based_deduplication       = false
+      + deduplication_scope               = (known after apply)
+      + delay_seconds                     = 0
+      + fifo_queue                        = false
+      + fifo_throughput_limit             = (known after apply)
+      + id                                = (known after apply)
+      + kms_data_key_reuse_period_seconds = 0
+      + max_message_size                  = 262144
+      + message_retention_seconds         = 86400
+      + name                              = "smarttraffic-phase8-alerts"
+      + name_prefix                       = (known after apply)
+      + policy                            = (known after apply)
+      + receive_wait_time_seconds         = 0
+      + redrive_allow_policy              = (known after apply)
+      + redrive_policy                    = (known after apply)
+      + region                            = "ap-south-1"
+      + sqs_managed_sse_enabled           = true
+      + tags                              = {
+          + "Phase"   = "6"
+          + "Project" = "SmartTraffic"
+          + "Purpose" = "TemporaryAlertVerification"
+        }
+      + tags_all                          = {
+          + "Phase"   = "6"
+          + "Project" = "SmartTraffic"
+          + "Purpose" = "TemporaryAlertVerification"
+        }
+      + url                               = (known after apply)
+      + visibility_timeout_seconds        = 60
+    }
+
+  # module.alerts.aws_sqs_queue.dlq will be created
+  + resource "aws_sqs_queue" "dlq" {
+      + arn                               = (known after apply)
+      + content_based_deduplication       = false
+      + deduplication_scope               = (known after apply)
+      + delay_seconds                     = 0
+      + fifo_queue                        = false
+      + fifo_throughput_limit             = (known after apply)
+      + id                                = (known after apply)
+      + kms_data_key_reuse_period_seconds = 0
+      + max_message_size                  = 262144
+      + message_retention_seconds         = 345600
+      + name                              = "smarttraffic-phase8-alerts-dlq"
+      + name_prefix                       = (known after apply)
+      + policy                            = (known after apply)
+      + receive_wait_time_seconds         = 0
+      + redrive_allow_policy              = (known after apply)
+      + redrive_policy                    = (known after apply)
+      + region                            = "ap-south-1"
+      + sqs_managed_sse_enabled           = true
+      + tags                              = {
+          + "Phase"   = "6"
+          + "Project" = "SmartTraffic"
+          + "Purpose" = "TemporaryAlertVerification"
+        }
+      + tags_all                          = {
+          + "Phase"   = "6"
+          + "Project" = "SmartTraffic"
+          + "Purpose" = "TemporaryAlertVerification"
+        }
+      + url                               = (known after apply)
+      + visibility_timeout_seconds        = 30
+    }
+
+  # module.alerts.terraform_data.deployment_guard will be created
+  + resource "terraform_data" "deployment_guard" {
+      + id = (known after apply)
+    }
+
+  # module.derived.aws_dynamodb_table.recommendations will be created
+  + resource "aws_dynamodb_table" "recommendations" {
+      + arn              = (known after apply)
+      + billing_mode     = "PAY_PER_REQUEST"
+      + hash_key         = "intersection_id"
+      + id               = (known after apply)
+      + name             = "smarttraffic-phase8-recommendations"
+      + range_key        = "window_key"
+      + read_capacity    = (known after apply)
+      + region           = "ap-south-1"
+      + stream_arn       = (known after apply)
+      + stream_label     = (known after apply)
+      + stream_view_type = (known after apply)
+      + tags             = {
+          + "Owner"   = "SignalRecommendation"
+          + "Phase"   = "5"
+          + "Project" = "SmartTraffic"
+          + "Purpose" = "TemporaryDynamoDBVerification"
+        }
+      + tags_all         = {
+          + "Owner"   = "SignalRecommendation"
+          + "Phase"   = "5"
+          + "Project" = "SmartTraffic"
+          + "Purpose" = "TemporaryDynamoDBVerification"
+        }
+      + write_capacity   = (known after apply)
+
+      + attribute {
+          + name = "intersection_id"
+          + type = "S"
+        }
+      + attribute {
+          + name = "window_key"
+          + type = "S"
+        }
+
+      + global_secondary_index (known after apply)
+
+      + global_table_witness (known after apply)
+
+      + point_in_time_recovery (known after apply)
+
+      + server_side_encryption {
+          + enabled     = true
+          + kms_key_arn = (known after apply)
+        }
+
+      + ttl (known after apply)
+
+      + warm_throughput (known after apply)
+    }
+
+  # module.derived.aws_dynamodb_table.summaries will be created
+  + resource "aws_dynamodb_table" "summaries" {
+      + arn              = (known after apply)
+      + billing_mode     = "PAY_PER_REQUEST"
+      + hash_key         = "intersection_id"
+      + id               = (known after apply)
+      + name             = "smarttraffic-phase8-summaries"
+      + range_key        = "window_key"
+      + read_capacity    = (known after apply)
+      + region           = "ap-south-1"
+      + stream_arn       = (known after apply)
+      + stream_label     = (known after apply)
+      + stream_view_type = (known after apply)
+      + tags             = {
+          + "Owner"   = "TrafficAnalytics"
+          + "Phase"   = "5"
+          + "Project" = "SmartTraffic"
+          + "Purpose" = "TemporaryDynamoDBVerification"
+        }
+      + tags_all         = {
+          + "Owner"   = "TrafficAnalytics"
+          + "Phase"   = "5"
+          + "Project" = "SmartTraffic"
+          + "Purpose" = "TemporaryDynamoDBVerification"
+        }
+      + write_capacity   = (known after apply)
+
+      + attribute {
+          + name = "intersection_id"
+          + type = "S"
+        }
+      + attribute {
+          + name = "window_key"
+          + type = "S"
+        }
+
+      + global_secondary_index (known after apply)
+
+      + global_table_witness (known after apply)
+
+      + point_in_time_recovery (known after apply)
+
+      + server_side_encryption {
+          + enabled     = true
+          + kms_key_arn = (known after apply)
+        }
+
+      + ttl (known after apply)
+
+      + warm_throughput (known after apply)
+    }
+
+  # module.derived.aws_iam_policy.signal_recommendation will be created
+  + resource "aws_iam_policy" "signal_recommendation" {
+      + arn              = (known after apply)
+      + attachment_count = (known after apply)
+      + id               = (known after apply)
+      + name             = "smarttraffic-phase8-signal-recommendation-dynamodb"
+      + name_prefix      = (known after apply)
+      + path             = "/"
+      + policy           = (known after apply)
+      + policy_id        = (known after apply)
+      + tags_all         = (known after apply)
+    }
+
+  # module.derived.aws_iam_policy.traffic_analytics will be created
+  + resource "aws_iam_policy" "traffic_analytics" {
+      + arn              = (known after apply)
+      + attachment_count = (known after apply)
+      + id               = (known after apply)
+      + name             = "smarttraffic-phase8-traffic-analytics-dynamodb"
+      + name_prefix      = (known after apply)
+      + path             = "/"
+      + policy           = (known after apply)
+      + policy_id        = (known after apply)
+      + tags_all         = (known after apply)
+    }
+
+  # module.derived.terraform_data.deployment_guard will be created
+  + resource "terraform_data" "deployment_guard" {
+      + id = (known after apply)
+    }
+
+  # module.processing.aws_emr_cluster.congestion will be created
+  + resource "aws_emr_cluster" "congestion" {
+      + applications                      = [
+          + "Flink",
+        ]
+      + arn                               = (known after apply)
+      + cluster_state                     = (known after apply)
+      + id                                = (known after apply)
+      + keep_job_flow_alive_when_no_steps = true
+      + log_uri                           = (known after apply)
+      + master_public_dns                 = (known after apply)
+      + name                              = "smarttraffic-phase8-emr"
+      + region                            = "ap-south-1"
+      + release_label                     = "emr-7.14.0"
+      + scale_down_behavior               = (known after apply)
+      + service_role                      = (known after apply)
+      + step                              = (known after apply)
+      + step_concurrency_level            = 1
+      + tags                              = {
+          + "Project"                                  = "SmartTraffic"
+          + "Purpose"                                  = "Phase4TemporaryVerification"
+          + "for-use-with-amazon-emr-managed-policies" = "true"
+        }
+      + tags_all                          = {
+          + "Project"                                  = "SmartTraffic"
+          + "Purpose"                                  = "Phase4TemporaryVerification"
+          + "for-use-with-amazon-emr-managed-policies" = "true"
+        }
+      + termination_protection            = false
+      + unhealthy_node_replacement        = false
+      + visible_to_all_users              = true
+
+      + auto_termination_policy {
+          + idle_timeout = 3600
+        }
+
+      + core_instance_fleet (known after apply)
+
+      + core_instance_group {
+          + id             = (known after apply)
+          + instance_count = 1
+          + instance_type  = "m5.xlarge"
+          + name           = "Core"
+
+          + ebs_config (known after apply)
+        }
+
+      + ec2_attributes {
+          + emr_managed_master_security_group = (known after apply)
+          + emr_managed_slave_security_group  = (known after apply)
+          + instance_profile                  = (known after apply)
+          + service_access_security_group     = (known after apply)
+          + subnet_id                         = (known after apply)
+          + subnet_ids                        = (known after apply)
+        }
+
+      + master_instance_fleet (known after apply)
+
+      + master_instance_group {
+          + id             = (known after apply)
+          + instance_count = 1
+          + instance_type  = "m5.xlarge"
+          + name           = "Primary"
+
+          + ebs_config (known after apply)
+        }
+    }
+
+  # module.processing.aws_iam_instance_profile.emr_ec2 will be created
+  + resource "aws_iam_instance_profile" "emr_ec2" {
+      + arn         = (known after apply)
+      + create_date = (known after apply)
+      + id          = (known after apply)
+      + name        = "smarttraffic-phase8-emr-ec2"
+      + name_prefix = (known after apply)
+      + path        = "/"
+      + role        = "smarttraffic-phase8-emr-ec2"
+      + tags_all    = (known after apply)
+      + unique_id   = (known after apply)
+    }
+
+  # module.processing.aws_iam_role.emr_ec2 will be created
+  + resource "aws_iam_role" "emr_ec2" {
+      + arn                   = (known after apply)
+      + assume_role_policy    = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = "sts:AssumeRole"
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + Service = "ec2.amazonaws.com"
+                        }
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + create_date           = (known after apply)
+      + force_detach_policies = false
+      + id                    = (known after apply)
+      + managed_policy_arns   = (known after apply)
+      + max_session_duration  = 3600
+      + name                  = "smarttraffic-phase8-emr-ec2"
+      + name_prefix           = (known after apply)
+      + path                  = "/"
+      + tags_all              = (known after apply)
+      + unique_id             = (known after apply)
+
+      + inline_policy (known after apply)
+    }
+
+  # module.processing.aws_iam_role.emr_service will be created
+  + resource "aws_iam_role" "emr_service" {
+      + arn                   = (known after apply)
+      + assume_role_policy    = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = "sts:AssumeRole"
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + Service = "elasticmapreduce.amazonaws.com"
+                        }
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + create_date           = (known after apply)
+      + force_detach_policies = false
+      + id                    = (known after apply)
+      + managed_policy_arns   = (known after apply)
+      + max_session_duration  = 3600
+      + name                  = (known after apply)
+      + name_prefix           = "smarttraffic-phase8-emr-service-"
+      + path                  = "/"
+      + tags_all              = (known after apply)
+      + unique_id             = (known after apply)
+
+      + inline_policy (known after apply)
+    }
+
+  # module.processing.aws_iam_role_policy.emr_ec2 will be created
+  + resource "aws_iam_role_policy" "emr_ec2" {
+      + id          = (known after apply)
+      + name        = (known after apply)
+      + name_prefix = (known after apply)
+      + policy      = (known after apply)
+      + role        = (known after apply)
+    }
+
+  # module.processing.aws_iam_role_policy.emr_service_pass_ec2_role will be created
+  + resource "aws_iam_role_policy" "emr_service_pass_ec2_role" {
+      + id          = (known after apply)
+      + name        = "pass-emr-ec2-role"
+      + name_prefix = (known after apply)
+      + policy      = (known after apply)
+      + role        = (known after apply)
+    }
+
+  # module.processing.aws_iam_role_policy_attachment.emr_service will be created
+  + resource "aws_iam_role_policy_attachment" "emr_service" {
+      + id         = (known after apply)
+      + policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEMRServicePolicy_v2"
+      + role       = (known after apply)
+    }
+
+  # module.processing.aws_msk_topic.results will be created
+  + resource "aws_msk_topic" "results" {
+      + arn                = (known after apply)
+      + cluster_arn        = (known after apply)
+      + configs            = jsonencode(
+            {
+              + "cleanup.policy"      = "delete"
+              + "min.insync.replicas" = "2"
+              + "retention.ms"        = "86400000"
+            }
+        )
+      + configs_actual     = (known after apply)
+      + name               = "traffic.results"
+      + partition_count    = 1
+      + region             = "ap-south-1"
+      + replication_factor = 2
+    }
+
+  # module.processing.aws_s3_object.jar will be created
+  + resource "aws_s3_object" "jar" {
+      + acl                    = (known after apply)
+      + arn                    = (known after apply)
+      + bucket                 = (known after apply)
+      + bucket_key_enabled     = (known after apply)
+      + checksum_crc32         = (known after apply)
+      + checksum_crc32c        = (known after apply)
+      + checksum_crc64nvme     = (known after apply)
+      + checksum_sha1          = (known after apply)
+      + checksum_sha256        = (known after apply)
+      + content_type           = (known after apply)
+      + etag                   = "6643fd1c08a9d2417cdcd2b34d086582"
+      + force_destroy          = false
+      + id                     = (known after apply)
+      + key                    = "artifacts/congestion-processor-1.0.0-emr.jar"
+      + kms_key_id             = (known after apply)
+      + region                 = "ap-south-1"
+      + server_side_encryption = "AES256"
+      + source                 = "../../../services/congestion-processor/target-emr/congestion-processor-1.0.0.jar"
+      + storage_class          = (known after apply)
+      + tags_all               = (known after apply)
+      + version_id             = (known after apply)
+    }
+
+  # module.processing.aws_security_group.emr_core will be created
+  + resource "aws_security_group" "emr_core" {
+      + arn                    = (known after apply)
+      + description            = "EMR core node for temporary Phase 4 verification"
+      + egress                 = (known after apply)
+      + id                     = (known after apply)
+      + ingress                = (known after apply)
+      + name                   = (known after apply)
+      + name_prefix            = "smarttraffic-phase8-emr-core-"
+      + owner_id               = (known after apply)
+      + region                 = "ap-south-1"
+      + revoke_rules_on_delete = true
+      + tags                   = {
+          + "for-use-with-amazon-emr-managed-policies" = "true"
+        }
+      + tags_all               = {
+          + "for-use-with-amazon-emr-managed-policies" = "true"
+        }
+      + vpc_id                 = (known after apply)
+    }
+
+  # module.processing.aws_security_group.emr_primary will be created
+  + resource "aws_security_group" "emr_primary" {
+      + arn                    = (known after apply)
+      + description            = "EMR primary node for temporary Phase 4 verification"
+      + egress                 = (known after apply)
+      + id                     = (known after apply)
+      + ingress                = (known after apply)
+      + name                   = (known after apply)
+      + name_prefix            = "smarttraffic-phase8-emr-primary-"
+      + owner_id               = (known after apply)
+      + region                 = "ap-south-1"
+      + revoke_rules_on_delete = true
+      + tags                   = {
+          + "for-use-with-amazon-emr-managed-policies" = "true"
+        }
+      + tags_all               = {
+          + "for-use-with-amazon-emr-managed-policies" = "true"
+        }
+      + vpc_id                 = (known after apply)
+    }
+
+  # module.processing.aws_security_group.emr_service will be created
+  + resource "aws_security_group" "emr_service" {
+      + arn                    = (known after apply)
+      + description            = "EMR service access in the isolated subnet"
+      + egress                 = (known after apply)
+      + id                     = (known after apply)
+      + ingress                = (known after apply)
+      + name                   = (known after apply)
+      + name_prefix            = "smarttraffic-phase8-emr-service-"
+      + owner_id               = (known after apply)
+      + region                 = "ap-south-1"
+      + revoke_rules_on_delete = true
+      + tags                   = {
+          + "for-use-with-amazon-emr-managed-policies" = "true"
+        }
+      + tags_all               = {
+          + "for-use-with-amazon-emr-managed-policies" = "true"
+        }
+      + vpc_id                 = (known after apply)
+    }
+
+  # module.processing.aws_vpc_security_group_egress_rule.core_kafka will be created
+  + resource "aws_vpc_security_group_egress_rule" "core_kafka" {
+      + arn                          = (known after apply)
+      + from_port                    = 9098
+      + id                           = (known after apply)
+      + ip_protocol                  = "tcp"
+      + referenced_security_group_id = (known after apply)
+      + region                       = "ap-south-1"
+      + security_group_id            = (known after apply)
+      + security_group_rule_id       = (known after apply)
+      + tags_all                     = {}
+      + to_port                      = 9098
+    }
+
+  # module.processing.aws_vpc_security_group_egress_rule.core_primary will be created
+  + resource "aws_vpc_security_group_egress_rule" "core_primary" {
+      + arn                          = (known after apply)
+      + id                           = (known after apply)
+      + ip_protocol                  = "-1"
+      + referenced_security_group_id = (known after apply)
+      + region                       = "ap-south-1"
+      + security_group_id            = (known after apply)
+      + security_group_rule_id       = (known after apply)
+      + tags_all                     = {}
+    }
+
+  # module.processing.aws_vpc_security_group_egress_rule.core_s3 will be created
+  + resource "aws_vpc_security_group_egress_rule" "core_s3" {
+      + arn                    = (known after apply)
+      + from_port              = 443
+      + id                     = (known after apply)
+      + ip_protocol            = "tcp"
+      + prefix_list_id         = (known after apply)
+      + region                 = "ap-south-1"
+      + security_group_id      = (known after apply)
+      + security_group_rule_id = (known after apply)
+      + tags_all               = {}
+      + to_port                = 443
+    }
+
+  # module.processing.aws_vpc_security_group_egress_rule.core_self will be created
+  + resource "aws_vpc_security_group_egress_rule" "core_self" {
+      + arn                          = (known after apply)
+      + id                           = (known after apply)
+      + ip_protocol                  = "-1"
+      + referenced_security_group_id = (known after apply)
+      + region                       = "ap-south-1"
+      + security_group_id            = (known after apply)
+      + security_group_rule_id       = (known after apply)
+      + tags_all                     = {}
+    }
+
+  # module.processing.aws_vpc_security_group_egress_rule.primary_core will be created
+  + resource "aws_vpc_security_group_egress_rule" "primary_core" {
+      + arn                          = (known after apply)
+      + id                           = (known after apply)
+      + ip_protocol                  = "-1"
+      + referenced_security_group_id = (known after apply)
+      + region                       = "ap-south-1"
+      + security_group_id            = (known after apply)
+      + security_group_rule_id       = (known after apply)
+      + tags_all                     = {}
+    }
+
+  # module.processing.aws_vpc_security_group_egress_rule.primary_kafka will be created
+  + resource "aws_vpc_security_group_egress_rule" "primary_kafka" {
+      + arn                          = (known after apply)
+      + from_port                    = 9098
+      + id                           = (known after apply)
+      + ip_protocol                  = "tcp"
+      + referenced_security_group_id = (known after apply)
+      + region                       = "ap-south-1"
+      + security_group_id            = (known after apply)
+      + security_group_rule_id       = (known after apply)
+      + tags_all                     = {}
+      + to_port                      = 9098
+    }
+
+  # module.processing.aws_vpc_security_group_egress_rule.primary_s3 will be created
+  + resource "aws_vpc_security_group_egress_rule" "primary_s3" {
+      + arn                    = (known after apply)
+      + from_port              = 443
+      + id                     = (known after apply)
+      + ip_protocol            = "tcp"
+      + prefix_list_id         = (known after apply)
+      + region                 = "ap-south-1"
+      + security_group_id      = (known after apply)
+      + security_group_rule_id = (known after apply)
+      + tags_all               = {}
+      + to_port                = 443
+    }
+
+  # module.processing.aws_vpc_security_group_egress_rule.primary_self will be created
+  + resource "aws_vpc_security_group_egress_rule" "primary_self" {
+      + arn                          = (known after apply)
+      + id                           = (known after apply)
+      + ip_protocol                  = "-1"
+      + referenced_security_group_id = (known after apply)
+      + region                       = "ap-south-1"
+      + security_group_id            = (known after apply)
+      + security_group_rule_id       = (known after apply)
+      + tags_all                     = {}
+    }
+
+  # module.processing.aws_vpc_security_group_egress_rule.primary_service will be created
+  + resource "aws_vpc_security_group_egress_rule" "primary_service" {
+      + arn                          = (known after apply)
+      + from_port                    = 9443
+      + id                           = (known after apply)
+      + ip_protocol                  = "tcp"
+      + referenced_security_group_id = (known after apply)
+      + region                       = "ap-south-1"
+      + security_group_id            = (known after apply)
+      + security_group_rule_id       = (known after apply)
+      + tags_all                     = {}
+      + to_port                      = 9443
+    }
+
+  # module.processing.aws_vpc_security_group_egress_rule.service_core will be created
+  + resource "aws_vpc_security_group_egress_rule" "service_core" {
+      + arn                          = (known after apply)
+      + from_port                    = 8443
+      + id                           = (known after apply)
+      + ip_protocol                  = "tcp"
+      + referenced_security_group_id = (known after apply)
+      + region                       = "ap-south-1"
+      + security_group_id            = (known after apply)
+      + security_group_rule_id       = (known after apply)
+      + tags_all                     = {}
+      + to_port                      = 8443
+    }
+
+  # module.processing.aws_vpc_security_group_egress_rule.service_primary will be created
+  + resource "aws_vpc_security_group_egress_rule" "service_primary" {
+      + arn                          = (known after apply)
+      + from_port                    = 8443
+      + id                           = (known after apply)
+      + ip_protocol                  = "tcp"
+      + referenced_security_group_id = (known after apply)
+      + region                       = "ap-south-1"
+      + security_group_id            = (known after apply)
+      + security_group_rule_id       = (known after apply)
+      + tags_all                     = {}
+      + to_port                      = 8443
+    }
+
+  # module.processing.aws_vpc_security_group_ingress_rule.core_cluster["core"] will be created
+  + resource "aws_vpc_security_group_ingress_rule" "core_cluster" {
+      + arn                          = (known after apply)
+      + id                           = (known after apply)
+      + ip_protocol                  = "-1"
+      + referenced_security_group_id = (known after apply)
+      + region                       = "ap-south-1"
+      + security_group_id            = (known after apply)
+      + security_group_rule_id       = (known after apply)
+      + tags_all                     = {}
+    }
+
+  # module.processing.aws_vpc_security_group_ingress_rule.core_cluster["primary"] will be created
+  + resource "aws_vpc_security_group_ingress_rule" "core_cluster" {
+      + arn                          = (known after apply)
+      + id                           = (known after apply)
+      + ip_protocol                  = "-1"
+      + referenced_security_group_id = (known after apply)
+      + region                       = "ap-south-1"
+      + security_group_id            = (known after apply)
+      + security_group_rule_id       = (known after apply)
+      + tags_all                     = {}
+    }
+
+  # module.processing.aws_vpc_security_group_ingress_rule.core_from_service will be created
+  + resource "aws_vpc_security_group_ingress_rule" "core_from_service" {
+      + arn                          = (known after apply)
+      + from_port                    = 8443
+      + id                           = (known after apply)
+      + ip_protocol                  = "tcp"
+      + referenced_security_group_id = (known after apply)
+      + region                       = "ap-south-1"
+      + security_group_id            = (known after apply)
+      + security_group_rule_id       = (known after apply)
+      + tags_all                     = {}
+      + to_port                      = 8443
+    }
+
+  # module.processing.aws_vpc_security_group_ingress_rule.emr_kafka["core"] will be created
+  + resource "aws_vpc_security_group_ingress_rule" "emr_kafka" {
+      + arn                          = (known after apply)
+      + from_port                    = 9098
+      + id                           = (known after apply)
+      + ip_protocol                  = "tcp"
+      + referenced_security_group_id = (known after apply)
+      + region                       = "ap-south-1"
+      + security_group_id            = (known after apply)
+      + security_group_rule_id       = (known after apply)
+      + tags_all                     = {}
+      + to_port                      = 9098
+    }
+
+  # module.processing.aws_vpc_security_group_ingress_rule.emr_kafka["primary"] will be created
+  + resource "aws_vpc_security_group_ingress_rule" "emr_kafka" {
+      + arn                          = (known after apply)
+      + from_port                    = 9098
+      + id                           = (known after apply)
+      + ip_protocol                  = "tcp"
+      + referenced_security_group_id = (known after apply)
+      + region                       = "ap-south-1"
+      + security_group_id            = (known after apply)
+      + security_group_rule_id       = (known after apply)
+      + tags_all                     = {}
+      + to_port                      = 9098
+    }
+
+  # module.processing.aws_vpc_security_group_ingress_rule.primary_cluster["core"] will be created
+  + resource "aws_vpc_security_group_ingress_rule" "primary_cluster" {
+      + arn                          = (known after apply)
+      + id                           = (known after apply)
+      + ip_protocol                  = "-1"
+      + referenced_security_group_id = (known after apply)
+      + region                       = "ap-south-1"
+      + security_group_id            = (known after apply)
+      + security_group_rule_id       = (known after apply)
+      + tags_all                     = {}
+    }
+
+  # module.processing.aws_vpc_security_group_ingress_rule.primary_cluster["primary"] will be created
+  + resource "aws_vpc_security_group_ingress_rule" "primary_cluster" {
+      + arn                          = (known after apply)
+      + id                           = (known after apply)
+      + ip_protocol                  = "-1"
+      + referenced_security_group_id = (known after apply)
+      + region                       = "ap-south-1"
+      + security_group_id            = (known after apply)
+      + security_group_rule_id       = (known after apply)
+      + tags_all                     = {}
+    }
+
+  # module.processing.aws_vpc_security_group_ingress_rule.primary_from_service will be created
+  + resource "aws_vpc_security_group_ingress_rule" "primary_from_service" {
+      + arn                          = (known after apply)
+      + from_port                    = 8443
+      + id                           = (known after apply)
+      + ip_protocol                  = "tcp"
+      + referenced_security_group_id = (known after apply)
+      + region                       = "ap-south-1"
+      + security_group_id            = (known after apply)
+      + security_group_rule_id       = (known after apply)
+      + tags_all                     = {}
+      + to_port                      = 8443
+    }
+
+  # module.processing.aws_vpc_security_group_ingress_rule.service_from_primary will be created
+  + resource "aws_vpc_security_group_ingress_rule" "service_from_primary" {
+      + arn                          = (known after apply)
+      + from_port                    = 9443
+      + id                           = (known after apply)
+      + ip_protocol                  = "tcp"
+      + referenced_security_group_id = (known after apply)
+      + region                       = "ap-south-1"
+      + security_group_id            = (known after apply)
+      + security_group_rule_id       = (known after apply)
+      + tags_all                     = {}
+      + to_port                      = 9443
+    }
+
+  # module.processing.terraform_data.deployment_guard will be created
+  + resource "terraform_data" "deployment_guard" {
+      + id = (known after apply)
+    }
+
+  # module.streaming.aws_iam_policy.publisher will be created
+  + resource "aws_iam_policy" "publisher" {
+      + arn              = (known after apply)
+      + attachment_count = (known after apply)
+      + id               = (known after apply)
+      + name             = (known after apply)
+      + name_prefix      = "smarttraffic-phase8-kafka-publisher-"
+      + path             = "/"
+      + policy           = (known after apply)
+      + policy_id        = (known after apply)
+      + tags_all         = (known after apply)
+    }
+
+  # module.streaming.aws_iam_policy.topic_admin will be created
+  + resource "aws_iam_policy" "topic_admin" {
+      + arn              = (known after apply)
+      + attachment_count = (known after apply)
+      + id               = (known after apply)
+      + name             = (known after apply)
+      + name_prefix      = "smarttraffic-phase8-kafka-topic-admin-"
+      + path             = "/"
+      + policy           = (known after apply)
+      + policy_id        = (known after apply)
+      + tags_all         = (known after apply)
+    }
+
+  # module.streaming.aws_iam_policy.verifier will be created
+  + resource "aws_iam_policy" "verifier" {
+      + arn              = (known after apply)
+      + attachment_count = (known after apply)
+      + id               = (known after apply)
+      + name             = (known after apply)
+      + name_prefix      = "smarttraffic-phase8-kafka-verifier-"
+      + path             = "/"
+      + policy           = (known after apply)
+      + policy_id        = (known after apply)
+      + tags_all         = (known after apply)
+    }
+
+  # module.streaming.aws_msk_cluster.main will be created
+  + resource "aws_msk_cluster" "main" {
+      + arn                                           = (known after apply)
+      + bootstrap_brokers                             = (known after apply)
+      + bootstrap_brokers_public_sasl_iam             = (known after apply)
+      + bootstrap_brokers_public_sasl_scram           = (known after apply)
+      + bootstrap_brokers_public_tls                  = (known after apply)
+      + bootstrap_brokers_sasl_iam                    = (known after apply)
+      + bootstrap_brokers_sasl_scram                  = (known after apply)
+      + bootstrap_brokers_tls                         = (known after apply)
+      + bootstrap_brokers_vpc_connectivity_sasl_iam   = (known after apply)
+      + bootstrap_brokers_vpc_connectivity_sasl_scram = (known after apply)
+      + bootstrap_brokers_vpc_connectivity_tls        = (known after apply)
+      + cluster_name                                  = "smarttraffic-phase8-kafka"
+      + cluster_uuid                                  = (known after apply)
+      + current_version                               = (known after apply)
+      + enhanced_monitoring                           = "DEFAULT"
+      + id                                            = (known after apply)
+      + kafka_version                                 = "3.9.x"
+      + number_of_broker_nodes                        = 2
+      + region                                        = "ap-south-1"
+      + storage_mode                                  = (known after apply)
+      + tags_all                                      = (known after apply)
+      + zookeeper_connect_string                      = (known after apply)
+      + zookeeper_connect_string_tls                  = (known after apply)
+
+      + broker_node_group_info {
+          + az_distribution = "DEFAULT"
+          + client_subnets  = (known after apply)
+          + instance_type   = "kafka.t3.small"
+          + security_groups = (known after apply)
+
+          + connectivity_info {
+              + network_type = (known after apply)
+
+              + public_access {
+                  + type = "DISABLED"
+                }
+
+              + vpc_connectivity (known after apply)
+            }
+
+          + storage_info {
+              + ebs_storage_info {
+                  + volume_size = 10
+                }
+            }
+        }
+
+      + client_authentication {
+          + unauthenticated = false
+
+          + sasl {
+              + iam = true
+            }
+        }
+
+      + configuration_info {
+          + arn      = (known after apply)
+          + revision = (known after apply)
+        }
+
+      + encryption_info {
+          + encryption_at_rest_kms_key_arn = (known after apply)
+
+          + encryption_in_transit {
+              + client_broker = "TLS"
+              + in_cluster    = true
+            }
+        }
+
+      + rebalancing (known after apply)
+    }
+
+  # module.streaming.aws_msk_configuration.main will be created
+  + resource "aws_msk_configuration" "main" {
+      + arn               = (known after apply)
+      + id                = (known after apply)
+      + kafka_versions    = [
+          + "3.9.x",
+        ]
+      + latest_revision   = (known after apply)
+      + name              = "smarttraffic-phase8-kafka"
+      + region            = "ap-south-1"
+      + server_properties = <<-EOT
+            auto.create.topics.enable=false
+            default.replication.factor=2
+            min.insync.replicas=2
+            offsets.topic.replication.factor=2
+            log.retention.hours=24
+        EOT
+    }
+
+  # module.streaming.aws_msk_topic.raw will be created
+  + resource "aws_msk_topic" "raw" {
+      + arn                = (known after apply)
+      + cluster_arn        = (known after apply)
+      + configs            = jsonencode(
+            {
+              + "cleanup.policy"      = "delete"
+              + "min.insync.replicas" = "2"
+              + "retention.ms"        = "86400000"
+            }
+        )
+      + configs_actual     = (known after apply)
+      + name               = "traffic.raw"
+      + partition_count    = 1
+      + region             = "ap-south-1"
+      + replication_factor = 2
+    }
+
+  # module.streaming.aws_s3_bucket.archive will be created
+  + resource "aws_s3_bucket" "archive" {
+      + acceleration_status         = (known after apply)
+      + acl                         = (known after apply)
+      + arn                         = (known after apply)
+      + bucket                      = (known after apply)
+      + bucket_domain_name          = (known after apply)
+      + bucket_namespace            = (known after apply)
+      + bucket_prefix               = "smarttraffic-phase8-kafka-"
+      + bucket_region               = (known after apply)
+      + bucket_regional_domain_name = (known after apply)
+      + force_destroy               = false
+      + hosted_zone_id              = (known after apply)
+      + id                          = (known after apply)
+      + object_lock_enabled         = (known after apply)
+      + policy                      = (known after apply)
+      + region                      = "ap-south-1"
+      + request_payer               = (known after apply)
+      + tags_all                    = (known after apply)
+      + website_domain              = (known after apply)
+      + website_endpoint            = (known after apply)
+
+      + cors_rule (known after apply)
+
+      + grant (known after apply)
+
+      + lifecycle_rule (known after apply)
+
+      + logging (known after apply)
+
+      + object_lock_configuration (known after apply)
+
+      + replication_configuration (known after apply)
+
+      + server_side_encryption_configuration (known after apply)
+
+      + versioning (known after apply)
+
+      + website (known after apply)
+    }
+
+  # module.streaming.aws_s3_bucket_policy.archive will be created
+  + resource "aws_s3_bucket_policy" "archive" {
+      + bucket = (known after apply)
+      + id     = (known after apply)
+      + policy = (known after apply)
+      + region = "ap-south-1"
+    }
+
+  # module.streaming.aws_s3_bucket_public_access_block.archive will be created
+  + resource "aws_s3_bucket_public_access_block" "archive" {
+      + block_public_acls       = true
+      + block_public_policy     = true
+      + bucket                  = (known after apply)
+      + id                      = (known after apply)
+      + ignore_public_acls      = true
+      + region                  = "ap-south-1"
+      + restrict_public_buckets = true
+    }
+
+  # module.streaming.aws_s3_bucket_server_side_encryption_configuration.archive will be created
+  + resource "aws_s3_bucket_server_side_encryption_configuration" "archive" {
+      + bucket = (known after apply)
+      + id     = (known after apply)
+      + region = "ap-south-1"
+
+      + rule {
+          + blocked_encryption_types = (known after apply)
+          + bucket_key_enabled       = (known after apply)
+
+          + apply_server_side_encryption_by_default {
+              + kms_master_key_id = (known after apply)
+              + sse_algorithm     = "AES256"
+            }
+        }
+    }
+
+  # module.streaming.aws_s3_bucket_versioning.archive will be created
+  + resource "aws_s3_bucket_versioning" "archive" {
+      + bucket = (known after apply)
+      + id     = (known after apply)
+      + region = "ap-south-1"
+
+      + versioning_configuration {
+          + mfa_delete = (known after apply)
+          + status     = "Enabled"
+        }
+    }
+
+  # module.streaming.aws_security_group.kafka will be created
+  + resource "aws_security_group" "kafka" {
+      + arn                    = (known after apply)
+      + description            = "Managed by Terraform"
+      + egress                 = (known after apply)
+      + id                     = (known after apply)
+      + ingress                = (known after apply)
+      + name                   = (known after apply)
+      + name_prefix            = "smarttraffic-phase8-kafka-kafka-"
+      + owner_id               = (known after apply)
+      + region                 = "ap-south-1"
+      + revoke_rules_on_delete = false
+      + tags_all               = (known after apply)
+      + vpc_id                 = (known after apply)
+    }
+
+  # module.streaming.aws_vpc_endpoint.s3 will be created
+  + resource "aws_vpc_endpoint" "s3" {
+      + arn                   = (known after apply)
+      + cidr_blocks           = (known after apply)
+      + dns_entry             = (known after apply)
+      + id                    = (known after apply)
+      + ip_address_type       = (known after apply)
+      + network_interface_ids = (known after apply)
+      + owner_id              = (known after apply)
+      + policy                = (known after apply)
+      + prefix_list_id        = (known after apply)
+      + private_dns_enabled   = (known after apply)
+      + region                = "ap-south-1"
+      + requester_managed     = (known after apply)
+      + route_table_ids       = (known after apply)
+      + security_group_ids    = (known after apply)
+      + service_name          = "com.amazonaws.ap-south-1.s3"
+      + service_region        = (known after apply)
+      + state                 = (known after apply)
+      + subnet_ids            = (known after apply)
+      + tags_all              = (known after apply)
+      + vpc_endpoint_type     = "Gateway"
+      + vpc_id                = (known after apply)
+
+      + dns_options (known after apply)
+
+      + subnet_configuration (known after apply)
+    }
+
+  # module.streaming.aws_vpc_security_group_egress_rule.application_kafka will be created
+  + resource "aws_vpc_security_group_egress_rule" "application_kafka" {
+      + arn                          = (known after apply)
+      + from_port                    = 9098
+      + id                           = (known after apply)
+      + ip_protocol                  = "tcp"
+      + referenced_security_group_id = (known after apply)
+      + region                       = "ap-south-1"
+      + security_group_id            = (known after apply)
+      + security_group_rule_id       = (known after apply)
+      + tags_all                     = {}
+      + to_port                      = 9098
+    }
+
+  # module.streaming.aws_vpc_security_group_egress_rule.application_s3 will be created
+  + resource "aws_vpc_security_group_egress_rule" "application_s3" {
+      + arn                    = (known after apply)
+      + from_port              = 443
+      + id                     = (known after apply)
+      + ip_protocol            = "tcp"
+      + prefix_list_id         = (known after apply)
+      + region                 = "ap-south-1"
+      + security_group_id      = (known after apply)
+      + security_group_rule_id = (known after apply)
+      + tags_all               = {}
+      + to_port                = 443
+    }
+
+  # module.streaming.aws_vpc_security_group_egress_rule.broker_traffic will be created
+  + resource "aws_vpc_security_group_egress_rule" "broker_traffic" {
+      + arn                          = (known after apply)
+      + from_port                    = 0
+      + id                           = (known after apply)
+      + ip_protocol                  = "tcp"
+      + referenced_security_group_id = (known after apply)
+      + region                       = "ap-south-1"
+      + security_group_id            = (known after apply)
+      + security_group_rule_id       = (known after apply)
+      + tags_all                     = {}
+      + to_port                      = 65535
+    }
+
+  # module.streaming.aws_vpc_security_group_ingress_rule.application_kafka will be created
+  + resource "aws_vpc_security_group_ingress_rule" "application_kafka" {
+      + arn                          = (known after apply)
+      + from_port                    = 9098
+      + id                           = (known after apply)
+      + ip_protocol                  = "tcp"
+      + referenced_security_group_id = (known after apply)
+      + region                       = "ap-south-1"
+      + security_group_id            = (known after apply)
+      + security_group_rule_id       = (known after apply)
+      + tags_all                     = {}
+      + to_port                      = 9098
+    }
+
+  # module.streaming.aws_vpc_security_group_ingress_rule.broker_traffic will be created
+  + resource "aws_vpc_security_group_ingress_rule" "broker_traffic" {
+      + arn                          = (known after apply)
+      + from_port                    = 0
+      + id                           = (known after apply)
+      + ip_protocol                  = "tcp"
+      + referenced_security_group_id = (known after apply)
+      + region                       = "ap-south-1"
+      + security_group_id            = (known after apply)
+      + security_group_rule_id       = (known after apply)
+      + tags_all                     = {}
+      + to_port                      = 65535
+    }
+
+  # module.streaming.terraform_data.deployment_guard will be created
+  + resource "terraform_data" "deployment_guard" {
+      + id = (known after apply)
+    }
+
+Plan: 132 to add, 6 to change, 0 to destroy.
+
+Changes to Outputs:
+  + alert_queue_url         = (known after apply)
+  + archive_bucket          = (known after apply)
+  + eks_cluster_name        = "smarttraffic-phase8"
+  + kafka_bootstrap_servers = (known after apply)
+  + public_https_dns_name   = "api.smarttrafficmgmt.online"
+  + rds_endpoint            = (known after apply)

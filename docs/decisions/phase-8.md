@@ -1,6 +1,6 @@
 # Phase 8 integrated deployment design and preflight
 
-**Status: proposed for approval (2026-11-12).** This is Phase 8 Step 1 only. It records a deployable target and the gates that prevent an apply. It creates no AWS resources, and it does not approve Phase 8 Steps 2–5.
+**Status: historical Step 1 design/preflight, approved and later exercised.** This document records the design and gates in force before the authorized run. The current outcome is in `docs/evidence/phase-8-acceptance.md`, `docs/evidence/phase-8-teardown-audit.md`, and `docs/progress/phase-8.md`.
 
 ## Existing baseline and required outcome
 
@@ -65,6 +65,10 @@ References: [EKS pricing](https://aws.amazon.com/eks/pricing/), [MSK pricing](ht
 - Cloud configuration/secrets-reference support, focused packaging checks and an apply/teardown runbook.
 
 No interface, service-boundary or behavior change is approved by this document. Phase 8 remains **In Progress** pending the approvals and access/cost gates above.
+
+## Planning amendment — 2026-11-16
+
+The user approved a revised project cost cap of **US$22**. This supersedes the US$10 planning cap stated in this historical Phase 8 preflight; its dated Cost Explorer measurements and conclusions remain evidence for that earlier gate. Future cloud work still requires a fresh cost preflight, a time-bounded teardown plan and separate explicit authorization before provisioning.
 
 ## Step 2 preparation result
 

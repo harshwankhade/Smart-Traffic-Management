@@ -1,5 +1,7 @@
 # Smart Traffic Management - S12
 
+**Phase 8 is In Progress.** An authorized integrated AWS run verified the six Kubernetes services, Apache Flink on EMR, Lambda Alert Service, MSK, RDS, DynamoDB, S3, SQS, Argo CD GitOps reconciliation, and ZooKeeper takeover; all run-owned runtime resources were subsequently removed. Route 53 and the ACM certificate are intentionally retained for `smarttrafficmgmt.online`. The remaining MVP gap is a strict external-client HTTPS request: DNS, ACM and the ALB listener were verified, but this workstation's TLS-intercepting outbound network prevented a certificate-validating public request. See [acceptance evidence](docs/evidence/phase-8-acceptance.md), [teardown audit](docs/evidence/phase-8-teardown-audit.md), and [Phase 8 progress](docs/progress/phase-8.md).
+
 Phase 5 is complete for its approved scope. The user approved the derived-record/query/delivery design in
 `docs/decisions/phase-5.md`; Steps 1–5 added recommendation and summary contracts, pure
 simulation-only rules, service-owned DynamoDB repositories, independent Kafka result
@@ -39,7 +41,7 @@ The demo starts its loopback dependencies, uses a unique ZooKeeper election path
 - Local Kafka/SeaweedFS containers persist records/objects. Congestion Processor runs real Flink minute windows, bounded deduplication and checkpoint recovery. Signal Recommendation and Traffic Analytics consume its results and expose local read APIs; Alert Service retains Phase 1 health/smoke behavior.
 - Versioned response schemas, local HTTP restart demo, automated tests and private RDS Terraform prepared for mocked checks only.
 
-See [REST contracts, errors and examples](docs/phase-2-api.md) and [Flink processing/recovery](docs/phase-4-processing.md). Registry, Incident Manager and Ingestion expose local `/docs` and `/openapi.json`; Publisher exposes gRPC plus HTTP liveness/readiness. Queue delivery has temporary-cloud evidence. Phase 7 ZooKeeper crash and session recovery passed the [real local demo](docs/evidence/phase-7-local.md). Integrated cloud deployment and dashboards remain future work.
+See [REST contracts, errors and examples](docs/phase-2-api.md) and [Flink processing/recovery](docs/phase-4-processing.md). Registry, Incident Manager and Ingestion expose local `/docs` and `/openapi.json`; Publisher exposes gRPC plus HTTP liveness/readiness. Queue delivery has temporary-cloud evidence. Phase 7 ZooKeeper crash and session recovery passed the [real local demo](docs/evidence/phase-7-local.md). The Phase 8 integrated cloud run is recorded above; dashboards and sustained HPA/load validation remain Phase 9 work.
 
 ## Phase 4 local Flink demo
 
@@ -141,8 +143,8 @@ instance remains unapplied. The separate, user-authorized Phase 4 temporary stac
 destroyed. Deployment approval defaults false. Provider downloads require Internet access; these
 local checks require no AWS credentials.
 
-The user-approved US$10 total cap and no-credit assumption remain binding, with approximately 20 minutes of
-demonstration requested. The temporary Phase 4 EMR/MSK/S3 test verified that specific region,
+The user-approved US$22 total cap and no-credit assumption remain binding. Any future cloud run still requires a
+current cost preflight, a time-bounded cleanup plan and separate authorization. The temporary Phase 4 EMR/MSK/S3 test verified that specific region,
 runtime and private data path once, but actual billed cost and future capacity were not checked.
 Linux packaging of the Python services and live PostgreSQL remain unverified. Team/deadline
 remain unconfirmed. Any future cloud deployment requires separate authorization and cost review.
