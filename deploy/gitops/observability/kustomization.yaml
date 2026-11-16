@@ -4,5 +4,4 @@ namespace: smarttraffic-observability
 resources:
   - namespace.yaml
   - monitoring.yaml
-  - hpa.yaml
   - fluent-bit.yaml

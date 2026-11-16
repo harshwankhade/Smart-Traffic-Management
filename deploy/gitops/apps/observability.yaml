@@ -33,7 +33,7 @@ spec:
     namespace: smarttraffic-observability
   syncPolicy:
     automated: {prune: true, selfHeal: true}
-    syncOptions: [CreateNamespace=true, SkipDryRunOnMissingResource=true]
+    syncOptions: [CreateNamespace=true, SkipDryRunOnMissingResource=true, ServerSideApply=true]
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -51,6 +51,26 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: smarttraffic-observability
+  syncPolicy:
+    automated: {prune: true, selfHeal: true}
+    syncOptions: [CreateNamespace=true, SkipDryRunOnMissingResource=true]
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: smarttraffic-phase9-hpa
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/harshwankhade/Smart-Traffic-Management.git
+    targetRevision: main
+    path: deploy/gitops/hpa
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: smarttraffic
   syncPolicy:
     automated: {prune: true, selfHeal: true}
     syncOptions: [CreateNamespace=true, SkipDryRunOnMissingResource=true]
