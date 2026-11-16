@@ -33,7 +33,7 @@ spec:
     namespace: smarttraffic-observability
   syncPolicy:
     automated: {prune: true, selfHeal: true}
-    syncOptions: [CreateNamespace=true, SkipDryRunOnMissingResource=true, ServerSideApply=true]
+    syncOptions: [CreateNamespace=true, SkipDryRunOnMissingResource=true, ServerSideApply=true, ServerSideDiff=true]
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
