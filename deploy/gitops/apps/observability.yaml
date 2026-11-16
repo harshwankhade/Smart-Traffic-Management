@@ -5,6 +5,7 @@ metadata:
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "6"
+    argocd.argoproj.io/compare-options: ServerSideDiff=true
 spec:
   project: default
   source:
@@ -33,7 +34,7 @@ spec:
     namespace: smarttraffic-observability
   syncPolicy:
     automated: {prune: true, selfHeal: true}
-    syncOptions: [CreateNamespace=true, SkipDryRunOnMissingResource=true, ServerSideApply=true, ServerSideDiff=true]
+    syncOptions: [CreateNamespace=true, SkipDryRunOnMissingResource=true, ServerSideApply=true]
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
