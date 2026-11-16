@@ -3,12 +3,14 @@ kind: ServiceAccount
 metadata:
   name: signal-recommendation
   namespace: smarttraffic
+  labels: {app: signal-recommendation}
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: signal-recommendation
   namespace: smarttraffic
+  labels: {app: signal-recommendation}
 spec:
   selector: {app: signal-recommendation}
   ports: [{name: http, port: 8000, targetPort: http}]

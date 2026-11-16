@@ -114,8 +114,36 @@ resource "aws_eks_cluster" "main" {
     endpoint_public_access  = true
     public_access_cidrs     = var.admin_cidrs
   }
+  enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+  tags                      = local.tags
+  depends_on                = [aws_iam_role_policy_attachment.eks_cluster]
+}
+resource "aws_cloudwatch_log_group" "eks_application" {
+  name              = "/smarttraffic/${var.project_name}/eks"
+  retention_in_days = 7
+  tags              = local.tags
+  depends_on        = [terraform_data.deployment_guard]
+}
+resource "aws_iam_role" "fluent_bit" {
+  name_prefix = "${var.project_name}-fluent-bit-"
+  assume_role_policy = jsonencode({ Version = "2012-10-17", Statement = [{
+    Effect = "Allow", Principal = { Service = "pods.eks.amazonaws.com" }, Action = ["sts:AssumeRole", "sts:TagSession"]
+  }] })
   tags       = local.tags
-  depends_on = [aws_iam_role_policy_attachment.eks_cluster]
+  depends_on = [terraform_data.deployment_guard]
+}
+resource "aws_iam_role_policy" "fluent_bit" {
+  role = aws_iam_role.fluent_bit.id
+  policy = jsonencode({ Version = "2012-10-17", Statement = [{
+    Effect = "Allow", Action = ["logs:CreateLogStream", "logs:DescribeLogStreams", "logs:PutLogEvents"], Resource = "${aws_cloudwatch_log_group.eks_application.arn}:*"
+  }] })
+}
+resource "aws_eks_pod_identity_association" "fluent_bit" {
+  cluster_name    = aws_eks_cluster.main.name
+  namespace       = "smarttraffic-observability"
+  service_account = "aws-for-fluent-bit"
+  role_arn        = aws_iam_role.fluent_bit.arn
+  depends_on      = [aws_eks_addon.pod_identity, aws_iam_role_policy.fluent_bit]
 }
 resource "aws_eks_node_group" "main" {
   cluster_name    = aws_eks_cluster.main.name

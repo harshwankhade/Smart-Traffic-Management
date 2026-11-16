@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata: {name: aws-for-fluent-bit, namespace: smarttraffic-observability}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata: {name: fluent-bit-config, namespace: smarttraffic-observability}
+data:
+  fluent-bit.conf: |
+    [SERVICE]
+        Flush 1
+        Log_Level info
+        Parsers_File parsers.conf
+    [INPUT]
+        Name tail
+        Path /var/log/containers/*smarttraffic*.log
+        Parser docker
+        Tag smarttraffic.*
+        Mem_Buf_Limit 10MB
+        Skip_Long_Lines On
+    [OUTPUT]
+        Name cloudwatch_logs
+        Match smarttraffic.*
+        region ap-south-1
+        log_group_name /smarttraffic/smarttraffic-phase8/eks
+        log_stream_prefix fluent-bit-
+        auto_create_group false
+  parsers.conf: |
+    [PARSER]
+        Name docker
+        Format json
+        Time_Keep On
+        Time_Key time
+        Time_Format %Y-%m-%dT%H:%M:%S.%L
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata: {name: aws-for-fluent-bit, namespace: smarttraffic-observability}
+spec:
+  selector: {matchLabels: {app: aws-for-fluent-bit}}
+  template:
+    metadata: {labels: {app: aws-for-fluent-bit}}
+    spec:
+      serviceAccountName: aws-for-fluent-bit
+      containers:
+        - name: fluent-bit
+          image: public.ecr.aws/aws-observability/aws-for-fluent-bit:stable
+          resources: {requests: {cpu: 50m, memory: 64Mi}, limits: {cpu: 200m, memory: 128Mi}}
+          volumeMounts:
+            - {name: config, mountPath: /fluent-bit/etc/}
+            - {name: varlog, mountPath: /var/log, readOnly: true}
+      volumes:
+        - {name: config, configMap: {name: fluent-bit-config}}
+        - {name: varlog, hostPath: {path: /var/log}}

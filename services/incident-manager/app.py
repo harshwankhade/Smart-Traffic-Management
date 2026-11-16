@@ -13,6 +13,7 @@ from incidents.registry_client import RegistryClient
 from incidents.schemas import Incident, IncidentCreate, IncidentPatch
 from incidents.outbox import OutboxWorker
 from traffic_contracts.alerts import SqsAlertSender
+from traffic_contracts.metrics import install_http_metrics
 
 
 def create_app(database_url=None, registry_url=None, registry_transport=None, alert_sender=None):
@@ -37,6 +38,7 @@ def create_app(database_url=None, registry_url=None, registry_transport=None, al
             database.engine.dispose()
 
     app = FastAPI(title="Incident Manager", version="1.0", lifespan=lifespan)
+    install_http_metrics(app, "incident-manager")
     app.state.database = database
 
     def session():

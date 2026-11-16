@@ -4,7 +4,7 @@ Run **one numbered step per prompt**, then stop. This file breaks down Phase 9 o
 
 ## Approved planning inputs
 
-- The project cost cap is **US$22**. A fresh cost preflight, a bounded run/teardown window, and explicit authorization remain required before provisioning.
+- The project cost cap is **US$25**. A fresh cost preflight, a bounded run/teardown window, and explicit authorization remain required before provisioning.
 - Plan for **12 of 16 EC2 vCPUs**, retaining four vCPUs as recovery headroom: four EKS `t3.large` workers (8 vCPUs) and one EMR `m5.xlarge` node (4 vCPUs). Confirm the live quota and inventory in Step 1; do not consume all 16 vCPUs.
 
 1. **Settle the observability/load design and cloud preflight.** Choose the minimal Prometheus/Grafana, centralized-log and load-generator design that covers all eight runtimes; decide metrics/log ownership, retention, dashboards, resource requests, two HPA targets and cost/lifecycle limits. Recheck AWS access, quotas, current cost and the exact cloud run/teardown plan. Include the mandatory Phase 8 strict independent-client HTTPS request as the first pre-teardown acceptance gate, requiring a separate explicit user approval after the user has changed to the independent trusted network. **No apply.** Done when designs, costs, gates and approval decisions are reviewable. **Prompt:** `Do Phase 9 step 1 from "phase 9 steps.md" only: prepare the observability, HPA/load and cloud preflight plan, including the carried-forward HTTPS acceptance gate. Do not provision resources. Then stop.`

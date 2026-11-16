@@ -3,12 +3,14 @@ kind: ServiceAccount
 metadata:
   name: event-publisher
   namespace: smarttraffic
+  labels: {app: event-publisher}
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: event-publisher
   namespace: smarttraffic
+  labels: {app: event-publisher}
 spec:
   clusterIP: None
   selector: {app: event-publisher}

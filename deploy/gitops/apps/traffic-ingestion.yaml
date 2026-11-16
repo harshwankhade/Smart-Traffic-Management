@@ -3,12 +3,14 @@ kind: ServiceAccount
 metadata:
   name: traffic-ingestion
   namespace: smarttraffic
+  labels: {app: traffic-ingestion}
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: traffic-ingestion
   namespace: smarttraffic
+  labels: {app: traffic-ingestion}
 spec:
   selector: {app: traffic-ingestion}
   ports:
@@ -38,4 +40,4 @@ spec:
             - secretRef: {name: smarttraffic-runtime-values}
           livenessProbe: {httpGet: {path: /healthz, port: http}, initialDelaySeconds: 10}
           readinessProbe: {httpGet: {path: /readyz, port: http}, initialDelaySeconds: 10}
-          resources: {requests: {cpu: 100m, memory: 128Mi}, limits: {cpu: 500m, memory: 256Mi}}
+          resources: {requests: {cpu: 250m, memory: 256Mi}, limits: {cpu: 750m, memory: 512Mi}}

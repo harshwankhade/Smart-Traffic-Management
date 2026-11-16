@@ -7,6 +7,7 @@ from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import JSONResponse
 
 from analytics.repository import SummaryRepository
+from traffic_contracts.metrics import install_http_metrics
 from analytics.recovery_api import page as recovery_page
 from analytics.recovery_repository import RecoveryConflict, RecoveryRepository
 from traffic_contracts.recovery import validate_recovery_event
@@ -32,6 +33,7 @@ def create_app(repository=None):
                 app.state.worker.stop()
 
     app = FastAPI(title="Traffic Analytics", version="1.0", lifespan=lifespan)
+    install_http_metrics(app, "traffic-analytics")
 
     def owned_repository():
         owned = getattr(app.state, "repository", None)

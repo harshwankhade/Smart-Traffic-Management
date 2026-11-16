@@ -8,10 +8,11 @@ resource "terraform_data" "deployment_guard" {
 }
 
 locals {
-  topic_prefix = replace(var.kafka_cluster_arn, ":cluster/", ":topic/")
-  group_prefix = replace(var.kafka_cluster_arn, ":cluster/", ":group/")
-  artifact_key = "artifacts/congestion-processor-1.0.0-emr.jar"
-  emr_tag      = { "for-use-with-amazon-emr-managed-policies" = "true" }
+  topic_prefix      = replace(var.kafka_cluster_arn, ":cluster/", ":topic/")
+  group_prefix      = replace(var.kafka_cluster_arn, ":cluster/", ":group/")
+  artifact_key      = "artifacts/congestion-processor-1.0.0-emr.jar"
+  emr_log_agent_key = "artifacts/emr-cloudwatch-agent.sh"
+  emr_tag           = { "for-use-with-amazon-emr-managed-policies" = "true" }
 }
 
 resource "aws_msk_topic" "results" {
@@ -30,6 +31,19 @@ resource "aws_s3_object" "jar" {
   etag                   = filemd5(var.jar_path)
   server_side_encryption = "AES256"
   depends_on             = [terraform_data.deployment_guard]
+}
+resource "aws_s3_object" "emr_log_agent" {
+  bucket                 = var.archive_bucket
+  key                    = local.emr_log_agent_key
+  source                 = "${path.module}/assets/emr-cloudwatch-agent.sh"
+  etag                   = filemd5("${path.module}/assets/emr-cloudwatch-agent.sh")
+  server_side_encryption = "AES256"
+  depends_on             = [terraform_data.deployment_guard]
+}
+resource "aws_cloudwatch_log_group" "emr" {
+  name              = "/smarttraffic/${var.project_name}/emr"
+  retention_in_days = 7
+  depends_on        = [terraform_data.deployment_guard]
 }
 
 resource "aws_security_group" "emr_primary" {
@@ -222,7 +236,8 @@ resource "aws_iam_role_policy" "emr_ec2" {
       { Effect = "Allow", Action = ["kafka-cluster:Connect", "kafka-cluster:DescribeCluster", "kafka-cluster:WriteDataIdempotently"], Resource = var.kafka_cluster_arn },
       { Effect = "Allow", Action = ["kafka-cluster:DescribeTopic", "kafka-cluster:ReadData", "kafka-cluster:WriteData"], Resource = ["${local.topic_prefix}/traffic.raw", "${local.topic_prefix}/traffic.results"] },
       { Effect = "Allow", Action = ["kafka-cluster:DescribeGroup", "kafka-cluster:AlterGroup"], Resource = ["${local.group_prefix}/congestion-v1", "${local.group_prefix}/congestion-verification-v1"] },
-      { Effect = "Allow", Action = ["elasticmapreduce:DescribeCluster", "elasticmapreduce:ListInstances"], Resource = "*" }
+      { Effect = "Allow", Action = ["elasticmapreduce:DescribeCluster", "elasticmapreduce:ListInstances"], Resource = "*" },
+      { Effect = "Allow", Action = ["logs:CreateLogStream", "logs:DescribeLogStreams", "logs:PutLogEvents"], Resource = "${aws_cloudwatch_log_group.emr.arn}:*" }
     ]
   })
 }
@@ -233,6 +248,12 @@ resource "aws_emr_cluster" "congestion" {
   applications  = ["Flink"]
   service_role  = aws_iam_role.emr_service.arn
   log_uri       = "s3://${var.archive_bucket}/emr-logs/"
+
+  bootstrap_action {
+    name = "phase9-cloudwatch-agent"
+    path = "s3://${var.archive_bucket}/${aws_s3_object.emr_log_agent.key}"
+    args = [aws_cloudwatch_log_group.emr.name]
+  }
 
   keep_job_flow_alive_when_no_steps = true
   termination_protection            = false
@@ -265,6 +286,8 @@ resource "aws_emr_cluster" "congestion" {
     aws_iam_role_policy.emr_service_pass_ec2_role,
     aws_iam_role_policy.emr_ec2,
     aws_s3_object.jar,
+    aws_s3_object.emr_log_agent,
+    aws_cloudwatch_log_group.emr,
     aws_msk_topic.results,
     aws_vpc_security_group_ingress_rule.emr_kafka,
     aws_vpc_security_group_egress_rule.primary_service,

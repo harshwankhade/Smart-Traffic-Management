@@ -8,6 +8,7 @@ from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 
 from traffic_contracts.reading import Reading
+from traffic_contracts.metrics import install_http_metrics
 from ingestion.clients import PublisherClient, RegistryClient, ZooKeeperPublisherClient
 
 
@@ -29,6 +30,7 @@ def create_app(registry=None, publisher=None):
             publisher.close()
 
     app = FastAPI(title="Traffic Ingestion", version="1.0", lifespan=lifespan)
+    install_http_metrics(app, "traffic-ingestion")
 
     @app.exception_handler(RequestValidationError)
     async def invalid(_, error):

@@ -3,12 +3,14 @@ kind: ServiceAccount
 metadata:
   name: sensor-registry
   namespace: smarttraffic
+  labels: {app: sensor-registry}
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: sensor-registry
   namespace: smarttraffic
+  labels: {app: sensor-registry}
 spec:
   selector: {app: sensor-registry}
   ports:

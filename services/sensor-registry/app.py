@@ -11,6 +11,7 @@ from registry.database import Database
 from registry.models import IntersectionRow, SensorRow
 from registry.schemas import (Intersection, IntersectionCreate, IntersectionPatch,
                               Sensor, SensorCreate, SensorPatch)
+from traffic_contracts.metrics import install_http_metrics
 
 
 def create_app(database_url=None):
@@ -25,6 +26,7 @@ def create_app(database_url=None):
             database.engine.dispose()
 
     app = FastAPI(title="Sensor Registry", version="1.0", lifespan=lifespan)
+    install_http_metrics(app, "sensor-registry")
     app.state.database = database
 
     def session():

@@ -70,6 +70,8 @@ No interface, service-boundary or behavior change is approved by this document. 
 
 The user approved a revised project cost cap of **US$22**. This supersedes the US$10 planning cap stated in this historical Phase 8 preflight; its dated Cost Explorer measurements and conclusions remain evidence for that earlier gate. Future cloud work still requires a fresh cost preflight, a time-bounded teardown plan and separate explicit authorization before provisioning.
 
+On 2026-11-16, the user subsequently raised the cap to **US$25**. Phase 9 holds the current cost estimate and gate in `docs/decisions/phase-9.md`.
+
 ## Step 2 preparation result
 
 The new integrated Terraform root, shared six-service image definition and package checker are prepared. Terraform formatting and validation passed; the false deployment guard stopped plan-only review before creation. Docker Desktop was unavailable, and the Phase 3 child Terraform provider still cannot refresh its own credential process under the restored profile, so no enabled plan was generated. See `docs/phase-8-iac.md` for the exact checks, remaining inputs and teardown sequence. This does not authorize an apply or Step 3.

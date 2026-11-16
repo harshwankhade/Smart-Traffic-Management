@@ -1,0 +1,27 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: smarttraffic-http
+  namespace: smarttraffic-observability
+  labels: {release: kube-prometheus-stack}
+spec:
+  namespaceSelector: {matchNames: [smarttraffic]}
+  selector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values: [sensor-registry, traffic-ingestion, event-publisher, signal-recommendation, incident-manager, traffic-analytics]
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: smarttraffic-phase9-dashboard
+  namespace: smarttraffic-observability
+  labels: {grafana_dashboard: "1"}
+data:
+  phase9-overview.json: |
+    {"title":"Smart Traffic Phase 9","timezone":"utc","panels":[{"type":"timeseries","title":"HTTP RPS","targets":[{"expr":"sum(rate(smarttraffic_http_requests_total[1m])) by (service)"}]},{"type":"timeseries","title":"HTTP error rate","targets":[{"expr":"sum(rate(smarttraffic_http_requests_total{status=~\"5..\"}[1m])) by (service)"}]},{"type":"timeseries","title":"p95 latency","targets":[{"expr":"histogram_quantile(0.95, sum(rate(smarttraffic_http_request_duration_seconds_bucket[5m])) by (le, service))"}]},{"type":"timeseries","title":"HPA replicas","targets":[{"expr":"kube_horizontalpodautoscaler_status_current_replicas{namespace=\"smarttraffic\"}"}]}]}

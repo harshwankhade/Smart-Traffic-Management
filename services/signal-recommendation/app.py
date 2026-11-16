@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 from recommendation import recommend
 from recommendation.repository import RecommendationRepository
 from traffic_contracts.alerts import SqsAlertSender, congestion_request
+from traffic_contracts.metrics import install_http_metrics
 from traffic_contracts.result_consumer import ResultConsumer
 from traffic_contracts.window_api import json_response, query_page
 
@@ -42,6 +43,7 @@ def create_app(repository=None, alert_sender=None):
                 app.state.worker.stop()
 
     app = FastAPI(title="Signal Recommendation", version="1.0", lifespan=lifespan)
+    install_http_metrics(app, "signal-recommendation")
 
     def owned_repository():
         owned = getattr(app.state, "repository", None)

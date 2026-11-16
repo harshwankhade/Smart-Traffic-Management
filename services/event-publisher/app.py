@@ -8,6 +8,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
 from traffic_contracts import publisher_pb2_grpc
+from traffic_contracts.metrics import install_http_metrics
 from publisher.adapters import KafkaSink, S3Archive
 from publisher.coordination import SinglePublisher, ZooKeeperElection, enabled_from_environment
 from publisher.recovery import HttpRecoveryReporter
@@ -58,6 +59,7 @@ def create_app(archive=None, sink=None, coordination=None):
                 item.close()
 
     app = FastAPI(title="Event Publisher", docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
+    install_http_metrics(app, "event-publisher")
 
     @app.get("/healthz")
     def health():

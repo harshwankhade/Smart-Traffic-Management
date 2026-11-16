@@ -4,6 +4,7 @@ resources:
   - namespace.yaml
   - runtime-config.yaml
   - runtime-secrets.yaml
+  - observability.yaml
   - network-policy.yaml
   - zookeeper.yaml
   - sensor-registry.yaml

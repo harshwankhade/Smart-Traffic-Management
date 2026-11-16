@@ -8,6 +8,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 APPS = ROOT / "deploy" / "gitops" / "apps"
+OBSERVABILITY = ROOT / "deploy" / "gitops" / "observability"
 SERVICES = ("sensor-registry", "traffic-ingestion", "event-publisher",
             "signal-recommendation", "incident-manager", "traffic-analytics")
 
@@ -26,17 +27,23 @@ def main() -> None:
         if fragment not in root_application:
             raise RuntimeError(f"root Application lacks {fragment!r}")
     rendered = run("kubectl", "kustomize", str(APPS))
+    observability = run("kubectl", "kustomize", str(OBSERVABILITY))
     for service in SERVICES:
         for required in (f"name: {service}", f"app: {service}"):
             if required not in rendered:
                 raise RuntimeError(f"rendered manifests lack {required!r}")
-    if "kind: StatefulSet" not in rendered or "name: smarttraffic-zookeeper" not in rendered:
+    if "kind: StatefulSet" not in rendered or "name: zookeeper" not in rendered:
         raise RuntimeError("ZooKeeper GitOps Application is absent")
     for required in ("api.smarttrafficmgmt.online", "external-secrets.io/v1",
                      "smarttraffic-runtime-values", "be73c68e-0709-409e-b7b8-de4121081b6c"):
         if required not in rendered:
             raise RuntimeError(f"rendered manifests lack deployment input {required!r}")
-    print("PASS GitOps manifests rendered; root ownership, six services, ZooKeeper, HTTPS ingress, and External Secrets references were verified locally.")
+    for required in ("kind: HorizontalPodAutoscaler", "name: traffic-ingestion",
+                     "name: traffic-analytics", "kind: ServiceMonitor",
+                     "kind: DaemonSet", "aws-for-fluent-bit"):
+        if required not in observability:
+            raise RuntimeError(f"observability manifests lack {required!r}")
+    print("PASS GitOps manifests rendered; root ownership, six services, ZooKeeper, HTTPS ingress, External Secrets, HPA, Prometheus scraping, and CloudWatch log collection were verified locally.")
 
 
 if __name__ == "__main__":

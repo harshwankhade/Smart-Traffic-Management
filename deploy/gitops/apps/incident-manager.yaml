@@ -3,12 +3,14 @@ kind: ServiceAccount
 metadata:
   name: incident-manager
   namespace: smarttraffic
+  labels: {app: incident-manager}
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: incident-manager
   namespace: smarttraffic
+  labels: {app: incident-manager}
 spec:
   selector: {app: incident-manager}
   ports: [{name: http, port: 8000, targetPort: http}]
