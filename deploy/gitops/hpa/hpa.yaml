@@ -14,7 +14,7 @@ spec:
     scaleDown: {stabilizationWindowSeconds: 300}
   metrics:
     - type: Resource
-      resource: {name: cpu, target: {type: Utilization, averageUtilization: 60}}
+      resource: {name: cpu, target: {type: Utilization, averageUtilization: 30}}
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
@@ -32,4 +32,4 @@ spec:
     scaleDown: {stabilizationWindowSeconds: 300}
   metrics:
     - type: Resource
-      resource: {name: cpu, target: {type: Utilization, averageUtilization: 60}}
+      resource: {name: cpu, target: {type: Utilization, averageUtilization: 30}}
