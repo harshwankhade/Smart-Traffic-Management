@@ -72,6 +72,8 @@ The user approved a revised project cost cap of **US$22**. This supersedes the U
 
 On 2026-11-16, the user subsequently raised the cap to **US$25**. Phase 9 holds the current cost estimate and gate in `docs/decisions/phase-9.md`.
 
+Later on 2026-11-16, the user raised the current cap again to **US$30**; this supersedes the US$25 planning cap.
+
 ## Step 2 preparation result
 
 The new integrated Terraform root, shared six-service image definition and package checker are prepared. Terraform formatting and validation passed; the false deployment guard stopped plan-only review before creation. Docker Desktop was unavailable, and the Phase 3 child Terraform provider still cannot refresh its own credential process under the restored profile, so no enabled plan was generated. See `docs/phase-8-iac.md` for the exact checks, remaining inputs and teardown sequence. This does not authorize an apply or Step 3.

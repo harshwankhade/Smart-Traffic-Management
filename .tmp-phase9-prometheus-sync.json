@@ -1,0 +1,1 @@
+{"operation":{"sync":{"revision":"75.15.1","prune":true,"syncOptions":["CreateNamespace=true","SkipDryRunOnMissingResource=true","ServerSideApply=true","Force=true"]}}}

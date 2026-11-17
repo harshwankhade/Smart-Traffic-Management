@@ -143,7 +143,7 @@ instance remains unapplied. The separate, user-authorized Phase 4 temporary stac
 destroyed. Deployment approval defaults false. Provider downloads require Internet access; these
 local checks require no AWS credentials.
 
-The user-approved US$25 total cap and no-credit assumption remain binding. Any future cloud run still requires a
+The user-approved US$30 total cap and no-credit assumption remain binding. Any future cloud run still requires a
 current cost preflight, a time-bounded cleanup plan and separate authorization. The temporary Phase 4 EMR/MSK/S3 test verified that specific region,
 runtime and private data path once, but actual billed cost and future capacity were not checked.
 Linux packaging of the Python services and live PostgreSQL remain unverified. Team/deadline

@@ -36,12 +36,22 @@ run "emr_flink_configuration" {
   command = plan
   variables { deployment_approved = true }
   assert {
-    condition     = aws_emr_cluster.congestion.release_label == "emr-7.14.0" && contains(aws_emr_cluster.congestion.applications, "Flink")
-    error_message = "Use the approved EMR 7.14 Flink managed cluster."
+    condition = (
+      jsondecode(local.emr_native_cloudwatch_template).Resources.CongestionCluster.Properties.ReleaseLabel == "emr-7.14.0" &&
+      contains([for application in jsondecode(local.emr_native_cloudwatch_template).Resources.CongestionCluster.Properties.Applications : application.Name], "Flink") &&
+      contains([for application in jsondecode(local.emr_native_cloudwatch_template).Resources.CongestionCluster.Properties.Applications : application.Name], "AmazonCloudWatchAgent")
+    )
+    error_message = "Use the approved EMR 7.14 Flink cluster with the native CloudWatch Agent application."
   }
   assert {
-    condition     = aws_emr_cluster.congestion.master_instance_group[0].instance_count == 1 && aws_emr_cluster.congestion.core_instance_group[0].instance_count == 1
-    error_message = "The temporary managed test needs exactly one primary and one core node."
+    condition = (
+      jsondecode(local.emr_native_cloudwatch_template).Resources.CongestionCluster.Properties.Instances.MasterInstanceGroup.InstanceCount == 1 &&
+      jsondecode(local.emr_native_cloudwatch_template).Resources.CongestionCluster.Properties.MonitoringConfiguration.CloudWatchLogConfiguration.Enabled &&
+      contains(keys(jsondecode(local.emr_native_cloudwatch_template).Resources.CongestionCluster.Properties.MonitoringConfiguration.CloudWatchLogConfiguration.LogTypes), "STEP_LOGS") &&
+      contains(keys(jsondecode(local.emr_native_cloudwatch_template).Resources.CongestionCluster.Properties.MonitoringConfiguration.CloudWatchLogConfiguration.LogTypes), "SPARK_DRIVER") &&
+      contains(keys(jsondecode(local.emr_native_cloudwatch_template).Resources.CongestionCluster.Properties.MonitoringConfiguration.CloudWatchLogConfiguration.LogTypes), "SPARK_EXECUTOR")
+    )
+    error_message = "The single-worker EMR runtime must capture native step and Spark logs."
   }
   assert {
     condition     = aws_msk_topic.results.name == "traffic.results" && aws_msk_topic.results.replication_factor == 2 && jsondecode(aws_msk_topic.results.configs)["min.insync.replicas"] == "2"
@@ -73,8 +83,11 @@ run "emr_flink_configuration" {
     condition = (
       aws_security_group.emr_primary.revoke_rules_on_delete &&
       aws_security_group.emr_core.revoke_rules_on_delete &&
-      aws_security_group.emr_service.revoke_rules_on_delete
+      aws_security_group.emr_service.revoke_rules_on_delete &&
+      aws_security_group.cloudwatch_logs_endpoint.revoke_rules_on_delete &&
+      aws_vpc_security_group_egress_rule.primary_cloudwatch_logs_endpoint.from_port == 443 &&
+      aws_vpc_security_group_ingress_rule.cloudwatch_logs_endpoint_from_primary.to_port == 443
     )
-    error_message = "All state-owned EMR security groups must revoke EMR-added rules before deletion."
+    error_message = "EMR and its CloudWatch Logs endpoint must use revocable, TCP-443-only security groups."
   }
 }

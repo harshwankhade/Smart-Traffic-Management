@@ -1,0 +1,46 @@
+{
+  "logs": {
+    "logs_collected": {
+      "files": {
+        "collect_list": [
+          {
+            "file_path": "/mnt/var/log/hadoop-yarn/containers/*/*/jobmanager.log",
+            "log_group_name": "/smarttraffic/smarttraffic-phase8-emr/emr",
+            "log_stream_name": "{instance_id}/flink-jobmanager",
+            "publish_multi_logs": true
+          },
+          {
+            "file_path": "/mnt/var/log/hadoop-yarn/containers/*/*/jobmanager.out",
+            "log_group_name": "/smarttraffic/smarttraffic-phase8-emr/emr",
+            "log_stream_name": "{instance_id}/flink-jobmanager-stdout",
+            "publish_multi_logs": true
+          },
+          {
+            "file_path": "/mnt/var/log/hadoop-yarn/containers/*/*/jobmanager.err",
+            "log_group_name": "/smarttraffic/smarttraffic-phase8-emr/emr",
+            "log_stream_name": "{instance_id}/flink-jobmanager-stderr",
+            "publish_multi_logs": true
+          },
+          {
+            "file_path": "/mnt/var/log/hadoop-yarn/containers/*/*/taskmanager.log",
+            "log_group_name": "/smarttraffic/smarttraffic-phase8-emr/emr",
+            "log_stream_name": "{instance_id}/flink-taskmanager",
+            "publish_multi_logs": true
+          },
+          {
+            "file_path": "/mnt/var/log/hadoop-yarn/containers/*/*/taskmanager.out",
+            "log_group_name": "/smarttraffic/smarttraffic-phase8-emr/emr",
+            "log_stream_name": "{instance_id}/flink-taskmanager-stdout",
+            "publish_multi_logs": true
+          },
+          {
+            "file_path": "/mnt/var/log/hadoop-yarn/containers/*/*/taskmanager.err",
+            "log_group_name": "/smarttraffic/smarttraffic-phase8-emr/emr",
+            "log_stream_name": "{instance_id}/flink-taskmanager-stderr",
+            "publish_multi_logs": true
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,13 @@
+[
+  {
+    "Type": "CUSTOM_JAR",
+    "Name": "phase9-install-flink-cloudwatch-collector",
+    "ActionOnFailure": "CONTINUE",
+    "Jar": "command-runner.jar",
+    "Args": [
+      "bash",
+      "-c",
+      "set -euo pipefail; sudo -n aws s3 cp s3://smarttraffic-phase8-kafka-20261116053700312600000001/artifacts/install-phase9-flink-cloudwatch-agent.sh /tmp/install-phase9-flink-cloudwatch-agent.sh; sudo -n chmod 700 /tmp/install-phase9-flink-cloudwatch-agent.sh; sudo -n /tmp/install-phase9-flink-cloudwatch-agent.sh s3://smarttraffic-phase8-kafka-20261116053700312600000001/artifacts/phase9-flink-cloudwatch-agent.json"
+    ]
+  }
+]

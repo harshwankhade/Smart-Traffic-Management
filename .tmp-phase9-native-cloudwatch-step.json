@@ -1,0 +1,13 @@
+[
+  {
+    "Type": "CUSTOM_JAR",
+    "Name": "phase9-native-cloudwatch-diagnostic-after-endpoint",
+    "ActionOnFailure": "CONTINUE",
+    "Jar": "command-runner.jar",
+    "Args": [
+      "bash",
+      "-c",
+      "echo phase9-native-cloudwatch-stdout-after-endpoint; echo phase9-native-cloudwatch-stderr-after-endpoint >&2"
+    ]
+  }
+]

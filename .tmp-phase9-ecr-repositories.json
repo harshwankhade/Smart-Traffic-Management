@@ -1,0 +1,8 @@
+{
+  "event-publisher": "520646131316.dkr.ecr.ap-south-1.amazonaws.com/smarttraffic-phase8/event-publisher",
+  "incident-manager": "520646131316.dkr.ecr.ap-south-1.amazonaws.com/smarttraffic-phase8/incident-manager",
+  "sensor-registry": "520646131316.dkr.ecr.ap-south-1.amazonaws.com/smarttraffic-phase8/sensor-registry",
+  "signal-recommendation": "520646131316.dkr.ecr.ap-south-1.amazonaws.com/smarttraffic-phase8/signal-recommendation",
+  "traffic-analytics": "520646131316.dkr.ecr.ap-south-1.amazonaws.com/smarttraffic-phase8/traffic-analytics",
+  "traffic-ingestion": "520646131316.dkr.ecr.ap-south-1.amazonaws.com/smarttraffic-phase8/traffic-ingestion"
+}

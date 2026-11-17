@@ -8,7 +8,9 @@ The approved EC2 quota is 16 vCPUs. The Phase 9 plan deliberately uses 12: four 
 
 `t3.large` instances are burstable. The load run must record CPU credit balance and surplus-credit charges alongside node CPU; stop or reduce the test if the credit trend makes the result or cost unrepresentative.
 
-Provisioning may run for at most 90 minutes. Begin teardown no later than three hours after the apply starts, then allow up to two hours for deletion and independent audit. The EMR idle timer is not a teardown mechanism. A fresh estimate must include the four EKS nodes, EMR, MSK, NAT, RDS, ALB, EBS, logs, data transfer, public IPv4 and monitoring storage. It must show that known project spend plus the proposed run remains within the approved US$25 cap.
+Provisioning may run for at most 90 minutes. The cost estimate assumes objectives are complete and ready for teardown no later than three hours after the apply starts, then allows up to two hours for deletion and independent audit. The EMR idle timer is not a teardown mechanism. A fresh estimate must include the four EKS nodes, EMR, MSK, NAT, RDS, ALB, EBS, logs, data transfer, public IPv4 and monitoring storage. It must show that known project spend plus the proposed run remains within the approved US$30 cap.
+
+After Phase 9 acceptance objectives and evidence are complete, do **not** begin teardown automatically. Keep the runtime available for the user's additional authorized inspection/work and obtain separate explicit teardown approval before deleting any runtime resource or starting the audit. The approval request must state the elapsed runtime, current cost evidence and the remaining estimated budget.
 
 ## Observability design
 
@@ -44,6 +46,14 @@ The estimate uses on-demand Mumbai prices retrieved on 2026-11-16, the maximum t
 Add US$0.20 for short-lived EBS/MSK storage, US$0.70 for modest logs, NAT processing, S3/SQS/Lambda/DynamoDB, and public IPv4 usage, and a 25% lifecycle contingency (US$1.3694). This gives a **US$6.85 planning estimate**. The HPA test runs on burstable T3 workers; if it spends CPU credits at the full 5.6 vCPUs above the four-node baseline for five hours, it can add approximately **US$1.40**. The prudent range is therefore **US$6.85–US$8.25**, before tax and late-posting charges.
 
 The US$6.85–US$8.25 range fits within the conservative US$10.1815539284 remaining amount, leaving at least **US$1.93** before tax and delayed charges. This passes the planning cost gate, but it does not authorize a run. Before any separate cloud-run approval, rerun Cost Explorer and the reviewed-plan check; stop if the fresh remaining amount is less than the high estimate plus a US$1.50 reserve. The separate DNS zone and ACM certificate may remain, but all runtime resources must be run-scoped and audited after teardown.
+
+### Step 3 refreshed cost gate — 2026-11-16
+
+The renewed-profile preflight recorded US$18.4112218425 account-wide estimated usage, leaving US$6.5887781575 below the US$25 cap. That is below the US$6.85 lower estimate and the US$9.75 high-estimate-plus-reserve gate. The cost gate failed before provisioning; see `docs/evidence/phase-9-step3-preflight.md`.
+
+### Cap amendment — 2026-11-16
+
+The user raised the current project cap to **US$30**. The same fresh Cost Explorer figure leaves US$11.5887781575 below that cap, which exceeds the US$9.75 high-estimate-plus-reserve gate by US$1.8387781575. The historical preflight evidence remains unchanged; a reviewed Terraform plan is still required before provisioning.
 
 The strict public HTTPS request is the first acceptance action after the runtime is healthy and before load work or teardown. It requires the user to change to an independent trusted network and give a separate explicit approval immediately before that request. Normal certificate validation must remain enabled; `--insecure` or equivalent is forbidden. A failed or unavailable check blocks Phase 8 closure and must be recorded before proceeding with Phase 9 evidence.
 

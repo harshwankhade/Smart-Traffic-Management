@@ -84,6 +84,28 @@ resource "aws_route_table_association" "private" {
   route_table_id = aws_route_table.private.id
 }
 
+# EMR runs in a private subnet.  Native EMR CloudWatch Logs publishing requires
+# a Logs interface endpoint; one ENI in the single-worker EMR subnet keeps the
+# Phase 9 demonstration within its cost cap.
+resource "aws_vpc_endpoint" "cloudwatch_logs" {
+  vpc_id              = aws_vpc.main.id
+  service_name        = "com.amazonaws.${var.aws_region}.logs"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  subnet_ids          = [values(aws_subnet.private)[0].id]
+  security_group_ids  = [module.processing.cloudwatch_logs_endpoint_security_group_id]
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect    = "Allow"
+      Principal = "*"
+      Action    = ["logs:CreateLogGroup", "logs:PutRetentionPolicy", "logs:DescribeLogGroups", "logs:CreateLogStream", "logs:DescribeLogStreams", "logs:PutLogEvents"]
+      Resource  = "*"
+    }]
+  })
+  tags = merge(local.tags, { Purpose = "Phase9EmrCloudWatchLogs" })
+}
+
 resource "aws_iam_role" "eks_cluster" {
   name_prefix        = "${var.project_name}-eks-"
   assume_role_policy = jsonencode({ Version = "2012-10-17", Statement = [{ Effect = "Allow", Principal = { Service = "eks.amazonaws.com" }, Action = "sts:AssumeRole" }] })
@@ -152,9 +174,9 @@ resource "aws_eks_node_group" "main" {
   subnet_ids      = values(aws_subnet.private)[*].id
   instance_types  = ["t3.large"]
   scaling_config {
-    desired_size = 2
-    min_size     = 2
-    max_size     = 2
+    desired_size = 4
+    min_size     = 4
+    max_size     = 4
   }
   # Private nodes need working egress during bootstrap, including ECR and STS.
   depends_on = [aws_iam_role_policy_attachment.eks_nodes, aws_route.private_nat, aws_route_table_association.private]
@@ -491,7 +513,7 @@ resource "helm_release" "external_secrets" {
     installCRDs    = true
     serviceAccount = { create = true, name = "external-secrets" }
   })]
-  depends_on = [aws_eks_pod_identity_association.external_secrets]
+  depends_on = [helm_release.aws_load_balancer_controller, aws_eks_pod_identity_association.external_secrets]
 }
 resource "helm_release" "argocd" {
   name             = "argocd"
@@ -499,7 +521,7 @@ resource "helm_release" "argocd" {
   chart            = "argo-cd"
   namespace        = "argocd"
   create_namespace = true
-  version          = "7.8.26"
+  version          = "10.17.0"
   atomic           = true
   wait             = true
   depends_on       = [helm_release.aws_load_balancer_controller, helm_release.external_dns, helm_release.external_secrets]
@@ -508,15 +530,13 @@ resource "helm_release" "argocd" {
 # Terraform seeds only Argo CD's root Application. Argo then reconciles every
 # namespace, workload, Service, ConfigMap, Ingress and ZooKeeper resource from Git.
 resource "helm_release" "argocd_root_application" {
-  name       = "smarttraffic-root"
-  repository = "https://argoproj.github.io/argo-helm"
-  chart      = "argocd-apps"
-  namespace  = "argocd"
-  version    = "1.4.1"
-  atomic     = true
-  wait       = true
+  name      = "smarttraffic-root"
+  chart     = "${path.module}/charts/argocd-root-application"
+  namespace = "argocd"
+  atomic    = true
+  wait      = true
   values = [yamlencode({
-    applications = [{
+    application = {
       name      = "smarttraffic-root"
       namespace = "argocd"
       project   = "default"
@@ -533,7 +553,7 @@ resource "helm_release" "argocd_root_application" {
         automated   = { prune = true, selfHeal = true }
         syncOptions = ["CreateNamespace=true", "PruneLast=true"]
       }
-    }]
+    }
   })]
   depends_on = [helm_release.argocd]
 }

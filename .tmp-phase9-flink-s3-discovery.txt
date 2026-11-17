@@ -1,0 +1,110 @@
+=== YARN ALL STATES ===
+Total number of applications (application-types: [], states: [NEW, NEW_SAVING, SUBMITTED, ACCEPTED, RUNNING, FINISHED, FAILED, KILLED] and tags: []):1
+                Application-Id	    Application-Name	    Application-Type	      User	     Queue	             State	       Final-State	       Progress	                       Tracking-URL	Tags
+application_1794848495769_0001	Flink per-job cluster	        Apache Flink	    hadoop	root.default	           RUNNING	         UNDEFINED	           100%	          http://10.80.10.168:44031	[]
+=== TARGET APPLICATION ===
+Application Report : 
+	Application-Id : application_1794848495769_0001
+	Application-Name : Flink per-job cluster
+	Application-Type : Apache Flink
+	User : hadoop
+	Queue : root.default
+	Application Priority : 0
+	Start-Time : 1794853372738
+	Finish-Time : 0
+	Progress : 100%
+	State : RUNNING
+	Final-State : UNDEFINED
+	Tracking-URL : http://10.80.10.168:44031
+	RPC Port : 44031
+	AM Host : ip-10-80-10-168.ap-south-1.compute.internal
+	Aggregate Resource Allocation : 1321542 MB-seconds, 864 vcore-seconds
+	Aggregate Resource Preempted : 0 MB-seconds, 0 vcore-seconds
+	Log Aggregation Status : NOT_START
+	Diagnostics : 
+	Unmanaged Application : false
+	Application Node Label Expression : <Not set>
+	AM container Node Label Expression : <DEFAULT_PARTITION>
+	TimeoutType : LIFETIME	ExpiryTime : UNLIMITED	RemainingTime : -1seconds
+
+=== NODEMANAGER LOG DIRS ===
+    <description>Where to store container logs.</description>
+    <name>yarn.nodemanager.log-dirs</name>
+    <value>/var/log/hadoop-yarn/containers</value>
+=== TARGET CONTAINER FILES ===
+/mnt/var/log/hadoop-yarn/containers/application_1794848495769_0001/container_1794848495769_0001_01_000001/prelaunch.out 100 bytes
+/mnt/var/log/hadoop-yarn/containers/application_1794848495769_0001/container_1794848495769_0001_01_000001/prelaunch.err 0 bytes
+/mnt/var/log/hadoop-yarn/containers/application_1794848495769_0001/container_1794848495769_0001_01_000001/launch_container.sh 24385 bytes
+/mnt/var/log/hadoop-yarn/containers/application_1794848495769_0001/container_1794848495769_0001_01_000001/directory.info 7367 bytes
+/mnt/var/log/hadoop-yarn/containers/application_1794848495769_0001/container_1794848495769_0001_01_000001/jobmanager.out 0 bytes
+/mnt/var/log/hadoop-yarn/containers/application_1794848495769_0001/container_1794848495769_0001_01_000001/jobmanager.err 518 bytes
+/mnt/var/log/hadoop-yarn/containers/application_1794848495769_0001/container_1794848495769_0001_01_000001/jobmanager.log 1425285 bytes
+/mnt/var/log/hadoop-yarn/containers/application_1794848495769_0001/container_1794848495769_0001_01_000002/prelaunch.out 100 bytes
+/mnt/var/log/hadoop-yarn/containers/application_1794848495769_0001/container_1794848495769_0001_01_000002/prelaunch.err 0 bytes
+/mnt/var/log/hadoop-yarn/containers/application_1794848495769_0001/container_1794848495769_0001_01_000002/launch_container.sh 14740 bytes
+/mnt/var/log/hadoop-yarn/containers/application_1794848495769_0001/container_1794848495769_0001_01_000002/directory.info 7090 bytes
+/mnt/var/log/hadoop-yarn/containers/application_1794848495769_0001/container_1794848495769_0001_01_000002/taskmanager.out 0 bytes
+/mnt/var/log/hadoop-yarn/containers/application_1794848495769_0001/container_1794848495769_0001_01_000002/taskmanager.err 518 bytes
+/mnt/var/log/hadoop-yarn/containers/application_1794848495769_0001/container_1794848495769_0001_01_000002/taskmanager.log 91914 bytes
+=== JOBMANAGER SAMPLE ===
+	at software.amazon.awssdk.services.s3.DelegatingS3Client.lambda$deleteObject$23(DelegatingS3Client.java:3363) ~[congestion-processor-1.0.0-emr.jar:?]
+	at software.amazon.awssdk.services.s3.internal.crossregion.S3CrossRegionSyncClient.invokeOperation(S3CrossRegionSyncClient.java:67) ~[congestion-processor-1.0.0-emr.jar:?]
+	at software.amazon.awssdk.services.s3.DelegatingS3Client.deleteObject(DelegatingS3Client.java:3363) ~[congestion-processor-1.0.0-emr.jar:?]
+	at org.apache.hadoop.fs.s3a.impl.S3AStoreImpl.lambda$deleteObject$5(S3AStoreImpl.java:789) ~[hadoop-aws-3.4.2-amzn-2.jar:?]
+	at org.apache.hadoop.fs.statistics.impl.IOStatisticsBinding.invokeTrackingDuration(IOStatisticsBinding.java:547) ~[hadoop-common-3.4.2-amzn-2.jar:?]
+	at org.apache.hadoop.fs.statistics.impl.IOStatisticsBinding.lambda$trackDurationOfOperation$5(IOStatisticsBinding.java:528) ~[hadoop-common-3.4.2-amzn-2.jar:?]
+	at org.apache.hadoop.fs.s3a.Invoker.retryUntranslated(Invoker.java:468) ~[hadoop-aws-3.4.2-amzn-2.jar:?]
+	at org.apache.hadoop.fs.s3a.Invoker.retryUntranslated(Invoker.java:431) ~[hadoop-aws-3.4.2-amzn-2.jar:?]
+	at org.apache.hadoop.fs.s3a.impl.S3AStoreImpl.deleteObject(S3AStoreImpl.java:780) ~[hadoop-aws-3.4.2-amzn-2.jar:?]
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.deleteObject(S3AFileSystem.java:3627) ~[hadoop-aws-3.4.2-amzn-2.jar:?]
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.deleteObjectAtPath(S3AFileSystem.java:3656) ~[hadoop-aws-3.4.2-amzn-2.jar:?]
+	at org.apache.hadoop.fs.s3a.S3AFileSystem$OperationCallbacksImpl.lambda$deleteObjectAtPath$0(S3AFileSystem.java:3031) ~[hadoop-aws-3.4.2-amzn-2.jar:?]
+	at org.apache.hadoop.fs.s3a.Invoker.lambda$once$0(Invoker.java:165) ~[hadoop-aws-3.4.2-amzn-2.jar:?]
+	at org.apache.hadoop.fs.s3a.Invoker.once(Invoker.java:122) ~[hadoop-aws-3.4.2-amzn-2.jar:?]
+	at org.apache.hadoop.fs.s3a.Invoker.once(Invoker.java:163) ~[hadoop-aws-3.4.2-amzn-2.jar:?]
+	at org.apache.hadoop.fs.s3a.S3AFileSystem$OperationCallbacksImpl.deleteObjectAtPath(S3AFileSystem.java:3030) ~[hadoop-aws-3.4.2-amzn-2.jar:?]
+	at org.apache.hadoop.fs.s3a.impl.DeleteOperation.deleteObjectAtPath(DeleteOperation.java:413) ~[hadoop-aws-3.4.2-amzn-2.jar:?]
+	at org.apache.hadoop.fs.s3a.impl.DeleteOperation.execute(DeleteOperation.java:264) ~[hadoop-aws-3.4.2-amzn-2.jar:?]
+	at org.apache.hadoop.fs.s3a.impl.DeleteOperation.execute(DeleteOperation.java:72) ~[hadoop-aws-3.4.2-amzn-2.jar:?]
+	at org.apache.hadoop.fs.s3a.impl.ExecutingStoreOperation.apply(ExecutingStoreOperation.java:76) ~[hadoop-aws-3.4.2-amzn-2.jar:?]
+	at org.apache.hadoop.fs.statistics.impl.IOStatisticsBinding.invokeTrackingDuration(IOStatisticsBinding.java:547) ~[hadoop-common-3.4.2-amzn-2.jar:?]
+	at org.apache.hadoop.fs.statistics.impl.IOStatisticsBinding.lambda$trackDurationOfOperation$5(IOStatisticsBinding.java:528) ~[hadoop-common-3.4.2-amzn-2.jar:?]
+	at org.apache.hadoop.fs.statistics.impl.IOStatisticsBinding.trackDuration(IOStatisticsBinding.java:449) ~[hadoop-common-3.4.2-amzn-2.jar:?]
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.deleteWithoutCloseCheck(S3AFileSystem.java:4011) ~[hadoop-aws-3.4.2-amzn-2.jar:?]
+	at org.apache.hadoop.fs.s3a.S3AFileSystem.delete(S3AFileSystem.java:3987) ~[hadoop-aws-3.4.2-amzn-2.jar:?]
+	at org.apache.flink.fs.s3hadoop.common.HadoopFileSystem.delete(HadoopFileSystem.java:160) ~[?:?]
+	at org.apache.flink.core.fs.PluginFileSystemFactory$ClassLoaderFixingFileSystem.delete(PluginFileSystemFactory.java:155) ~[flink-dist-1.20.0-amzn-8.jar:1.20.0-amzn-8]
+	at org.apache.flink.runtime.state.filesystem.FileStateHandle.discardState(FileStateHandle.java:98) ~[flink-dist-1.20.0-amzn-8.jar:1.20.0-amzn-8]
+	at org.apache.flink.util.concurrent.FutureUtils.lambda$runAsync$19(FutureUtils.java:936) ~[flink-dist-1.20.0-amzn-8.jar:1.20.0-amzn-8]
+	... 5 more
+=== TASKMANAGER SAMPLE ===
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	transaction.timeout.ms = 3600000
+	transactional.id = null
+	value.serializer = class org.apache.kafka.common.serialization.ByteArraySerializer
+
+2026-11-16 18:23:13,890 INFO  org.apache.kafka.clients.producer.KafkaProducer              [] - [Producer clientId=producer-1] Instantiated an idempotent producer.
+2026-11-16 18:23:13,971 INFO  org.apache.kafka.common.security.authenticator.AbstractLogin [] - Successfully logged in.
+2026-11-16 18:23:14,006 INFO  org.apache.kafka.common.utils.AppInfoParser                  [] - Kafka version: 3.4.0
+2026-11-16 18:23:14,006 INFO  org.apache.kafka.common.utils.AppInfoParser                  [] - Kafka commitId: 2e1947d240607d53
+2026-11-16 18:23:14,006 INFO  org.apache.kafka.common.utils.AppInfoParser                  [] - Kafka startTimeMs: 1794853394005
+2026-11-16 18:23:14,016 INFO  org.apache.flink.runtime.state.StateBackendLoader            [] - State backend is set to heap memory org.apache.flink.runtime.state.hashmap.HashMapStateBackend@375ba4c2
+2026-11-16 18:23:14,017 INFO  org.apache.flink.runtime.state.heap.HeapKeyedStateBackendBuilder [] - Finished to build heap keyed state-backend.
+2026-11-16 18:23:14,017 INFO  org.apache.flink.runtime.state.heap.HeapKeyedStateBackend    [] - Initializing heap keyed state backend with stream factory.
+2026-11-16 18:23:14,023 INFO  org.apache.flink.runtime.taskmanager.Task                    [] - intersection-minute-windows -> (count-late-readings -> Sink: Print to Std. Out, traffic.results: Writer -> traffic.results: Committer) (1/1)#0 (22b4f41eb94beb3fd4e31463738d6189_6250c7c1fabda386b94b02ea03a9dfa9_0_0) switched from INITIALIZING to RUNNING.
+2026-11-16 18:23:14,044 WARN  org.apache.kafka.clients.consumer.ConsumerConfig             [] - These configurations '[client.id.prefix, partition.discovery.interval.ms]' were supplied but are not used yet.
+2026-11-16 18:23:14,044 INFO  org.apache.kafka.common.utils.AppInfoParser                  [] - Kafka version: 3.4.0
+2026-11-16 18:23:14,044 INFO  org.apache.kafka.common.utils.AppInfoParser                  [] - Kafka commitId: 2e1947d240607d53
+2026-11-16 18:23:14,044 INFO  org.apache.kafka.common.utils.AppInfoParser                  [] - Kafka startTimeMs: 1794853394044
+2026-11-16 18:23:14,054 INFO  org.apache.flink.connector.base.source.reader.fetcher.SplitFetcher [] - Starting split fetcher 0
+2026-11-16 18:23:14,059 INFO  org.apache.kafka.clients.consumer.KafkaConsumer              [] - [Consumer clientId=congestion-v1-0, groupId=congestion-v1] Assigned to partition(s): traffic.raw-0
+2026-11-16 18:23:14,063 INFO  org.apache.kafka.clients.consumer.internals.SubscriptionState [] - [Consumer clientId=congestion-v1-0, groupId=congestion-v1] Seeking to earliest offset of partition traffic.raw-0
+2026-11-16 18:23:14,731 INFO  org.apache.kafka.clients.Metadata                            [] - [Producer clientId=producer-1] Cluster ID: f_GfGGozQU-8PTvDR0hqaA
+2026-11-16 18:23:14,732 INFO  org.apache.kafka.clients.Metadata                            [] - [Consumer clientId=congestion-v1-0, groupId=congestion-v1] Resetting the last seen epoch of partition traffic.raw-0 to 0 since the associated topicId changed from null to SXC_fGK_RXS9afNUyCRBlw
+2026-11-16 18:23:14,733 INFO  org.apache.kafka.clients.Metadata                            [] - [Consumer clientId=congestion-v1-0, groupId=congestion-v1] Cluster ID: f_GfGGozQU-8PTvDR0hqaA
+2026-11-16 18:23:14,735 INFO  org.apache.kafka.clients.producer.internals.TransactionManager [] - [Producer clientId=producer-1] ProducerId set to 1003 with epoch 0
+2026-11-16 18:23:14,989 INFO  org.apache.kafka.clients.consumer.internals.SubscriptionState [] - [Consumer clientId=congestion-v1-0, groupId=congestion-v1] Resetting offset for partition traffic.raw-0 to position FetchPosition{offset=0, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[b-2.smarttrafficphase8kaf.jc7st6.c3.kafka.ap-south-1.amazonaws.com:9098 (id: 2 rack: aps1-az1)], epoch=0}}.
+2026-11-16 18:23:15,811 INFO  org.apache.kafka.clients.Metadata                            [] - [Producer clientId=producer-1] Resetting the last seen epoch of partition traffic.results-0 to 0 since the associated topicId changed from null to UEZ8XnGTSYyjZUa51MF-JA
+2026-11-16 18:23:27,673 INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator [] - [Consumer clientId=congestion-v1-0, groupId=congestion-v1] Discovered group coordinator b-1.smarttrafficphase8kaf.jc7st6.c3.kafka.ap-south-1.amazonaws.com:9098 (id: 2147483646 rack: null)

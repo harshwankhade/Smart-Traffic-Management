@@ -1,0 +1,5 @@
+apiVersion: v2
+name: argocd-root-application
+description: Terraform-owned Argo CD root Application for Smart Traffic GitOps reconciliation.
+type: application
+version: 0.1.0

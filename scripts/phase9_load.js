@@ -20,15 +20,15 @@ export const options = {
       exec: "submitReading",
       startVUs: 0,
       stages: [
-        { duration: "1m", target: 160 },
-        { duration: "4m", target: 400 },
+        { duration: "1m", target: 80 },
+        { duration: "4m", target: 160 },
         { duration: "1m", target: 0 },
       ],
     },
     analytics: {
       executor: "constant-vus",
       exec: "readSummaries",
-      vus: 100,
+      vus: 40,
       duration: "6m",
       startTime: "30s",
     },
