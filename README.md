@@ -52,7 +52,7 @@ Open Registry API docs at `http://127.0.0.1:8001/docs` and Incident Manager API 
 
 Start Docker Desktop first. These demos use loopback containers and synthetic data. Run one demo at a time because some share Kafka or DynamoDB Local. Normal `down` commands stop their containers and networks **without deleting named volumes**.
 
-### Ingestion → gRPC Publisher → Kafka and archive (Phase 3)
+### Ingestion → gRPC Publisher → Kafka and archive
 
 ```powershell
 .venv\Scripts\python scripts\generate_proto.py
@@ -65,7 +65,7 @@ Start Docker Desktop first. These demos use loopback containers and synthetic da
 
 `configure` creates local-only archive credentials under `.data/phase3/local.env`; it does not use AWS keys. The demo starts its own service processes, validates sensor references, checks actual Kafka records and archived bytes, and exercises retries and outages. See the [Phase 3 guide](docs/phase-3-api.md). If you will run Phase 4 immediately afterward, keep the Phase 3 containers running and use `phase3_local.py down` only after Phase 4 is stopped.
 
-### Stateful Flink congestion windows (Phase 4)
+### Stateful Flink congestion windows
 
 ```powershell
 mvn -f services/congestion-processor/pom.xml package
@@ -78,7 +78,7 @@ mvn -f services/congestion-processor/pom.xml package
 
 `phase4_local.py up` starts and bootstraps its Kafka dependency and the local Flink cluster. The demo compares known inputs with actual `traffic.results` records, checks duplicate and late readings, and restores a checkpoint. Flink's local UI is `http://127.0.0.1:8081` while the cluster is up. Stop Phase 4 before Phase 3; retained volumes preserve local data. See the [processing and recovery guide](docs/phase-4-processing.md).
 
-### Recommendation and Analytics consumers (Phase 5)
+### Recommendation and Analytics consumers 
 
 ```powershell
 .venv\Scripts\python scripts\phase3_local.py configure
@@ -95,7 +95,7 @@ Remove-Item Env:PHASE5_LOCAL_DEMO
 
 This demo publishes a known result to Kafka, waits for both independent consumers, reads both HTTP APIs, replays the result, and checks persistence after service restarts. It uses DynamoDB Local, not AWS DynamoDB. See the [Phase 5 demo guide](docs/phase-5-demo.md).
 
-### Incident and congestion alerts (Phase 6)
+### Incident and congestion alerts 
 
 The quickest alert demo needs no Docker:
 
@@ -105,7 +105,7 @@ The quickest alert demo needs no Docker:
 
 It runs the real alert producers and handler with an in-memory queue/table stand-in. To use a real local DynamoDB table, follow the [Phase 6 local guide](docs/phase-6-local.md). Actual SQS → Lambda → DynamoDB evidence is recorded separately in the [Phase 6 cloud report](docs/progress/phase-6.md).
 
-### ZooKeeper publisher failover (Phase 7)
+### ZooKeeper publisher failover
 
 ```powershell
 .venv\Scripts\python scripts\phase3_local.py configure
@@ -129,15 +129,3 @@ kubectl kustomize deploy/gitops/apps
 .venv\Scripts\python scripts\phase8_gitops_check.py
 ```
 
-For an authorized run, follow these documents in order:
-
-1. [Integrated Terraform runbook](infrastructure/terraform/phase8/README.md) and [Phase 8 IaC notes](docs/phase-8-iac.md) for the guarded infrastructure and image packaging.
-2. [GitOps runbook](deploy/gitops/README.md) and [Phase 8 deployment notes](docs/phase-8-gitops.md) for ECR image digests, Argo CD reconciliation, and the public ingress.
-3. [Phase 9 observability runbook](docs/phase-9-observability.md) for Prometheus, Grafana, CloudWatch Logs, HPA, and k6 evidence.
-
-The [Phase 8 acceptance report](docs/evidence/phase-8-acceptance.md) records a past integrated run. [Phase 9 runtime evidence](docs/evidence/phase-9-step3-run.md) records successful strict HTTPS and both HPAs scaling to four replicas, but the load run exceeded its p95 latency threshold (5.47 s versus 2 s) and centralized Flink container logs remained unverified. These dated reports are not a live inventory of current AWS resources or charges.
-
-## More documentation
-
-- [Requirements](PROJECT_BRIEF.md), [design document](docs/DESIGN_DOCUMENT.md), [technical architecture](ARCHITECTURE.md), and [roadmap](ROADMAP.md)
-- [Service API and local demo guides](docs/), [phase progress](docs/progress/), and [test evidence](docs/evidence/)
