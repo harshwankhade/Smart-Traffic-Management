@@ -31,3 +31,4 @@ docs/
 !docs/
 docs/*
 !docs/DESIGN_DOCUMENT.md
+task_division.txt
