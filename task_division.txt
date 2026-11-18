@@ -1,0 +1,22 @@
+Smart Traffic Management (S12) — proposed two-member task division, Phases 1–9
+
+Member 1: [Full name], [ID number]
+Services (4): Sensor Registry, Event Publisher, Congestion Processor, Traffic Analytics.
+Assignment tasks (4): (a) Terraform/IaC, (c) EKS + two HPAs + load testing,
+(e) Kafka/managed Flink processing, (f) ZooKeeper coordination.
+Phase work: P1 architecture and core contracts; P2 Registry; P3 Publisher,
+Kafka and S3 archive; P4 Flink windows/checkpoints; P5 Analytics; P6 queue/IAM
+integration support; P7 publisher election; P8 Terraform and EKS/EMR/MSK;
+P9 HPAs, k6 and performance evidence.
+
+Member 2: [Full name], [ID number]
+Services (4): Traffic Ingestion, Signal Recommendation, Incident Manager, Alert Service.
+Assignment tasks (4): (b) REST/gRPC/queue/serverless, (d) Argo CD GitOps,
+(g) RDS/DynamoDB/S3 storage, (h) Prometheus/Grafana/centralized logging.
+Phase work: P1 requirements, API contracts and test plan; P2 Incident Manager;
+P3 Ingestion/gRPC; P4 processor integration checks; P5 Recommendation;
+P6 incident outbox, SQS and Lambda alerts; P7 ingestion failover routing;
+P8 GitOps, data services and public HTTPS; P9 dashboards and log collection.
+
+Both members: cross-service integration, tests, documentation and demos.
+This is a proposed allocation, not a record of actual individual contributions.

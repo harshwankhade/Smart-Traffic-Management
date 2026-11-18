@@ -28,3 +28,6 @@ ROADMAP.md
 .tmp-phase9-*
 .env.example
 docs/
+!docs/
+docs/*
+!docs/DESIGN_DOCUMENT.md
