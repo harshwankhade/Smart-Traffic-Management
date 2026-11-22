@@ -28,7 +28,7 @@ metadata:
     service.beta.kubernetes.io/aws-load-balancer-scheme: internal
     service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
     service.beta.kubernetes.io/aws-load-balancer-attributes: load_balancing.cross_zone.enabled=true
-    external-dns.alpha.kubernetes.io/hostname: kafka.smarttraffic.internal
+    external-dns.kubernetes.io/hostname: kafka.smarttraffic.internal
 spec:
   type: LoadBalancer
   loadBalancerClass: service.k8s.aws/nlb
