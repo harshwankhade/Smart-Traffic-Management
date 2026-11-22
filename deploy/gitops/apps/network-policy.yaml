@@ -28,6 +28,22 @@ spec:
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
+metadata: {name: public-api-from-alb, namespace: smarttraffic}
+spec:
+  podSelector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values: [sensor-registry, traffic-ingestion, signal-recommendation, incident-manager, traffic-analytics]
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - ipBlock: {cidr: 10.80.0.0/23}
+      ports:
+        - {protocol: TCP, port: 8000}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
 metadata: {name: kafka-from-private-vpc, namespace: smarttraffic}
 spec:
   podSelector: {matchLabels: {app: kafka}}
