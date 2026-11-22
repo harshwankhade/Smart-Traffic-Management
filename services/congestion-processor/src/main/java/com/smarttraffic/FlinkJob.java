@@ -41,12 +41,7 @@ public final class FlinkJob {
     public static void main(String[] args) throws Exception {
         Properties p = applicationSettings(args);
         String brokers = p.getProperty("KAFKA_BOOTSTRAP_SERVERS", "127.0.0.1:9092");
-        Properties kafka = new Properties();
-        if (p.getProperty("KAFKA_AUTH_MODE", "local").equals("iam")) {
-            kafka.setProperty("security.protocol", "SASL_SSL"); kafka.setProperty("sasl.mechanism", "AWS_MSK_IAM");
-            kafka.setProperty("sasl.jaas.config", "software.amazon.msk.auth.iam.IAMLoginModule required;");
-            kafka.setProperty("sasl.client.callback.handler.class", "software.amazon.msk.auth.iam.IAMClientCallbackHandler");
-        }
+        Properties kafka = kafkaSettings(p);
         kafka.setProperty("allow.auto.create.topics", "false");
         kafka.setProperty("isolation.level", "read_committed");
         var env = StreamExecutionEnvironment.getExecutionEnvironment();
@@ -92,5 +87,30 @@ public final class FlinkJob {
             p.getProperty("VERIFICATION_RUN_ID", "cloud-phase4"), kafka, verificationStage,
             p.getProperty("VERIFICATION_BUCKET", ""));
         env.execute("Smart Traffic Congestion v1");
+    }
+
+    static Properties kafkaSettings(Properties p) throws Exception {
+        Properties kafka = new Properties();
+        String mode = p.getProperty("KAFKA_AUTH_MODE", "local");
+        if (mode.equals("iam")) {
+            kafka.setProperty("security.protocol", "SASL_SSL");
+            kafka.setProperty("sasl.mechanism", "AWS_MSK_IAM");
+            kafka.setProperty("sasl.jaas.config", "software.amazon.msk.auth.iam.IAMLoginModule required;");
+            kafka.setProperty("sasl.client.callback.handler.class", "software.amazon.msk.auth.iam.IAMClientCallbackHandler");
+        } else if (mode.equals("tls")) {
+            String path = p.getProperty("KAFKA_SSL_CA_LOCATION", "");
+            if (path.isBlank()) throw new IllegalArgumentException("tls mode requires KAFKA_SSL_CA_LOCATION");
+            // Embed public trust material in the serialized connector configuration;
+            // TaskManagers need no client-local file or disabled hostname verification.
+            String pem = java.nio.file.Files.readString(java.nio.file.Path.of(path));
+            if (!pem.contains("-----BEGIN CERTIFICATE-----")) throw new IllegalArgumentException("Invalid Kafka CA PEM");
+            kafka.setProperty("security.protocol", "SSL");
+            kafka.setProperty("ssl.truststore.type", "PEM");
+            kafka.setProperty("ssl.truststore.certificates", pem);
+            kafka.setProperty("ssl.endpoint.identification.algorithm", "https");
+        } else if (!mode.equals("local")) {
+            throw new IllegalArgumentException("KAFKA_AUTH_MODE must be local, iam or tls");
+        }
+        return kafka;
     }
 }

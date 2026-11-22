@@ -1,13 +1,16 @@
 terraform {
+  backend "local" {}
   required_version = ">= 1.16.0"
   required_providers {
     aws  = { source = "hashicorp/aws", version = "~> 6.45" }
     helm = { source = "hashicorp/helm", version = "~> 2.17" }
+    tls  = { source = "hashicorp/tls", version = "~> 4.0" }
   }
 }
 
 provider "aws" {
-  region = var.aws_region
+  region              = var.aws_region
+  allowed_account_ids = var.expected_account_id == null ? null : [var.expected_account_id]
 }
 
 data "aws_eks_cluster_auth" "main" {

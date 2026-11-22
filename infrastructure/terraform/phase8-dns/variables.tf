@@ -2,6 +2,14 @@ variable "aws_region" {
   type    = string
   default = "ap-south-1"
 }
+variable "expected_account_id" {
+  type    = string
+  default = null
+  validation {
+    condition     = var.expected_account_id == null ? true : can(regex("^[0-9]{12}$", var.expected_account_id))
+    error_message = "Expected account ID must contain exactly 12 digits."
+  }
+}
 
 variable "domain_name" {
   type    = string

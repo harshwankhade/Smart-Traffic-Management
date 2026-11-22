@@ -1,5 +1,6 @@
 # Keep deployment_approved=false. Step 2 validates only; Step 4 needs separate authorization.
 deployment_approved = false
+eks_worker_count    = 2 # Use 4 for the separately reviewed HPA-validation run.
 project_name        = "stp8-example"
 aws_region          = "ap-south-1"
 availability_zones  = ["ap-south-1a", "ap-south-1b"]

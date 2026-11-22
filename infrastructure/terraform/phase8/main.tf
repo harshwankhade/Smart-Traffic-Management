@@ -11,7 +11,7 @@ locals {
   tags     = { Project = "SmartTraffic", Phase = "8", ManagedBy = "Terraform" }
   services = toset(["sensor-registry", "traffic-ingestion", "event-publisher", "signal-recommendation", "incident-manager", "traffic-analytics"])
   workload_policy_arns = {
-    "event-publisher"       = module.streaming.publisher_policy_arn
+    "event-publisher"       = aws_iam_policy.publisher_archive.arn
     "signal-recommendation" = module.derived.signal_recommendation_policy_arn
     "traffic-analytics"     = module.derived.traffic_analytics_policy_arn
     "incident-manager"      = module.alerts.incident_manager_send_policy_arn
@@ -174,32 +174,24 @@ resource "aws_eks_node_group" "main" {
   subnet_ids      = values(aws_subnet.private)[*].id
   instance_types  = ["t3.large"]
   scaling_config {
-    desired_size = 4
-    min_size     = 4
-    max_size     = 4
+    desired_size = var.eks_worker_count
+    min_size     = var.eks_worker_count
+    max_size     = var.eks_worker_count
   }
   # Private nodes need working egress during bootstrap, including ECR and STS.
   depends_on = [aws_iam_role_policy_attachment.eks_nodes, aws_route.private_nat, aws_route_table_association.private]
 }
-resource "aws_ecr_repository" "services" {
-  for_each             = local.services
-  name                 = "${var.project_name}/${each.key}"
-  image_tag_mutability = "IMMUTABLE"
-  force_delete         = true
-  image_scanning_configuration { scan_on_push = true }
-  tags       = local.tags
-  depends_on = [terraform_data.deployment_guard]
+data "aws_ecr_repository" "services" {
+  for_each = local.services
+  name     = "${var.project_name}/${each.key}"
 }
 
+# Preserve the old provider address until existing state has been reconciled.
+# This compatibility module declares no MSK, archive or other resources.
 module "streaming" {
-  source                        = "../phase3"
-  deployment_approved           = var.deployment_approved
-  project_name                  = "${var.project_name}-kafka"
-  vpc_id                        = aws_vpc.main.id
-  private_subnet_ids            = values(aws_subnet.private)[*].id
-  private_route_table_ids       = [aws_route_table.private.id]
-  application_security_group_id = aws_eks_cluster.main.vpc_config[0].cluster_security_group_id
+  source = "../phase3-provider-compat"
 }
+
 module "processing" {
   source                  = "../phase4"
   deployment_approved     = var.deployment_approved
@@ -208,12 +200,18 @@ module "processing" {
   emr_single_node         = true
   vpc_id                  = aws_vpc.main.id
   private_subnet_ids      = values(aws_subnet.private)[*].id
-  kafka_cluster_arn       = module.streaming.kafka_cluster_arn
-  kafka_security_group_id = module.streaming.kafka_security_group_id
-  kafka_bootstrap_servers = module.streaming.kafka_bootstrap_servers
-  archive_bucket          = module.streaming.archive_bucket
-  s3_prefix_list_id       = module.streaming.s3_prefix_list_id
+  kafka_auth_mode         = "tls"
+  kafka_cluster_arn       = ""
+  kafka_port              = 9093
+  kafka_security_group_id = ""
+  kafka_cidr              = aws_vpc.main.cidr_block
+  kafka_bootstrap_servers = "kafka.smarttraffic.internal:9093"
+  archive_bucket          = aws_s3_bucket.archive.id
+  s3_prefix_list_id       = aws_vpc_endpoint.s3.prefix_list_id
   jar_path                = var.emr_jar_path
+  # Gate only EMR creation on private-network readiness; legacy child providers
+  # prevent module-level depends_on, and EKS itself is not a prerequisite.
+  bootstrap_dependency_ids = concat([aws_route.private_nat.id, aws_vpc_endpoint.cloudwatch_logs.id], [for association in aws_route_table_association.private : association.id])
 }
 module "derived" {
   source              = "../phase5"
@@ -279,8 +277,9 @@ resource "aws_secretsmanager_secret_version" "runtime_config" {
     SENSOR_REGISTRY_DATABASE_SECRET_ARN  = aws_db_instance.main.master_user_secret[0].secret_arn
     INCIDENT_MANAGER_DATABASE_SECRET_ARN = aws_db_instance.main.master_user_secret[0].secret_arn
     SMARTTRAFFIC_RDS_HOST                = aws_db_instance.main.address
-    KAFKA_BOOTSTRAP_SERVERS              = module.streaming.kafka_bootstrap_servers
-    ARCHIVE_BUCKET                       = module.streaming.archive_bucket
+    KAFKA_BOOTSTRAP_SERVERS              = "kafka.smarttraffic.internal:9093"
+    KAFKA_SSL_CA_PEM                     = tls_self_signed_cert.kafka.cert_pem
+    ARCHIVE_BUCKET                       = aws_s3_bucket.archive.id
     RECOMMENDATIONS_TABLE                = module.derived.recommendations_table
     SUMMARIES_TABLE                      = module.derived.summaries_table
     ALERT_QUEUE_URL                      = module.alerts.alert_queue_url
@@ -319,15 +318,6 @@ resource "aws_iam_role_policy" "workload_database_secret" {
     Effect   = "Allow", Action = ["secretsmanager:GetSecretValue"],
     Resource = aws_db_instance.main.master_user_secret[0].secret_arn
   }] })
-}
-resource "aws_iam_role_policy" "results_consumers" {
-  for_each = toset(["signal-recommendation", "traffic-analytics"])
-  role     = aws_iam_role.workloads[each.key].name
-  policy = jsonencode({ Version = "2012-10-17", Statement = [
-    { Effect = "Allow", Action = ["kafka-cluster:Connect", "kafka-cluster:DescribeCluster"], Resource = module.streaming.kafka_cluster_arn },
-    { Effect = "Allow", Action = ["kafka-cluster:DescribeTopic", "kafka-cluster:ReadData"], Resource = "${replace(module.streaming.kafka_cluster_arn, ":cluster/", ":topic/")}/traffic.results" },
-    { Effect = "Allow", Action = ["kafka-cluster:DescribeGroup", "kafka-cluster:AlterGroup"], Resource = "${replace(module.streaming.kafka_cluster_arn, ":cluster/", ":group/")}/${each.key}-v1" }
-  ] })
 }
 resource "aws_eks_pod_identity_association" "workloads" {
   for_each        = local.services
@@ -441,7 +431,7 @@ resource "aws_iam_role" "external_dns" {
 resource "aws_iam_role_policy" "external_dns" {
   role = aws_iam_role.external_dns.name
   policy = jsonencode({ Version = "2012-10-17", Statement = [
-    { Effect = "Allow", Action = ["route53:ChangeResourceRecordSets"], Resource = "arn:aws:route53:::hostedzone/${var.route53_zone_id}" },
+    { Effect = "Allow", Action = ["route53:ChangeResourceRecordSets"], Resource = ["arn:aws:route53:::hostedzone/${var.route53_zone_id}", aws_route53_zone.kafka.arn] },
     { Effect = "Allow", Action = ["route53:ListHostedZones", "route53:ListResourceRecordSets"], Resource = "*" },
     { Effect = "Allow", Action = ["route53:GetChange"], Resource = "arn:aws:route53:::change/*" }
   ] })
@@ -457,6 +447,7 @@ resource "helm_release" "external_dns" {
   name       = "external-dns"
   repository = "https://kubernetes-sigs.github.io/external-dns/"
   chart      = "external-dns"
+  version    = "1.24.0"
   namespace  = "kube-system"
   atomic     = true
   wait       = true
@@ -468,7 +459,8 @@ resource "helm_release" "external_dns" {
     # The AWS provider matches a hosted-zone name, not an individual record.
     # `public_dns_name` is the approved one-label API host (api.<zone>), so
     # remove that label while retaining a narrowly scoped zone filter.
-    domainFilters  = [join(".", slice(split(".", var.public_dns_name), 1, length(split(".", var.public_dns_name))))]
+    domainFilters  = [join(".", slice(split(".", var.public_dns_name), 1, length(split(".", var.public_dns_name)))), "smarttraffic.internal"]
+    extraArgs      = { "zone-id-filter" = [var.route53_zone_id, aws_route53_zone.kafka.zone_id] }
     serviceAccount = { create = true, name = "external-dns" }
   })]
   depends_on = [aws_eks_pod_identity_association.external_dns]
@@ -490,7 +482,7 @@ resource "aws_iam_role_policy" "external_secrets" {
   role = aws_iam_role.external_secrets.name
   policy = jsonencode({ Version = "2012-10-17", Statement = [{
     Effect   = "Allow", Action = ["secretsmanager:GetSecretValue"],
-    Resource = aws_secretsmanager_secret.runtime_config.arn
+    Resource = [aws_secretsmanager_secret.runtime_config.arn, aws_secretsmanager_secret.kafka_tls.arn]
   }] })
 }
 resource "aws_eks_pod_identity_association" "external_secrets" {
@@ -513,7 +505,9 @@ resource "helm_release" "external_secrets" {
     installCRDs    = true
     serviceAccount = { create = true, name = "external-secrets" }
   })]
-  depends_on = [helm_release.aws_load_balancer_controller, aws_eks_pod_identity_association.external_secrets]
+  # The load-balancer admission webhook must have endpoints before another
+  # chart creates Services, or parallel installs can fail admission.
+  depends_on = [aws_eks_pod_identity_association.external_secrets, helm_release.aws_load_balancer_controller]
 }
 resource "helm_release" "argocd" {
   name             = "argocd"
@@ -530,6 +524,7 @@ resource "helm_release" "argocd" {
 # Terraform seeds only Argo CD's root Application. Argo then reconciles every
 # namespace, workload, Service, ConfigMap, Ingress and ZooKeeper resource from Git.
 resource "helm_release" "argocd_root_application" {
+  count     = var.gitops_bootstrap_enabled ? 1 : 0
   name      = "smarttraffic-root"
   chart     = "${path.module}/charts/argocd-root-application"
   namespace = "argocd"

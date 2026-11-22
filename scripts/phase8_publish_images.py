@@ -1,8 +1,9 @@
 """Build, push, and digest-pin the six Phase 8 images after ECR repositories exist.
 
 This script deliberately changes only Git-tracked Kustomize image directives.
-Run it after the reviewed ECR-only Terraform stage; commit/push its output before
-Argo CD's root Application is installed.
+Run it against repositories from phase8-artifacts, before creating the runtime.
+The source-hash tag reuses unchanged images. Commit/push its output only when
+separately authorized, before Argo CD's root Application is installed.
 """
 from __future__ import annotations
 
@@ -14,6 +15,11 @@ import subprocess
 from pathlib import Path
 
 import boto3
+
+try:
+    from scripts.prepare_demo_artifacts import image_revision
+except ModuleNotFoundError:
+    from prepare_demo_artifacts import image_revision
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -30,14 +36,19 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repositories-json", required=True,
                         help="JSON object from `terraform output -json ecr_repositories`.")
-    parser.add_argument("--tag", default="phase8-run", help="Immutable tag to push once per run.")
+    parser.add_argument("--tag", help="Optional explicit immutable tag; default is a hash of all Docker inputs.")
     parser.add_argument("--docker-config", help="Isolated Docker config directory for a short-lived registry login.")
     args = parser.parse_args()
+    args.tag = args.tag or "source-" + image_revision()[:32]
     repositories = json.loads(Path(args.repositories_json).read_text(encoding="utf-8"))
     if set(repositories) != set(SERVICES):
         raise SystemExit("repository output must contain exactly the six Phase 8 services")
     region = os.environ.get("AWS_REGION", "ap-south-1")
     session = boto3.Session(profile_name=os.environ.get("AWS_PROFILE"), region_name=region)
+    account_id = session.client("sts").get_caller_identity()["Account"]
+    expected_registry = f"{account_id}.dkr.ecr.{region}.amazonaws.com/"
+    if any(not repository.startswith(expected_registry) for repository in repositories.values()):
+        raise RuntimeError("Repository output belongs to another account/region; use the selected account's artifact state")
     token = session.client("ecr").get_authorization_token()["authorizationData"][0]
     username, password = base64.b64decode(token["authorizationToken"]).decode().split(":", 1)
     if username != "AWS":
@@ -67,7 +78,7 @@ def main() -> None:
         except ecr.exceptions.ImageNotFoundException:
             local = f"smarttraffic/{service}:{args.tag}"
             remote = f"{repositories[service]}:{args.tag}"
-            run(*docker, "build", "-f", "infrastructure/container/Dockerfile",
+            run(*docker, "build", "--platform", "linux/amd64", "-f", "infrastructure/container/Dockerfile",
                 "--build-arg", f"SERVICE_DIR=services/{service}", "-t", local, ".")
             run(*docker, "tag", local, remote)
             run(*docker, "push", remote)

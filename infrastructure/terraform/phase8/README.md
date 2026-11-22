@@ -1,16 +1,19 @@
-# Phase 8 integrated Terraform preparation
+# Reduced-startup integrated runtime
 
-This root prepares one run-scoped deployment: EKS and Argo CD bootstrap, ECR repositories, a two-AZ VPC with NAT egress, MSK/S3/EMR modules, RDS PostgreSQL, DynamoDB, SQS/Lambda and an ACM-backed HTTPS ALB. It creates nothing with the default `deployment_approved=false`.
+This guarded root provisions the VPC, two `t3.large` EKS workers by default (four for HPA validation), single-node EMR/Flink, RDS, DynamoDB, S3 runtime archive/checkpoints, SQS/Lambda, private Kafka DNS/trust, IAM and platform bootstrap. Argo CD deploys all application workloads, ZooKeeper, Kafka/internal NLB Service, monitoring and both HPAs. The runtime does not create MSK. ECR repositories are read from separately retained `phase8-artifacts` storage.
 
-Before a plan that enables the guard, provide a unique run prefix, real administrator CIDRs, a public DNS name and its authoritative Route 53 zone. Build the EMR JAR and Lambda ZIP first. Terraform owns AWS infrastructure and the Argo CD bootstrap only; Step 3 will add GitOps-managed Kubernetes workloads.
+Read [the complete runbook](../../../docs/reduced-startup.md) and [approved decisions](../../../docs/decisions/reduced-startup.md), especially existing-state migration. Prepare binaries and publish/reuse images before runtime creation. No current runtime/cost state is inferred from old evidence or local Terraform files.
 
-Safe checks:
+Safe local checks:
 
 ```powershell
 terraform -chdir=infrastructure/terraform/phase8 init -backend=false -input=false
 terraform -chdir=infrastructure/terraform/phase8 fmt -check -recursive
 terraform -chdir=infrastructure/terraform/phase8 validate
-.venv\Scripts\python scripts\phase8_package.py
+terraform -chdir=infrastructure/terraform/phase8 test
+.venv/Scripts/python scripts/phase8_gitops_check.py
 ```
 
-An enabled review plan and later apply must use the same `project_name`, record the plan, and use a current cost preflight below the US$9.50 gate. Teardown removes the GitOps application through Git first, waits for Argo CD pruning, terminates EMR, empties only the state-owned versioned bucket, then runs `terraform destroy` and independent tagged-resource audits. Do not run apply or destroy in this step.
+Tests mock root AWS/Helm/TLS resources and stub legacy child-module outputs; child modules have separate mock tests. `deployment_approved=false` remains default. AWS-backed plans/applies, image/binary publication, state migration, Git publication and teardown require the applicable authorization. Protect Terraform state: it contains the generated Kafka private key, which must never appear in logs or Git.
+
+The new cloud shape, private NLB/DNS connectivity and demo and HPA capacity remain unverified until a separately authorized run. Retain artifact and public DNS/certificate state during approved runtime cleanup; audit controller-created ALB/NLB groups and EBS volumes too.

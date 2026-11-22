@@ -38,8 +38,11 @@ def kafka_config(group_id):
 
         config.update({"security.protocol": "SASL_SSL", "sasl.mechanism": "OAUTHBEARER",
                        "oauth_cb": token})
+    elif mode == "tls":
+        from traffic_contracts.kafka_tls import tls_config
+        config.update(tls_config())
     elif mode != "local":
-        raise ValueError("KAFKA_AUTH_MODE must be local or iam")
+        raise ValueError("KAFKA_AUTH_MODE must be local, iam or tls")
     return config
 
 

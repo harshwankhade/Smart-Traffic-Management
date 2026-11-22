@@ -8,6 +8,21 @@ import org.apache.flink.util.CloseableIterator;
 import java.util.*;
 
 class TrafficTest {
+    @Test void tlsConfigurationCarriesTrustToTaskManagers() throws Exception {
+        var settings = new Properties(); settings.setProperty("KAFKA_AUTH_MODE", "tls");
+        assertThrows(IllegalArgumentException.class, () -> FlinkJob.kafkaSettings(settings));
+        var ca = java.nio.file.Files.createTempFile("kafka-ca-", ".pem");
+        try {
+            java.nio.file.Files.writeString(ca, "-----BEGIN CERTIFICATE-----\nexample\n-----END CERTIFICATE-----\n");
+            settings.setProperty("KAFKA_SSL_CA_LOCATION", ca.toString());
+            var kafka = FlinkJob.kafkaSettings(settings);
+            assertEquals("SSL", kafka.getProperty("security.protocol"));
+            assertEquals("PEM", kafka.getProperty("ssl.truststore.type"));
+            assertEquals("https", kafka.getProperty("ssl.endpoint.identification.algorithm"));
+            assertTrue(kafka.getProperty("ssl.truststore.certificates").contains("BEGIN CERTIFICATE"));
+            assertFalse(kafka.containsKey("ssl.truststore.location"));
+        } finally { java.nio.file.Files.deleteIfExists(ca); }
+    }
     @Test void startsWithoutManagedServicePropertiesFile() throws Exception {
         assertNotNull(FlinkJob.applicationSettings());
         assertEquals("value", FlinkJob.applicationSettings("--TEST_SETTING", "value").getProperty("TEST_SETTING"));

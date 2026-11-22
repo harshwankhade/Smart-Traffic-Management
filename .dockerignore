@@ -1,0 +1,16 @@
+# Send only actual build inputs; never send state, credentials, or local data.
+**
+!requirements-lock.txt
+!infrastructure/
+!infrastructure/container/
+!infrastructure/container/Dockerfile
+!contracts/
+!contracts/**
+!services/
+!services/**
+**/__pycache__
+**/*.pyc
+**/target
+**/target-emr
+**/.env
+**/.data

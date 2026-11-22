@@ -16,6 +16,7 @@ locals {
 }
 
 resource "aws_msk_topic" "results" {
+  count              = var.kafka_auth_mode == "iam" ? 1 : 0
   cluster_arn        = var.kafka_cluster_arn
   name               = "traffic.results"
   partition_count    = 1
@@ -24,11 +25,18 @@ resource "aws_msk_topic" "results" {
   depends_on         = [terraform_data.deployment_guard]
 }
 
+moved {
+  from = aws_msk_topic.results
+  to   = aws_msk_topic.results[0]
+}
+
 resource "aws_s3_object" "jar" {
   bucket                 = var.archive_bucket
   key                    = local.artifact_key
   source                 = var.jar_path
-  etag                   = filemd5(var.jar_path)
+  # Multipart S3 ETags are not file MD5s; use a local source hash to avoid
+  # re-uploading an unchanged processor on every plan.
+  source_hash            = filemd5(var.jar_path)
   server_side_encryption = "AES256"
   depends_on             = [terraform_data.deployment_guard]
 }
@@ -207,25 +215,27 @@ resource "aws_vpc_security_group_egress_rule" "core_s3" {
 }
 resource "aws_vpc_security_group_egress_rule" "primary_kafka" {
   security_group_id            = aws_security_group.emr_primary.id
-  referenced_security_group_id = var.kafka_security_group_id
+  referenced_security_group_id = var.kafka_auth_mode == "iam" ? var.kafka_security_group_id : null
+  cidr_ipv4                    = var.kafka_auth_mode == "tls" ? var.kafka_cidr : null
   ip_protocol                  = "tcp"
-  from_port                    = 9098
-  to_port                      = 9098
+  from_port                    = var.kafka_port
+  to_port                      = var.kafka_port
 }
 resource "aws_vpc_security_group_egress_rule" "core_kafka" {
   security_group_id            = aws_security_group.emr_core.id
-  referenced_security_group_id = var.kafka_security_group_id
+  referenced_security_group_id = var.kafka_auth_mode == "iam" ? var.kafka_security_group_id : null
+  cidr_ipv4                    = var.kafka_auth_mode == "tls" ? var.kafka_cidr : null
   ip_protocol                  = "tcp"
-  from_port                    = 9098
-  to_port                      = 9098
+  from_port                    = var.kafka_port
+  to_port                      = var.kafka_port
 }
 resource "aws_vpc_security_group_ingress_rule" "emr_kafka" {
-  for_each                     = { primary = aws_security_group.emr_primary.id, core = aws_security_group.emr_core.id }
+  for_each                     = var.kafka_auth_mode == "iam" ? { primary = aws_security_group.emr_primary.id, core = aws_security_group.emr_core.id } : {}
   security_group_id            = var.kafka_security_group_id
   referenced_security_group_id = each.value
   ip_protocol                  = "tcp"
-  from_port                    = 9098
-  to_port                      = 9098
+  from_port                    = var.kafka_port
+  to_port                      = var.kafka_port
 }
 
 resource "aws_iam_role" "emr_service" {
@@ -271,19 +281,20 @@ resource "aws_iam_role_policy" "emr_ec2" {
   role = aws_iam_role.emr_ec2.id
   policy = jsonencode({
     Version = "2012-10-17"
-    Statement = [
+    Statement = concat([
       { Effect = "Allow", Action = ["s3:GetObject", "s3:GetObjectVersion", "s3:PutObject", "s3:AbortMultipartUpload"], Resource = "arn:aws:s3:::${var.archive_bucket}/*" },
       { Effect = "Allow", Action = ["s3:GetBucketLocation", "s3:ListBucket", "s3:ListBucketMultipartUploads"], Resource = "arn:aws:s3:::${var.archive_bucket}" },
       { Effect = "Allow", Action = ["s3:GetObject"], Resource = ["arn:aws:s3:::al2023-repos-ap-south-1-de612dc2/*", "arn:aws:s3:::repo.ap-south-1.emr.amazonaws.com/*"] },
-      { Effect = "Allow", Action = ["kafka-cluster:Connect", "kafka-cluster:DescribeCluster", "kafka-cluster:WriteDataIdempotently"], Resource = var.kafka_cluster_arn },
-      { Effect = "Allow", Action = ["kafka-cluster:DescribeTopic", "kafka-cluster:ReadData", "kafka-cluster:WriteData"], Resource = ["${local.topic_prefix}/traffic.raw", "${local.topic_prefix}/traffic.results"] },
-      { Effect = "Allow", Action = ["kafka-cluster:DescribeGroup", "kafka-cluster:AlterGroup"], Resource = ["${local.group_prefix}/congestion-v1", "${local.group_prefix}/congestion-verification-v1"] },
       { Effect = "Allow", Action = ["elasticmapreduce:DescribeCluster", "elasticmapreduce:ListInstances"], Resource = "*" },
       { Effect = "Allow", Action = ["logs:DescribeLogGroups"], Resource = "*" },
       { Effect = "Allow", Action = ["logs:CreateLogGroup"], Resource = "*" },
       { Effect = "Allow", Action = ["logs:PutRetentionPolicy"], Resource = aws_cloudwatch_log_group.emr.arn },
       { Effect = "Allow", Action = ["logs:CreateLogStream", "logs:DescribeLogStreams", "logs:PutLogEvents"], Resource = "${aws_cloudwatch_log_group.emr.arn}:*" }
-    ]
+      ], [for statement in [
+        { Effect = "Allow", Action = ["kafka-cluster:Connect", "kafka-cluster:DescribeCluster", "kafka-cluster:WriteDataIdempotently"], Resource = var.kafka_cluster_arn },
+        { Effect = "Allow", Action = ["kafka-cluster:DescribeTopic", "kafka-cluster:ReadData", "kafka-cluster:WriteData"], Resource = ["${local.topic_prefix}/traffic.raw", "${local.topic_prefix}/traffic.results"] },
+        { Effect = "Allow", Action = ["kafka-cluster:DescribeGroup", "kafka-cluster:AlterGroup"], Resource = ["${local.group_prefix}/congestion-v1", "${local.group_prefix}/congestion-verification-v1"] }
+    ] : statement if var.kafka_auth_mode == "iam"])
   })
 }
 
@@ -346,6 +357,12 @@ resource "aws_cloudformation_stack" "congestion" {
   template_body = local.emr_native_cloudwatch_template
   on_failure    = "DELETE"
   tags          = merge(local.emr_tag, { Project = "SmartTraffic", Purpose = "Phase4TemporaryVerification" })
+  lifecycle {
+    precondition {
+      condition     = alltrue([for id in var.bootstrap_dependency_ids : length(id) > 0])
+      error_message = "Private network routes and endpoints must be ready before EMR bootstrap."
+    }
+  }
 
   depends_on = [
     aws_iam_role_policy_attachment.emr_service,

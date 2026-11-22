@@ -116,6 +116,18 @@ The demo starts its own loopback services and Docker dependencies, then checks l
 
 ## 4. Cloud deployment and monitoring
 
+The project is back on the original account **`520646131316`**, using profile **`smarttraffic-sdk`**. Load it in PowerShell with `. .\scripts\use_project_aws.ps1`. CLI/SDK access and the Mumbai **16-vCPU quota** were verified on 22 November 2026. The account helper selects the preserved original Terraform state; review existing resources, state and costs before planning any deployment. The newer credits account and its pending quota request remain separate. See [account-selection instructions](docs/aws-account-switch.md).
+
+The current reduced-startup configuration uses **two `t3.large` EKS workers for light demos**, with a four-worker option for HPA validation and one persistent Kafka broker on EKS, reached privately by EMR through a TLS NLB endpoint. MSK is no longer created by the integrated root. Six immutable images and reusable Lambda/Flink binaries have a separate retained-artifact lifecycle. This configuration was deployed and passed a light end-to-end cloud demo on 22 November 2026. All six Kubernetes services, private TLS Kafka, EMR/Flink, Lambda alerts and the public HTTPS API were verified. Full-load HPA capacity and latency remain unvalidated for this shape. See the [live demo evidence and commands](docs/evidence/reduced-startup-live-2026-11-22.md). See the [reduced-startup runbook](docs/reduced-startup.md) before planning a deployment or migrating existing state.
+
+Prepare binaries before starting cloud resources:
+
+```powershell
+.venv\Scripts\python scripts\prepare_demo_artifacts.py
+```
+
+Unchanged sources and verified binaries reuse the cache. `--offline` uses only existing Maven dependencies. The retained Terraform root is `infrastructure/terraform/phase8-artifacts`; the runtime root reads its ECR repositories instead of creating/deleting them. Image publication, Git publication and AWS provisioning retain their separate authorization boundaries.
+
 The cloud environment is **not** started by the local commands above. Terraform owns AWS infrastructure; Argo CD deploys and updates the Kubernetes services from Git. Do not deploy application manifests with direct `kubectl apply`. A cloud run requires a current resource/state and cost check, an exact reviewed Terraform plan, deployment authorization, and a supervised cleanup plan. Teardown has its own approval boundary; preserve Terraform state until an independent absence audit is complete.
 
 These preparation checks render and validate local configuration without deploying it. Terraform `init` may download providers:

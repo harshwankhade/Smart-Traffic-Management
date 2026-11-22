@@ -1,6 +1,18 @@
+# Docker uses <Dockerfile>.dockerignore when present. Keep credentials/state out
+# even when this directory's ignore file is used as the selected context policy.
 .git
 .venv
 .data
+.aws
+.codex
+.agents
+.env
+.env.*
+**/*.tfstate*
+**/*.tfvars
+**/*.pem
+**/*.key
+**/*.tfplan
 **/__pycache__
 **/*.pyc
 services/congestion-processor/target

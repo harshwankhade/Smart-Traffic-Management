@@ -15,6 +15,10 @@ mock_provider "aws" {
     defaults        = { id = "j-MOCK", name = "mock-emr" }
     override_during = plan
   }
+  mock_resource "aws_cloudwatch_log_group" {
+    defaults        = { arn = "arn:aws:logs:ap-south-1:123456789012:log-group:mock" }
+    override_during = plan
+  }
 }
 
 variables {
@@ -54,7 +58,7 @@ run "emr_flink_configuration" {
     error_message = "The single-worker EMR runtime must capture native step and Spark logs."
   }
   assert {
-    condition     = aws_msk_topic.results.name == "traffic.results" && aws_msk_topic.results.replication_factor == 2 && jsondecode(aws_msk_topic.results.configs)["min.insync.replicas"] == "2"
+    condition     = aws_msk_topic.results[0].name == "traffic.results" && aws_msk_topic.results[0].replication_factor == 2 && jsondecode(aws_msk_topic.results[0].configs)["min.insync.replicas"] == "2"
     error_message = "Results must use the distinct two-replica Kafka topic."
   }
   assert {
@@ -89,5 +93,29 @@ run "emr_flink_configuration" {
       aws_vpc_security_group_ingress_rule.cloudwatch_logs_endpoint_from_primary.to_port == 443
     )
     error_message = "EMR and its CloudWatch Logs endpoint must use revocable, TCP-443-only security groups."
+  }
+}
+
+run "private_eks_kafka_does_not_provision_msk" {
+  command = plan
+  variables {
+    deployment_approved     = true
+    kafka_auth_mode         = "tls"
+    kafka_cluster_arn       = ""
+    kafka_security_group_id = ""
+    kafka_port              = 9093
+    kafka_cidr              = "10.80.0.0/16"
+  }
+  assert {
+    condition     = length(aws_msk_topic.results) == 0 && length(aws_vpc_security_group_ingress_rule.emr_kafka) == 0
+    error_message = "The EKS broker must not create MSK topics or manage controller-owned NLB groups."
+  }
+  assert {
+    condition     = aws_vpc_security_group_egress_rule.primary_kafka.to_port == 9093 && aws_vpc_security_group_egress_rule.primary_kafka.cidr_ipv4 == "10.80.0.0/16"
+    error_message = "EMR may reach only the private Kafka TLS port."
+  }
+  assert {
+    condition     = !strcontains(aws_iam_role_policy.emr_ec2.policy, "kafka-cluster:")
+    error_message = "MSK IAM permissions must be absent in TLS mode."
   }
 }
