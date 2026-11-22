@@ -7,7 +7,7 @@ data:
   AWS_REGION: ap-south-1
   CREATE_DATABASE_SCHEMA: "1"
   ARCHIVE_MODE: aws
-  KAFKA_AUTH_MODE: iam
+  KAFKA_AUTH_MODE: tls
   KAFKA_RAW_TOPIC: traffic.raw
   KAFKA_RESULTS_TOPIC: traffic.results
   PUBLISHER_ZOOKEEPER_ENABLED: "1"

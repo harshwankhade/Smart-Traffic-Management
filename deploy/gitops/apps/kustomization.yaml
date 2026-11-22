@@ -7,6 +7,7 @@ resources:
   - observability.yaml
   - network-policy.yaml
   - zookeeper.yaml
+  - kafka.yaml
   - sensor-registry.yaml
   - traffic-ingestion.yaml
   - event-publisher.yaml
@@ -17,19 +18,19 @@ resources:
 images:
   - name: smarttraffic/sensor-registry
     newName: 520646131316.dkr.ecr.ap-south-1.amazonaws.com/smarttraffic-phase8/sensor-registry
-    digest: sha256:7abb06d0d9b8eec63848c3fc2a1882fff03b7eefbc99baed66905449ae567107
+    digest: sha256:ec722486acabc7e91430b36b4bf1e15d6c3ee85a015737c3b2f82082dc7e6c68
   - name: smarttraffic/traffic-ingestion
     newName: 520646131316.dkr.ecr.ap-south-1.amazonaws.com/smarttraffic-phase8/traffic-ingestion
-    digest: sha256:1e83c2633a373541ec4d876ae9b47d213d2228918d1702c9a9f4b39fe645fa15
+    digest: sha256:e3a43feb0351f31291c5efce8ac778122ce27da68563b315e37df75930017648
   - name: smarttraffic/event-publisher
     newName: 520646131316.dkr.ecr.ap-south-1.amazonaws.com/smarttraffic-phase8/event-publisher
-    digest: sha256:edd18c23b81c1a5ba53f38fe4fc825846f92ac6d91c53c765c27043d0f367e62
+    digest: sha256:8a07f7f7f7382fb6636d2fc4cb11b262c1b0f9226377f4e3f1a8679d83a317fe
   - name: smarttraffic/signal-recommendation
     newName: 520646131316.dkr.ecr.ap-south-1.amazonaws.com/smarttraffic-phase8/signal-recommendation
-    digest: sha256:c3ab677021fa6c450360ccd807a3ae68fb53f9febb5e03ec8553db4c8129431b
+    digest: sha256:1395cdc86e93581608e01d0ede0631ffd527a58cea618c08d3c9fe2df1981ee0
   - name: smarttraffic/incident-manager
     newName: 520646131316.dkr.ecr.ap-south-1.amazonaws.com/smarttraffic-phase8/incident-manager
-    digest: sha256:5a3040b6e0f3ac3c9e933096026db4858ced906ccc68f54362625737a507a3af
+    digest: sha256:018a81b44f60f4a51af855d444b3fdb5749fada01278abc74bc1425f2f3f7d93
   - name: smarttraffic/traffic-analytics
     newName: 520646131316.dkr.ecr.ap-south-1.amazonaws.com/smarttraffic-phase8/traffic-analytics
-    digest: sha256:7fd54f2b2a827741adc67f6b5be3060c0b02f762c8c95dbe3e1f1a96226fb5be
+    digest: sha256:4ff32e6d3a963b29060c0c6957e1aacced990f6cc4ba07a66e1d41ccb69d0635
