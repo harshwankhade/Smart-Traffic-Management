@@ -31,6 +31,10 @@ metadata:
     external-dns.kubernetes.io/hostname: kafka.smarttraffic.internal
 spec:
   type: LoadBalancer
+  # Topic bootstrap uses Kafka's advertised NLB address. Register the running
+  # broker before its topic-based readiness probe can pass; NLB TCP health
+  # checks still reject a broker that has not opened its TLS listener.
+  publishNotReadyAddresses: true
   loadBalancerClass: service.k8s.aws/nlb
   loadBalancerSourceRanges: [10.80.0.0/16]
   selector: {app: kafka}
