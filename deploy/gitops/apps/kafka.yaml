@@ -115,6 +115,15 @@ spec:
             - |
               cat /tls/tls.key /tls/tls.crt > /work/broker.pem
               /opt/kafka/bin/kafka-storage.sh format --ignore-formatted -t MkU3OEVBNTcwNTJENDM2Qk -c /config/server.properties
+              # A blocking postStart hook withholds the Pod IP from endpoint
+              # discovery. Bootstrap in the background so NLB registration
+              # and private DNS can become healthy before topic creation.
+              (
+                until /bin/bash /config/bootstrap-topics.sh; do
+                  echo "Topic bootstrap failed; retrying" >&2
+                  sleep 5
+                done
+              ) &
               exec /opt/kafka/bin/kafka-server-start.sh /config/server.properties
           env:
             - {name: KAFKA_HEAP_OPTS, value: "-Xms256m -Xmx512m"}
@@ -123,9 +132,6 @@ spec:
           resources:
             requests: {cpu: 250m, memory: 1Gi}
             limits: {cpu: "1", memory: 1536Mi}
-          lifecycle:
-            postStart:
-              exec: {command: [/bin/bash, /config/bootstrap-topics.sh]}
           startupProbe:
             tcpSocket: {port: tls}
             periodSeconds: 10
