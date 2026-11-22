@@ -35,6 +35,12 @@ spec:
         - name: app
           image: smarttraffic/event-publisher:phase8-local
           imagePullPolicy: IfNotPresent
+          command: [python, -c]
+          args:
+            - >-
+              import logging, uvicorn;
+              logging.basicConfig(level=logging.INFO, format='%(asctime)s %(name)s %(levelname)s %(message)s');
+              uvicorn.run('app:app', host='0.0.0.0', port=8000)
           ports:
             - {name: http, containerPort: 8000}
             - {name: grpc, containerPort: 50051}
@@ -49,5 +55,10 @@ spec:
             - configMapRef: {name: smarttraffic-runtime}
             - secretRef: {name: smarttraffic-runtime-values}
           livenessProbe: {httpGet: {path: /healthz, port: http}, initialDelaySeconds: 10}
+          startupProbe:
+            httpGet: {path: /readyz, port: http}
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 12
           readinessProbe: {httpGet: {path: /readyz, port: http}, initialDelaySeconds: 15}
           resources: {requests: {cpu: 200m, memory: 256Mi}, limits: {cpu: 1, memory: 512Mi}}
