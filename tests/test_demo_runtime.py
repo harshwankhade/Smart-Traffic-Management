@@ -51,6 +51,16 @@ class DemoRuntimeTests(unittest.TestCase):
                 source.write_text("corrupted")
                 self.assertFalse(builds.cached(manifest, "r", {"artifact": source}))
 
+    def test_checkpoint_guard_ignores_directory_markers_but_keeps_real_state(self):
+        import jmespath
+        from scripts.phase8_start_processor import CHECKPOINT_FILES_QUERY
+        for data, expected in [({}, []),
+                ({'Contents': [{'Key': 'checkpoints/demo/job/shared/', 'Size': 0}]}, []),
+                ({'Contents': [{'Key': 'checkpoints/demo/job/shared/', 'Size': 0},
+                               {'Key': 'checkpoints/demo/job/chk-1/_metadata', 'Size': 100}]},
+                 ['checkpoints/demo/job/chk-1/_metadata'])]:
+            self.assertEqual(jmespath.search(CHECKPOINT_FILES_QUERY, data), expected)
+
     def test_step_uses_tls_and_refuses_implicit_rebuild_or_foreign_checkpoint(self):
         outputs = {"flink_artifact_uri": "s3://demo/artifacts/processor.jar",
                    "kafka_ca_uri": "s3://demo/artifacts/kafka-ca.pem",

@@ -453,7 +453,7 @@ resource "helm_release" "external_dns" {
   wait       = true
   values = [yamlencode({
     provider   = { name = "aws" }
-    policy     = "sync"
+    policy     = "upsert-only"
     registry   = "txt"
     txtOwnerId = var.project_name
     # The AWS provider matches a hosted-zone name, not an individual record.

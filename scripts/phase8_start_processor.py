@@ -12,6 +12,8 @@ import os
 from pathlib import Path
 import shlex
 
+CHECKPOINT_FILES_QUERY = "not_null(Contents, `[]`)[?ends_with(Key, '/') == `false`].Key"
+
 
 def step(outputs, restore_checkpoint=None):
     def value(name):
@@ -46,8 +48,8 @@ def step(outputs, restore_checkpoint=None):
         "applications=$(yarn application -list -appTypes FLINK -appStates RUNNING,ACCEPTED)",
         "if grep -q '^application_' <<< \"$applications\"; then echo 'An existing Flink application must be reconciled first' >&2; exit 1; fi",
         *([] if restore_checkpoint else [
-            f"checkpoints=$(aws s3api list-objects-v2 --bucket {shlex.quote(bucket)} --prefix checkpoints/demo/ --max-keys 1 --query KeyCount --output text)",
-            'if [[ "$checkpoints" != "0" ]]; then echo "Existing checkpoints require --restore-checkpoint; refusing an implicit state rebuild" >&2; exit 1; fi',
+            f"checkpoints=$(aws s3api list-objects-v2 --bucket {shlex.quote(bucket)} --prefix checkpoints/demo/ --query {shlex.quote(CHECKPOINT_FILES_QUERY)} --output text)",
+            'if [[ -n "$checkpoints" && "$checkpoints" != "None" ]]; then echo "Existing checkpoints require --restore-checkpoint; refusing an implicit state rebuild" >&2; exit 1; fi',
         ]),
         f'aws s3 cp {shlex.quote(jar)} "$work/processor.jar"',
         f'aws s3 cp {shlex.quote(ca)} "$work/kafka-ca.pem"',
