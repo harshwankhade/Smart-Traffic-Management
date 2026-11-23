@@ -14,6 +14,7 @@ mock_provider "tls" {}
 override_module {
   target = module.processing
   outputs = {
+    emr_primary_security_group_id              = "sg-emr-mock"
     emr_cluster_id                             = "j-MOCK"
     artifact_key                               = "artifacts/processor.jar"
     cloudwatch_logs_endpoint_security_group_id = "sg-mock"
@@ -46,7 +47,10 @@ variables {
 
 run "demo_shape_and_artifact_ownership" {
   command = plan
-  variables { deployment_approved = true }
+  variables {
+    deployment_approved = true
+    eks_worker_count = 2
+  }
   assert {
     condition     = contains(aws_eks_node_group.main.instance_types, "t3.large") && length(aws_eks_node_group.main.instance_types) == 1 && aws_eks_node_group.main.scaling_config[0].desired_size == 2
     error_message = "The light demo must default to two t3.large workers."

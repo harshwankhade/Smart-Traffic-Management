@@ -460,7 +460,8 @@ resource "helm_release" "external_dns" {
     # `public_dns_name` is the approved one-label API host (api.<zone>), so
     # remove that label while retaining a narrowly scoped zone filter.
     domainFilters  = [join(".", slice(split(".", var.public_dns_name), 1, length(split(".", var.public_dns_name)))), "smarttraffic.internal"]
-    extraArgs      = { "zone-id-filter" = [var.route53_zone_id, aws_route53_zone.kafka.zone_id] }
+    extraArgs      = { "zone-id-filter" = [var.route53_zone_id, aws_route53_zone.kafka.zone_id], "listen-endpoint-events" = true }
+    interval       = "30s"
     serviceAccount = { create = true, name = "external-dns" }
   })]
   depends_on = [aws_eks_pod_identity_association.external_dns]
@@ -551,4 +552,15 @@ resource "helm_release" "argocd_root_application" {
     }
   })]
   depends_on = [helm_release.argocd]
+}
+
+# Private DNS points directly to the Kafka pod's VPC address. Permit only
+# EMR's primary node to reach its TLS listener through the pod/node SG.
+resource "aws_vpc_security_group_ingress_rule" "kafka_from_emr" {
+  security_group_id            = aws_eks_cluster.main.vpc_config[0].cluster_security_group_id
+  referenced_security_group_id = module.processing.emr_primary_security_group_id
+  ip_protocol                  = "tcp"
+  from_port                    = 9093
+  to_port                      = 9093
+  description                  = "EMR to private Kafka TLS pod endpoint"
 }

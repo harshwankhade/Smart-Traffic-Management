@@ -57,9 +57,11 @@ def main() -> None:
         if required not in hpas:
             raise RuntimeError(f"HPA manifests lack {required!r}")
     for required in ("kind: StatefulSet", "name: kafka", "kafka.smarttraffic.internal",
-                     "loadBalancerClass: service.k8s.aws/nlb", "KAFKA_AUTH_MODE: tls"):
+                     "publishNotReadyAddresses: true", "external-dns.kubernetes.io/ttl", "KAFKA_AUTH_MODE: tls"):
         if required not in rendered:
             raise RuntimeError(f"private Kafka configuration lacks {required!r}")
+    if "loadBalancerClass: service.k8s.aws/nlb" in rendered:
+        raise RuntimeError("Kafka must use headless private DNS, not an NLB")
     for required in ("kind: ServiceMonitor",
                      "kind: DaemonSet", "aws-for-fluent-bit"):
         if required not in observability:
