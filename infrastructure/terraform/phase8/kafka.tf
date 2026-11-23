@@ -4,6 +4,11 @@ resource "aws_route53_zone" "kafka" {
   name = "smarttraffic.internal"
   vpc { vpc_id = aws_vpc.main.id }
   tags = local.tags
+  # Configure the zone's default SOA before clients can cache a missing broker.
+  # The default record is deleted with the zone, not as a separate resource.
+  provisioner "local-exec" {
+    command = "python \"${path.module}/../../../scripts/prepare_private_kafka_dns.py\" --zone-id ${self.zone_id} ${var.expected_account_id == null ? "" : "--expected-account-id ${var.expected_account_id}"} --apply"
+  }
 }
 resource "tls_private_key" "kafka" {
   algorithm  = "RSA"

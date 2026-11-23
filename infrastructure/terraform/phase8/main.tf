@@ -564,3 +564,13 @@ resource "aws_vpc_security_group_ingress_rule" "kafka_from_emr" {
   to_port                      = 9093
   description                  = "EMR to private Kafka TLS pod endpoint"
 }
+
+# Private DNS for the Logs endpoint is shared by EMR and EKS pods.
+resource "aws_vpc_security_group_ingress_rule" "cloudwatch_from_eks" {
+  security_group_id            = module.processing.cloudwatch_logs_endpoint_security_group_id
+  referenced_security_group_id = aws_eks_cluster.main.vpc_config[0].cluster_security_group_id
+  ip_protocol                  = "tcp"
+  from_port                    = 443
+  to_port                      = 443
+  description                  = "EKS Fluent Bit to private CloudWatch Logs endpoint"
+}
