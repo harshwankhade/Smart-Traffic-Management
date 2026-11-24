@@ -1,8 +1,26 @@
 # Smart Traffic Management (S12)
 
+> **Running - 23 November 2026:** New requirement-test run is ready in account `520646131316`, Mumbai: four `t3.large` workers, private-DNS/TLS Kafka on EKS, managed EMR/Flink and Lambda/SQS. Functional rehearsal and public HTTPS passed. Kafka no longer uses an NLB. See [current evidence](docs/evidence/private-dns-live-2026-11-23.md). Runtime remains running; full HPA/load and failover rehearsals are separate.
+
 This academic project simulates traffic monitoring at intersections. It accepts sensor readings, computes congestion windows, recommends **simulated** signal changes, records incidents, and creates alerts. It never controls real traffic signals.
 
 The eight application services are Sensor Registry, Traffic Ingestion, Event Publisher, Congestion Processor, Signal Recommendation, Incident Manager, Alert Service, and Traffic Analytics. Six run on EKS in the cloud design; Congestion Processor runs Apache Flink on EMR, and Alert Service runs on Lambda. [The design document](docs/DESIGN_DOCUMENT.md) explains their responsibilities and connections.
+
+## Minimal demo dashboard
+
+With the cloud run active and AWS CLI signed in, run from the repository root:
+
+```powershell
+.venv\Scripts\python scripts\demo_dashboard.py --connect
+```
+
+Open **http://127.0.0.1:8787**. The launcher connects five authenticated Kubernetes tunnels sequentially, using context `smarttraffic-demo` and dedicated ports `18091`–`18095`. Existing Swagger tunnels can remain open. Use `--kubeconfig PATH` or `--context NAME` if needed; `--base-port NUMBER` changes the five tunnel ports. Ctrl+C stops the dashboard and the tunnels it started. Tunnel logs are under `.data/dashboard/`.
+
+Demo order: **Register & read back → Run 2-window demo → inspect results and simulated recommendations → Test unknown sensor → Create incident → Read back**. The batch uses counts **15, 30, 13, 12**, plus a watermark reading, and checks the actual cloud results against totals **45/25**, mean speeds **14/18**, and mean occupancy **0.85/0.65**. Results may take up to three minutes to arrive. Each request exposes its real status and JSON response in Request evidence.
+
+These buttons write synthetic records to the running cloud APIs. Use the dashboard alone as the traffic producer during rehearsal: its synthetic event times advance beyond wall-clock time, and other producers can submit older readings that Flink treats as late. The launcher preserves its latest accepted event time in `.data/dashboard/event-clock.txt`; retain this file between rehearsals. The connection indicators show API reachability; they do not certify every downstream component. Incident read-back does not confirm Lambda alert delivery.
+
+The GUI is a local presentation layer, with no additional AWS resources or service changes. Demonstrate public reachability separately using the deployed HTTPS endpoint. See [implementation and verification](docs/progress/demo-dashboard.md).
 
 ## Prerequisites
 
@@ -52,7 +70,7 @@ Open Registry API docs at `http://127.0.0.1:8001/docs` and Incident Manager API 
 
 Start Docker Desktop first. These demos use loopback containers and synthetic data. Run one demo at a time because some share Kafka or DynamoDB Local. Normal `down` commands stop their containers and networks **without deleting named volumes**.
 
-### Ingestion → gRPC Publisher → Kafka and archive
+### Ingestion â†’ gRPC Publisher â†’ Kafka and archive
 
 ```powershell
 .venv\Scripts\python scripts\generate_proto.py
@@ -103,7 +121,7 @@ The quickest alert demo needs no Docker:
 .venv\Scripts\python scripts\demo_phase6_alerts.py
 ```
 
-It runs the real alert producers and handler with an in-memory queue/table stand-in. To use a real local DynamoDB table, follow the [Phase 6 local guide](docs/phase-6-local.md). Actual SQS → Lambda → DynamoDB evidence is recorded separately in the [Phase 6 cloud report](docs/progress/phase-6.md).
+It runs the real alert producers and handler with an in-memory queue/table stand-in. To use a real local DynamoDB table, follow the [Phase 6 local guide](docs/phase-6-local.md). Actual SQS â†’ Lambda â†’ DynamoDB evidence is recorded separately in the [Phase 6 cloud report](docs/progress/phase-6.md).
 
 ### ZooKeeper publisher failover
 
@@ -118,7 +136,7 @@ The demo starts its own loopback services and Docker dependencies, then checks l
 
 The project is back on the original account **`520646131316`**, using profile **`smarttraffic-sdk`**. Load it in PowerShell with `. .\scripts\use_project_aws.ps1`. CLI/SDK access and the Mumbai **16-vCPU quota** were verified on 22 November 2026. The account helper selects the preserved original Terraform state; review existing resources, state and costs before planning any deployment. The newer credits account and its pending quota request remain separate. See [account-selection instructions](docs/aws-account-switch.md).
 
-The current reduced-startup configuration uses **two `t3.large` EKS workers for light demos**, with a four-worker option for HPA validation and one persistent Kafka broker on EKS, reached privately by EMR through a TLS NLB endpoint. MSK is no longer created by the integrated root. Six immutable images and reusable Lambda/Flink binaries have a separate retained-artifact lifecycle. This configuration was deployed and passed a light end-to-end cloud demo on 22 November 2026. All six Kubernetes services, private TLS Kafka, EMR/Flink, Lambda alerts and the public HTTPS API were verified. Full-load HPA capacity and latency remain unvalidated for this shape. See the [live demo evidence and commands](docs/evidence/reduced-startup-live-2026-11-22.md). See the [reduced-startup runbook](docs/reduced-startup.md) before planning a deployment or migrating existing state.
+The current reduced-startup configuration uses **two `t3.large` EKS workers for light demos**, with a four-worker option for HPA validation and one persistent Kafka broker on EKS, reached privately by EMR through headless-service DNS and TLS (no Kafka NLB). MSK is no longer created by the integrated root. Six immutable images and reusable Lambda/Flink binaries have a separate retained-artifact lifecycle. This configuration was deployed and passed a light end-to-end cloud demo on 22 November 2026, then its runtime was torn down on 23 November. All six Kubernetes services, private TLS Kafka, EMR/Flink, Lambda alerts and the public HTTPS API were verified. Full-load HPA capacity and latency remain unvalidated for this shape. See the [live demo evidence and commands](docs/evidence/reduced-startup-live-2026-11-22.md). See the [reduced-startup runbook](docs/reduced-startup.md) before planning a deployment or migrating existing state.
 
 Prepare binaries before starting cloud resources:
 

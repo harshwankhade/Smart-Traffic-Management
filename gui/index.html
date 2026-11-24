@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Smart Traffic · Demo Console</title><link rel="stylesheet" href="/styles.css"><script src="/dashboard.js" defer></script></head>
+<body>
+<header><div><span class="eyebrow">SMART TRAFFIC MANAGEMENT</span><h1>A clearer view of the junction.</h1><p>Register a sensor. Send a reading. See traffic become a recommendation.</p></div><span class="environment">SIMULATED TRAFFIC · CLOUD BACKEND</span></header>
+<main>
+<div class="connection"><span id="connection">Connecting to the deployed APIs…</span><button id="check" class="quiet">Check connection</button></div>
+<div id="health" class="health"></div>
+<section class="flow" aria-label="System workflow"><span>Sensor</span><b>→</b><span>REST ingestion</span><b>→</b><span>gRPC publisher</span><b>→</b><span>Kafka</span><b>→</b><span>Managed Flink</span><b>→</b><span>Analytics & advice</span></section>
+<div id="notice" role="status" aria-live="polite">Start by registering a new demo sensor or loading an existing one.</div>
+<div class="grid">
+<section class="panel"><div class="section-title"><span class="step">01</span><div><h2>Connect an intersection</h2><p>Sensor Registry · persisted identity and location</p></div></div>
+<label>Intersection ID<input id="intersection" autocomplete="off"></label><label>Sensor ID<input id="sensor" autocomplete="off"></label>
+<div class="row"><label>Junction name<input id="junction-name" value="Demo Junction"></label><label>Location<input id="location" value="Northbound approach"></label></div>
+<div class="actions"><button id="register">Register & read back</button><button id="load" class="secondary">Load sensor</button><button id="fresh" class="quiet">New IDs</button></div>
+<div id="sensor-state" class="result muted">No sensor loaded yet.</div>
+</section>
+<section class="panel"><div class="section-title"><span class="step">02</span><div><h2>Send traffic</h2><p>Traffic Ingestion · validation, gRPC and publication</p></div></div>
+<div class="row three"><label>Vehicle count<input id="count" type="number" min="0" step="1" value="15" required></label><label>Mean speed<input id="speed" type="number" min="0" step="0.1" value="10" required></label><label>Occupancy (0–1)<input id="occupancy" type="number" min="0" max="1" step="0.01" value="0.90" required></label></div>
+<div class="actions"><button id="send">Send one reading</button><button id="invalid" class="secondary">Test unknown sensor</button></div>
+<div class="demo-box"><div><strong>Two-window demonstration</strong><p>Send four known readings and a fifth watermark reading. Expected totals: <b>45</b> and <b>25</b>.</p></div><button id="batch">Run 2-window demo</button></div>
+<p class="hint">Expected window 1: 45 vehicles, mean speed 14, occupancy 0.85. Window 2: 25 vehicles, mean speed 18, occupancy 0.65. Synthetic event times advance across two minutes; single readings appear after their event-time window closes.</p>
+<div id="reading-state" class="result muted">Accepted event IDs will appear here.</div>
+</section>
+</div>
+<section class="panel results"><div class="section-title"><span class="step">03</span><div><h2>Observe the outcome</h2><p>Traffic Analytics + Signal Recommendation · independent reads of processed results</p></div><button id="refresh" class="secondary push">Refresh results</button></div>
+<div class="row filters"><label>From (UTC, optional)<input id="from" placeholder="2026-11-23T08:00:00Z"></label><label>To (UTC, optional)<input id="to" placeholder="2026-11-23T08:05:00Z"></label></div>
+<div class="stats"><div><span>WINDOWS RETURNED</span><strong id="stat-windows">—</strong></div><div><span>VEHICLES IN THESE WINDOWS</span><strong id="stat-vehicles">—</strong></div><div><span>LATEST MEAN SPEED</span><strong id="stat-speed">—</strong></div><div><span>RECOMMENDATIONS</span><strong id="stat-advice">—</strong></div></div>
+<div class="table-scroll"><table><thead><tr><th>Window (UTC)</th><th>Readings</th><th>Vehicles</th><th>Mean speed</th><th>Occupancy</th><th>Congestion</th><th>Demo check</th></tr></thead><tbody id="windows"><tr><td colspan="7" class="empty">No query yet. Register a sensor, send the demo, then refresh.</td></tr></tbody></table></div>
+<div id="advice" class="advice"><p class="muted">Simulated signal recommendations will appear here.</p></div>
+<p class="hint">Advisory simulation only. No real traffic light is controlled.</p>
+</section>
+<div class="grid lower">
+<section class="panel"><div class="section-title"><span class="step">04</span><div><h2>Report a road incident</h2><p>Incident Manager · SQL persistence and asynchronous alerts</p></div></div>
+<div class="row"><label>Incident ID<input id="incident-id"></label><label>Type<select id="incident-type"><option value="collision">Collision</option><option value="closure">Road closure</option><option value="disruption">Disruption</option></select></label></div>
+<label>Description<input id="description" value="Simulated incident blocking the northbound lane"></label>
+<div class="actions"><button id="incident-create">Create incident</button><button id="incident-read" class="secondary">Read back</button></div>
+<div id="incident-state" class="result muted">No incident loaded.</div><p class="hint">Alert processing is asynchronous. Saving an incident does not confirm alert delivery.</p>
+</section>
+<section class="panel activity"><div class="section-title"><div><h2>Request evidence</h2><p>Actual API status, IDs and response bodies</p></div><button id="clear-log" class="quiet push">Clear</button></div><div id="activity"><p class="muted">Your requests will appear here.</p></div></section>
+</div>
+<footer>This interface runs on your computer and accesses deployed EKS services through authenticated tunnels. Use the public HTTPS endpoint separately to demonstrate public reachability.</footer>
+</main>
+</body></html>
