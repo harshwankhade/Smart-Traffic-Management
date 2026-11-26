@@ -24,7 +24,7 @@ metadata:
   name: sensor-registry
   namespace: smarttraffic
   annotations:
-    demo.smarttraffic.io/gitops-proof: "demo-20261122-01"
+    demo.smarttraffic.io/gitops-proof: "demo-20261126-01"
 spec:
   replicas: 1
   selector: {matchLabels: {app: sensor-registry}}
